@@ -43,3 +43,14 @@ export const planSchema = z.object({
 });
 
 export const planResponseSchema = z.object({ plan: planSchema, receipt: z.string().min(1).max(40000) });
+
+export const savedGardenSchema = z.object({
+  id: z.uuid(), revision: z.number().int().positive(), plan: planSchema,
+  createdAt: z.iso.datetime(), updatedAt: z.iso.datetime(),
+}).strict();
+export const gardenResponseSchema = z.object({ garden: savedGardenSchema.nullable() }).strict();
+export const saveGardenSchema = z.object({
+  receipt: z.string().min(1).max(40000),
+  expectedRevision: z.number().int().positive().nullable(),
+  confirmReplacement: z.boolean(),
+}).strict();
