@@ -1,0 +1,173 @@
+{
+  "case": "weed-dandelion",
+  "request": {
+    "method": "POST",
+    "url": "https://weed-identification-api-ai-weed-detection-control.p.rapidapi.com/analyze",
+    "contentType": "multipart/form-data; boundary=ShambaRuntimeVerificationBoundary20261007",
+    "body": {
+      "system": "garden",
+      "language": "en",
+      "image": {
+        "filename": "dandelion.jpg",
+        "bytes": 1888403,
+        "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/5/5d/Taraxacum_officinale_-_whole_plant%2C_flowers%2C_leaves_%2818444028083%29.jpg"
+      }
+    }
+  },
+  "observation": {
+    "case": "weed-dandelion",
+    "service": "weed",
+    "startedAt": "2026-10-07T16:34:54.436948+00:00",
+    "attempted": true,
+    "httpStatus": 200,
+    "elapsedSeconds": 19.76,
+    "quotaHeaders": {
+      "x-ratelimit-requests-limit": "30",
+      "x-ratelimit-requests-remaining": "29",
+      "x-ratelimit-requests-reset": "2677913",
+      "x-ratelimit-rapid-free-plans-hard-limit-limit": "500000",
+      "x-ratelimit-rapid-free-plans-hard-limit-remaining": "499999",
+      "x-ratelimit-rapid-free-plans-hard-limit-reset": "2677913"
+    }
+  },
+  "response": {
+    "status": "success",
+    "message": "Weed identification completed successfully",
+    "result": {
+      "weed": {
+        "commonName": "Dandelion",
+        "scientificName": "Taraxacum officinale",
+        "family": "Asteraceae",
+        "eppoCode": "TAROF",
+        "plantType": "broadleaf",
+        "lifecycle": "perennial",
+        "reproduction": "seed",
+        "growthStage": "flowering",
+        "bbch": 65,
+        "lookAlikes": [
+          {
+            "name": "Cat's ear",
+            "scientificName": "Hypochaeris radicata",
+            "howToTellApart": "Cat's ear has hairy leaves and solid, sometimes branched flower stems, while dandelion leaves are usually hairless and flower stems are hollow, unbranched, and contain milky sap."
+          },
+          {
+            "name": "Hawkweed",
+            "scientificName": "Hieracium spp.",
+            "howToTellApart": "Hawkweed often has hairy leaves and leafy flower stems with multiple flower heads, whereas dandelion has a basal rosette and solitary flower heads on leafless hollow stems."
+          }
+        ]
+      },
+      "isWeed": true,
+      "confidence": 98,
+      "identificationFeatures": [
+        "Basal rosette of deeply lobed leaves with backward-pointing teeth",
+        "Hollow, milky-sap-containing flower stems",
+        "Bright yellow composite flower heads solitary on stems",
+        "White spherical seed heads with wind-dispersed achenes",
+        "Deep fleshy taproot"
+      ],
+      "threat": {
+        "level": "medium",
+        "competitiveness": "Moderate; competes for water, nutrients, and light, especially in thin lawns and garden beds.",
+        "seedsPerPlant": "Up to 2000-5000 seeds per plant per year",
+        "seedBankPersistenceYears": "2-5 years, possibly longer",
+        "toxicToLivestock": false,
+        "toxicityNote": "Not toxic; edible for humans and livestock when harvested from clean areas.",
+        "regulatedOrInvasive": false,
+        "regulatoryNote": "Not generally regulated; considered a common weed in many regions."
+      },
+      "controlWindow": {
+        "currentStageControllable": true,
+        "bestTiming": "Before seed set; best when soil is moist for hand removal of the taproot, or in early rosette stage.",
+        "urgency": "medium",
+        "preventSeedSet": "Remove or mow flower heads before they turn to white seed puffs to prevent wind dispersal."
+      },
+      "control": {
+        "mechanical": [
+          "Hand-dig or fork out the entire taproot, especially after rain when soil is soft.",
+          "Repeated mowing close to the ground to weaken the plant and prevent seed production.",
+          "Smother with cardboard, black plastic, or thick mulch for several weeks.",
+          "Solarize soil with clear plastic during hot sunny weather to kill roots and seeds near the surface."
+        ],
+        "cultural": [
+          "Maintain a dense, competitive lawn or ground cover with proper fertilization and overseeding.",
+          "Mow regularly at a height that favors desirable grasses and prevents dandelion flowering.",
+          "Apply mulch in garden beds to suppress seedling establishment.",
+          "Avoid excessive soil disturbance that exposes bare ground for seed germination."
+        ],
+        "biological": [
+          "No highly effective biological control is commercially available for garden use.",
+          "Grazing by goats, sheep, or rabbits can reduce top growth but will not eliminate established taproots."
+        ],
+        "organicApproved": [
+          "Acetic acid (20% or higher) as a spot spray on young rosettes, avoiding desirable plants.",
+          "Corn gluten meal as a pre-emergence suppressant for seedlings in established lawns.",
+          "Flame weeding or boiling water for small rosettes in cracks and paths.",
+          "Repeated cultivation and hand removal before seed set."
+        ],
+        "chemical": [],
+        "notSafeOnThisCrop": [
+          {
+            "activeIngredient": "2,4-D",
+            "hracGroup": "4",
+            "timing": "post-emergence",
+            "cropSafe": false,
+            "note": "Selective broadleaf herbicide; can damage broadleaf garden crops and desirable ornamentals. Spot treat only when safe.",
+            "resistanceWarning": true
+          },
+          {
+            "activeIngredient": "dicamba",
+            "hracGroup": "4",
+            "timing": "post-emergence",
+            "cropSafe": false,
+            "note": "Effective on dandelion but persistent in soil and can injure many garden plants. Avoid near sensitive crops.",
+            "resistanceWarning": true
+          },
+          {
+            "activeIngredient": "glyphosate",
+            "hracGroup": "9",
+            "timing": "spot treatment",
+            "cropSafe": false,
+            "note": "Non-selective; kills or damages any contacted desirable plant. Use only as directed spot treatment in paths or before planting.",
+            "resistanceWarning": false
+          },
+          {
+            "activeIngredient": "clopyralid",
+            "hracGroup": "4",
+            "timing": "post-emergence",
+            "cropSafe": false,
+            "note": "Controls many broadleaf weeds but residues can persist in compost and mulch, injuring sensitive garden crops.",
+            "resistanceWarning": true
+          }
+        ]
+      },
+      "resistance": {
+        "knownResistantGroups": [
+          "4"
+        ],
+        "advice": "Rotate across HRAC groups and integrate mechanical removal. Do not rely repeatedly on Group 4 herbicides in the same area; hand-digging taproots remains highly effective."
+      },
+      "usesAndBenefits": [
+        "Young leaves are edible raw in salads or cooked as greens; older leaves become bitter.",
+        "Flowers can be used for fritters, wine, or jelly.",
+        "Roasted roots are used as a caffeine-free coffee substitute.",
+        "Medicinal uses include diuretic and digestive support, but consult a healthcare professional; avoid harvest from sprayed or contaminated sites.",
+        "Forage for rabbits, tortoises, and some livestock.",
+        "Safety caveat: people with latex allergies may react to dandelion sap; avoid plants from herbicide-treated areas."
+      ],
+      "overallConfidence": 98
+    },
+    "cacheTime": 1791390913989,
+    "metadata": {
+      "language": "en",
+      "crop": "",
+      "cropStage": "",
+      "country": "",
+      "system": "garden",
+      "notes": "",
+      "weed": "Taraxacum officinale",
+      "isWeed": true,
+      "queryTime": "2026-10-07T16:35:13.989Z"
+    }
+  }
+}
