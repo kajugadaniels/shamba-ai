@@ -8,3 +8,9 @@ export function serverEnv() {
   }
   return { rapidapiKey, signingSecret };
 }
+
+export function signingSecret() {
+  const value = process.env.APP_SIGNING_SECRET?.trim();
+  if (!value || Buffer.byteLength(value) < 32) throw new Error("SERVER_CONFIGURATION");
+  return value;
+}
