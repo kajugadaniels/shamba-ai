@@ -1,6 +1,6 @@
 ---
 doc: scope
-status: approved
+status: draft
 ---
 
 # Shamba AI
@@ -16,6 +16,8 @@ A beginner growing food in a small outdoor home garden or raised bed, such as a 
 ## The Core Loop
 Enter the rectangular garden's dimensions in meters, choose a few supported crops, and receive a simple layout showing which crops should be planted together. Later, upload an unwanted-plant photo from that garden and receive an identification with practical control guidance, or a clear explanation that identification is uncertain.
 
+Visitors can generate a plan without signing in. Choosing to save requires sign up or sign in and associates the garden with that user. On return, signing in restores their one saved garden and its identification history. They can update or replace the garden; signing out ends access to saved data until they sign in again.
+
 ## Inspiration & Identity
 Beginner-friendly, with a clear layout and plain, practical guidance. No visual references or aesthetic direction chosen yet; refine these in the PRD.
 
@@ -27,7 +29,9 @@ A beginner enters a garden size such as 2m × 3m or 3m × 4m and selects crops. 
 
 If identification is uncertain, the app says “We couldn't confidently identify this plant” and suggests a clearer photo showing the leaves and whole plant, rather than guessing. Validate the flow with a small number of known weed photos without claiming that only those weeds are supported.
 
-The demo proves both useful results are connected to the same garden. Keep the journey short enough to show in roughly a minute; the hackathon targets 2–4 hours of active work and requires a short demo video and public GitHub repository. Deployment is optional.
+The demo proves both useful results are connected to the same garden and that signing in restores the saved dimensions, selected crops, generated layout, and identification history. Each saved identification includes the plant name, confidence if available, explanation, control guidance, and date/time.
+
+Keep the journey concise enough for a short demo; the hackathon targets 2–4 hours of active work and requires a short demo video and public GitHub repository. Deployment is optional. Authentication and persistence make this target tighter; avoid adding account or garden-management features beyond the boundary below.
 
 ## The POC Boundary
 - One rectangular outdoor home garden or raised bed, measured in meters.
@@ -37,16 +41,23 @@ The demo proves both useful results are connected to the same garden. Keep the j
 - Present an identification only when the result is strong enough, with confidence if available, a short explanation, and practical control guidance.
 - Provide a clear uncertain-identification result and better-photo guidance.
 - Keep planning and unwanted-plant identification within the same garden journey.
+- Minimal sign up, sign in, and sign out using a managed authentication service; Clerk is a candidate for the technical specification.
+- Require authentication to save a garden, while keeping initial plan generation available to visitors.
+- One saved garden per authenticated user, with updates or replacement and restoration on return.
+- Save garden dimensions, selected crops, generated layout, and that garden's identification results with date/time.
+- Identification-result persistence is sufficient; storing uploaded photos is not required for this proof of concept.
 
 ## Later
 No additional features committed for a later release. Supporting crops beyond the initial four is outside this proof of concept.
 
 ## Explicitly Cut
-- Accounts: unnecessary to demonstrate the one-garden journey.
+- Roles, organizations, profile management, and admin features: outside the minimal authentication needed to save and restore a garden.
+- Multiple-garden management: each authenticated user has only one saved garden.
+- Photo-library management: saving identification results is enough to prove continuity.
 - Weather, watering reminders, and climate- or location-specific growing recommendations: outside the selected planting and identification proof.
 - Disease detection: a separate diagnosis flow.
 - Marketplace features and full farm management: beyond the small-garden focus.
 - Balconies, hydroponics, greenhouses, containers, and commercial farms: excluded to keep growing-space support limited to a rectangular outdoor plot or raised bed.
 
 ## Questions for the Next Planning Steps
-The PRD will define layout detail, garden continuity, and result behavior. The technical specification will select the identification API and define how its result supports an identification decision. These implementation choices are not settled by this scope.
+The PRD will define layout detail, save/sign-in behavior, garden updates and replacement (including treatment of existing history), and identification-result behavior. The technical specification will select managed authentication, persistence, and the identification API, and define how its result supports an identification decision. These implementation choices are not settled by this scope.
