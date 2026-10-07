@@ -90,7 +90,7 @@ Acceptance: valid dimensions and two to four crops generate a preview; invalid v
 
 - Show where the selected crops should be placed near each other using labeled zones/rows, names, and icons/images.
 - Explain important supported companion relationships in plain language. The learner's Tomato + Basil and Carrot + Onion examples require planting-data verification before being presented as factual guidance.
-- If supported data identifies incompatible selected crops, show a clear warning and represent separation in the map.
+- Present conflict warnings and advisories according to Companion Conflict Evidence below, preserving their evidence strength in the map and explanation.
 - Do not promise exact centimeter spacing or planting capacity unless reliable planting data supports it.
 - When a supported capacity check finds insufficient space, show **Your selected crops need more growing space.** Suggest increasing dimensions or removing crops, retaining the inputs for adjustment. Do not generate an overcrowded map.
 - If reliable capacity data is unavailable, describe the map as a **companion-placement guide**, without claiming exact planting capacity.
@@ -99,6 +99,19 @@ Acceptance: valid dimensions and two to four crops generate a preview; invalid v
 Acceptance: the map reflects the submitted dimensions and selected crops, labels every selected crop, and provides supported explanations. It does not silently omit crops or invent spacing/capacity rules.
 
 Source: `scope.md > The Unique Kernel` and `The POC Boundary`.
+
+### Companion Conflict Evidence
+
+- Structured `knownConflicts` with `evidence: strong` produce a clear separation warning, labeled **Provider code-checked conflict**. This describes the provider's evidence category, not independent verification by Shamba AI.
+- Structured conflicts with `evidence: traditional` produce softer advisory guidance. Generated `badPairs` also produce advisories, never proven incompatibility claims.
+- Advisory copy can say **Some gardening guidance suggests keeping these crops apart.** or **The provider recommends separating these crops, but this is not presented as a strongly verified conflict.**
+- Do not say **must not be planted together** for traditional or generated advisories. Represent strong conflicts with separation; try to separate advisory pairs when practical without suggesting a verified separation distance.
+- If generated pair guidance contradicts structured conflicts, prioritize the stronger structured conflict evidence. Do not display contradictory messages for the same crop pair.
+- Translate provider fields into beginner-friendly copy. Never show technical field names in product views.
+
+Acceptance: strong structured conflicts show a distinct separation warning; traditional and generated conflicts show advisory wording. Their differences survive saving/restoration, and contradictions resolve in favor of stronger structured evidence.
+
+Source: learner decision after reviewing the authenticated companion responses.
 
 ### Authentication and Garden Saving
 
@@ -262,7 +275,7 @@ No later-release features are committed. Deployment remains optional; required s
 
 - Verify companion relationships and whether reliable fit data exists. Resolve the map's capacity claims before spec approval; the placement-guide fallback is already agreed.
 - The selected identification API's live checks returned confident weed and non-weed results. Implement the agreed Identification Confidence Policy and define usable explanatory evidence using only identification features/plant information. Implement the agreed non-weed/history behavior and a small-garden-only control mapping; confidence calibration and provider uncertainty/failure behavior remain unverified.
-- Choose managed authentication and persistence; Clerk is a candidate, not a settled stack decision.
+- The learner selected Clerk authentication, Neon PostgreSQL, and Prisma within a Next.js App Router/TypeScript application. Use server-side RapidAPI integrations and Zod normalization; the technical specification defines their contracts and persistence behavior.
 - Implement the agreed JPG/PNG/WEBP browser preparation and 3 MB client/server limit. Define bounded compression settings, date/time presentation, and handling of session expiry or garden replacement during an in-flight identification so results cannot attach to the wrong garden.
 
 These investigations belong in the technical specification; they do not authorize additional product features.
