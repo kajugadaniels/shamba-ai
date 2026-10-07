@@ -3,3 +3,12 @@
 .env.*
 !.env.example
 /git.md
+
+# Application dependencies and generated output
+/node_modules/
+/.next/
+/out/
+/coverage/
+*.tsbuildinfo
+/next-env.d.ts
+/src/generated/prisma/
