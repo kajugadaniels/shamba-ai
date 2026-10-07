@@ -1,0 +1,74 @@
+[
+  {
+    "case": "companion-four",
+    "service": "companion",
+    "startedAt": "2026-10-07T16:31:54.889688+00:00",
+    "attempted": true,
+    "transportError": "URLError",
+    "elapsedSeconds": 0.05
+  },
+  {
+    "case": "companion-four",
+    "service": "companion",
+    "startedAt": "2026-10-07T16:32:37.307129+00:00",
+    "attempted": true,
+    "httpStatus": 200,
+    "elapsedSeconds": 20.37,
+    "quotaHeaders": {
+      "x-ratelimit-requests-limit": "50",
+      "x-ratelimit-requests-remaining": "48",
+      "x-ratelimit-requests-reset": "2678027",
+      "x-ratelimit-rapid-free-plans-hard-limit-limit": "500000",
+      "x-ratelimit-rapid-free-plans-hard-limit-remaining": "499998",
+      "x-ratelimit-rapid-free-plans-hard-limit-reset": "2678027"
+    }
+  },
+  {
+    "case": "companion-two-decimal",
+    "service": "companion",
+    "startedAt": "2026-10-07T16:34:36.698244+00:00",
+    "attempted": true,
+    "httpStatus": 200,
+    "elapsedSeconds": 17.58,
+    "quotaHeaders": {
+      "x-ratelimit-requests-limit": "50",
+      "x-ratelimit-requests-remaining": "47",
+      "x-ratelimit-requests-reset": "2677910",
+      "x-ratelimit-rapid-free-plans-hard-limit-limit": "500000",
+      "x-ratelimit-rapid-free-plans-hard-limit-remaining": "499997",
+      "x-ratelimit-rapid-free-plans-hard-limit-reset": "2677910"
+    }
+  },
+  {
+    "case": "weed-dandelion",
+    "service": "weed",
+    "startedAt": "2026-10-07T16:34:54.436948+00:00",
+    "attempted": true,
+    "httpStatus": 200,
+    "elapsedSeconds": 19.76,
+    "quotaHeaders": {
+      "x-ratelimit-requests-limit": "30",
+      "x-ratelimit-requests-remaining": "29",
+      "x-ratelimit-requests-reset": "2677913",
+      "x-ratelimit-rapid-free-plans-hard-limit-limit": "500000",
+      "x-ratelimit-rapid-free-plans-hard-limit-remaining": "499999",
+      "x-ratelimit-rapid-free-plans-hard-limit-reset": "2677913"
+    }
+  },
+  {
+    "case": "weed-basil",
+    "service": "weed",
+    "startedAt": "2026-10-07T16:35:14.352830+00:00",
+    "attempted": true,
+    "httpStatus": 200,
+    "elapsedSeconds": 11.87,
+    "quotaHeaders": {
+      "x-ratelimit-requests-limit": "30",
+      "x-ratelimit-requests-remaining": "28",
+      "x-ratelimit-requests-reset": "2677901",
+      "x-ratelimit-rapid-free-plans-hard-limit-limit": "500000",
+      "x-ratelimit-rapid-free-plans-hard-limit-remaining": "499998",
+      "x-ratelimit-rapid-free-plans-hard-limit-reset": "2677901"
+    }
+  }
+]
