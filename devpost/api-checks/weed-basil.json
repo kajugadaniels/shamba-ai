@@ -1,0 +1,119 @@
+{
+  "case": "weed-basil",
+  "request": {
+    "method": "POST",
+    "url": "https://weed-identification-api-ai-weed-detection-control.p.rapidapi.com/analyze",
+    "contentType": "multipart/form-data; boundary=ShambaRuntimeVerificationBoundary20261007",
+    "body": {
+      "system": "garden",
+      "language": "en",
+      "image": {
+        "filename": "basil.jpg",
+        "bytes": 1222743,
+        "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/2/2e/Lush_basil_%28Ocimum_basilicum%29.jpg"
+      }
+    }
+  },
+  "observation": {
+    "case": "weed-basil",
+    "service": "weed",
+    "startedAt": "2026-10-07T16:35:14.352830+00:00",
+    "attempted": true,
+    "httpStatus": 200,
+    "elapsedSeconds": 11.87,
+    "quotaHeaders": {
+      "x-ratelimit-requests-limit": "30",
+      "x-ratelimit-requests-remaining": "28",
+      "x-ratelimit-requests-reset": "2677901",
+      "x-ratelimit-rapid-free-plans-hard-limit-limit": "500000",
+      "x-ratelimit-rapid-free-plans-hard-limit-remaining": "499998",
+      "x-ratelimit-rapid-free-plans-hard-limit-reset": "2677901"
+    }
+  },
+  "response": {
+    "status": "success",
+    "message": "Weed identification completed successfully",
+    "result": {
+      "weed": {
+        "commonName": "sweet basil",
+        "scientificName": "Ocimum basilicum",
+        "family": "Lamiaceae",
+        "eppoCode": "OCIBA",
+        "plantType": "broadleaf",
+        "lifecycle": "annual",
+        "reproduction": "seed",
+        "growthStage": "vegetative",
+        "bbch": 19,
+        "lookAlikes": [
+          {
+            "name": "holy basil",
+            "scientificName": "Ocimum tenuiflorum",
+            "howToTellApart": "Holy basil usually has more serrated, slightly hairy leaves and often purple-tinged stems; sweet basil has smoother, glossier, larger leaves and a milder anise/lemon aroma."
+          },
+          {
+            "name": "lemon basil",
+            "scientificName": "Ocimum × africanum",
+            "howToTellApart": "Lemon basil has narrower leaves and a strong lemon scent; sweet basil has broader, ovate leaves and a sweeter, clove-anise aroma."
+          }
+        ]
+      },
+      "isWeed": false,
+      "confidence": 99,
+      "identificationFeatures": [
+        "Potted herb with opposite, ovate, entire, glossy green leaves.",
+        "Square stems typical of the Lamiaceae family.",
+        "Leaves strongly aromatic when bruised.",
+        "No flowers present; plant is in vegetative growth.",
+        "This is a desirable culinary herb, not a weed."
+      ],
+      "threat": {
+        "level": "low",
+        "competitiveness": "Not competitive as a weed in garden settings; tender annual herb.",
+        "seedsPerPlant": "Not applicable; if allowed to flower, a single plant may produce hundreds to thousands of seeds.",
+        "seedBankPersistenceYears": "Not applicable; seeds are generally short-lived in soil under normal garden conditions.",
+        "toxicToLivestock": false,
+        "toxicityNote": "Generally non-toxic to livestock and humans at culinary amounts; concentrated essential oil contains estragole and should not be ingested in large quantities.",
+        "regulatedOrInvasive": false,
+        "regulatoryNote": "Not regulated as a noxious weed in most regions; not invasive in temperate gardens."
+      },
+      "controlWindow": {
+        "currentStageControllable": false,
+        "bestTiming": "Not applicable; maintain as a desirable herb.",
+        "urgency": "low",
+        "preventSeedSet": "Not applicable; if saving seed, allow flowering; otherwise deadhead to prolong leaf harvest."
+      },
+      "control": {
+        "mechanical": [],
+        "cultural": [],
+        "biological": [],
+        "organicApproved": [],
+        "chemical": [],
+        "notSafeOnThisCrop": []
+      },
+      "resistance": {
+        "knownResistantGroups": [],
+        "advice": "Not applicable; this is a crop/herb, not a weed target. No herbicide resistance management required."
+      },
+      "usesAndBenefits": [
+        "Culinary herb used fresh or dried in many cuisines.",
+        "Medicinal: traditional use for digestion, but evidence is limited; consult a healthcare provider.",
+        "Ornamental and aromatic garden plant; attracts pollinators when allowed to flower.",
+        "Companion planting: may help repel some insect pests, though evidence varies.",
+        "Safety caveat: avoid excessive consumption of concentrated essential oil; culinary use is generally recognized as safe."
+      ],
+      "overallConfidence": 99
+    },
+    "cacheTime": 1791390925939,
+    "metadata": {
+      "language": "en",
+      "crop": "",
+      "cropStage": "",
+      "country": "",
+      "system": "garden",
+      "notes": "",
+      "weed": "Ocimum basilicum",
+      "isWeed": false,
+      "queryTime": "2026-10-07T16:35:25.939Z"
+    }
+  }
+}
