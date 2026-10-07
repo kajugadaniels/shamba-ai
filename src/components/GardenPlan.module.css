@@ -10,8 +10,10 @@
 .note h4 { margin: 4px 0 6px; font-size: 15px; }
 .note p, .noNotes { font-size: 13px; line-height: 1.8; color: #48594e; overflow-wrap: anywhere; }
 .advisory { border-color: #b89755; background: #faf5e9; }
+.conflict { border: 1px solid #c5aa77; border-left: 5px solid #876326; border-radius: 10px; background: #f5ecd9; }
 .label { font-size: 11px; font-weight: 650; color: var(--forest); }
 .advisory .label { color: var(--warning); }
+.conflict .label { display: inline-block; color: #624719; background: #e9d8b5; padding: 3px 8px; border-radius: 5px; font-weight: 750; }
 .note .attribution { font-size: 11px; margin-top: 8px; }
 .actions { display: flex; gap: 12px; margin-top: 28px; }
 .actions button { min-height: 50px; padding: 12px 24px; border-radius: 10px; font-size: 14px; font-weight: 650; }
