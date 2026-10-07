@@ -1,11 +1,11 @@
 ---
 doc: spec
-status: draft
+status: approved
 ---
 
 # Shamba AI — Technical Specification
 
-This draft implements the approved scope and PRD. User-selected choices are settled; implementation proposals below remain part of this review. No application code has been built.
+Approved by the learner. This specification implements the approved scope and PRD, including signed receipts, garden revision guards, and the narrow reviewed guidance allowlist. No application code has been built yet.
 
 ## How This Works, In Plain Language
 
@@ -53,7 +53,7 @@ flowchart LR
 | Vitest + React Testing Library | Focused service and client-component tests; [Vitest](https://vitest.dev/guide/), [RTL](https://testing-library.com/docs/react-testing-library/intro/), [Next.js test setup](https://nextjs.org/docs/app/guides/testing/vitest) |
 | Vercel | Intended deployment host; [function limits](https://vercel.com/docs/functions/limitations) |
 
-Proposed compatibility baseline: Node.js 22.12 or newer in the 22.x line, Next.js 16 with its matching React version, Prisma 7 packages at matching versions, Zod 4, and current compatible Clerk/Motion/test packages. Pin actual resolved versions in the lockfile during setup and verify installation/build before integration. Use Prisma's PostgreSQL adapter (`@prisma/adapter-pg` and `pg`), an explicitly generated client, and Node runtime handlers. No separate backend, queue, object storage, or additional AI service.
+Planned compatibility baseline: Node.js 22.12 or newer in the 22.x line, Next.js 16 with its matching React version, Prisma 7 packages at matching versions, Zod 4, and current compatible Clerk/Motion/test packages. Pin actual resolved versions in the lockfile during setup and verify installation/build before integration. Use Prisma's PostgreSQL adapter (`@prisma/adapter-pg` and `pg`), an explicitly generated client, and Node runtime handlers. No separate backend, queue, object storage, or additional AI service.
 
 ## Where It Runs and How Someone Tries It
 
@@ -66,7 +66,7 @@ The local Next.js process serves the browser and API. Clerk, Neon, and RapidAPI 
 | `DATABASE_URL` | Neon pooled runtime connection |
 | `DIRECT_URL` | Neon direct connection for migrations |
 | `RAPIDAPI_KEY` | Existing shared key for the two subscribed services |
-| `APP_SIGNING_SECRET` | Proposed random server-only secret for receipts |
+| `APP_SIGNING_SECRET` | Random server-only secret for approved receipts |
 
 Prisma configuration explicitly loads `.env.local` for local CLI use, retaining externally supplied deployment variables. The runtime adapter uses `DATABASE_URL`; migrations use `DIRECT_URL`. No secrets use a `NEXT_PUBLIC_` prefix. Server modules import `server-only`; logs exclude keys, photos, receipts, and raw provider bodies.
 
@@ -81,7 +81,7 @@ npm run dev                    # next dev; open http://localhost:3000
 
 During schema development only, `npm run db:migrate` runs `prisma migrate dev` against the development database. `npm test` runs Vitest; `npm run lint`, `npm run typecheck`, and `npm run build` verify the app. Build generates Prisma Client before `next build`. Never run tests that clear data against the application's saved-garden database.
 
-For Vercel: import the developer's repository, configure the same environment variables and Clerk application URLs, apply committed migrations separately with `db:deploy`, then build/deploy. Use Node runtime, Fluid Compute, and `maxDuration: 120` for analysis handlers; the proposed upstream timeout is 90 seconds. Vercel documents a 4.5 MB request/response payload limit and a 300-second Hobby Fluid Compute duration limit; verify actual project settings before the demo. These are hosting limits, not provider latency promises.
+For Vercel: import the developer's repository, configure the same environment variables and Clerk application URLs, apply committed migrations separately with `db:deploy`, then build/deploy. Use Node runtime, Fluid Compute, and `maxDuration: 120` for analysis handlers; the planned upstream timeout is 90 seconds. Vercel documents a 4.5 MB request/response payload limit and a 300-second Hobby Fluid Compute duration limit; verify actual project settings before the demo. These are hosting limits, not provider latency promises.
 
 Record the complete journey locally or on Vercel. Submission still requires a short demo video and public GitHub repository; deployment is optional. No deployment occurs during planning.
 
@@ -123,7 +123,7 @@ Normalize unordered pairs and deduplicate with precedence: strong structured con
 
 Advisories use the approved cautious wording even when raw provider prose sounds categorical. Any retained rationale is explicitly attributed to the provider and must not reintroduce a proven-incompatibility or mandatory-separation claim.
 
-Preserve row ordering where possible; split/rearrange zones to avoid placing strong conflicting crops in the same or touching zones. Attempt advisory separation without overriding stronger warnings. With at most four crops, evaluate a bounded set of arrangements deterministically. If no arrangement can represent all strong separations, report that a suitable guide could not be generated and preserve inputs. Do not invent separation distances. Persist the final rendered rows and evidence, so restoration does not recompute a different layout.
+Preserve row ordering where possible; split/rearrange zones to avoid placing strong conflicting crops in the same or touching zones. Attempt advisory separation without overriding stronger warnings. With at most four crops, consider at most 24 distinct crop orderings within a small fixed set of map templates, using stable tie-breaking. Do not add an optimization service, open-ended search, or a general layout engine. If strong separation cannot be represented cleanly within those templates, show the affected pair warning and **We could not create a clear layout that separates these crops.** Preserve the inputs so the user can change selections; do not present a conflicting map as a successful guide. Do not invent separation distances. Persist the final rendered rows and evidence, so restoration does not recompute a different layout.
 
 ### Authentication and Replacement Dialog
 
@@ -143,7 +143,7 @@ Load the saved normalized plan without regenerating it. Load history separately 
 
 Implements `prd.md > Photo Identification`.
 
-Accept only JPEG/PNG/WEBP. Files at or below **3,000,000 bytes** remain unchanged after usability checks. For larger files, decode locally with orientation honored, preserve aspect ratio, and never crop/upscale. Proposed bounded compression: cap the long edge at 2048px, try JPEG qualities 0.90, 0.82, 0.74, then 1600px and 1280px at 0.82 if needed, never increasing dimensions between attempts. Flatten transparency onto a light background for JPEG export. Stop at the first usable file within the cap; otherwise ask for a smaller/clearer photo. These settings preserve useful detail but require real phone-photo testing; they are not an accuracy guarantee.
+Accept only JPEG/PNG/WEBP. Files at or below **3,000,000 bytes** remain unchanged after usability checks. For larger files, decode locally with orientation honored, preserve aspect ratio, and never crop/upscale. Bounded compression: cap the long edge at 2048px, try JPEG qualities 0.90, 0.82, 0.74, then 1600px and 1280px at 0.82 if needed, never increasing dimensions between attempts. Flatten transparency onto a light background for JPEG export. Stop at the first usable file within the cap; otherwise ask for a smaller/clearer photo. These settings preserve useful detail but require real phone-photo testing; they are not an accuracy guarantee.
 
 Use native decoding/canvas APIs, checking export MIME, null failures, and actual size ([Canvas export](https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/toBlob)). Preview and submit the same prepared File. Release decoded resources and object URLs on replacement/exit; prevent older processing jobs from replacing a newly selected image.
 
@@ -159,9 +159,9 @@ Usable explanatory evidence means at least one nonempty, non-placeholder botanic
 
 Return a discriminated outcome: `uncertain` or `identified`. Identified data includes classification `weed | not_weed`, optional common/scientific names with display-name fallback, score, explanation, filtered guidance, garden ID/revision, request ID, and app UTC time. Provider/transport errors remain retryable failures. Display **Provider confidence: N/100**; 90 is the conservative application threshold, not calibrated accuracy.
 
-For non-weeds, guidance is always empty and UI shows the approved no-weed-control message. For weeds, use a deliberately narrow whole-item allowlist for reviewed small-garden advice. Initially allow only the two reviewed live sentences about hand-digging the taproot and applying mulch in garden beds, after whitespace/case normalization. Store/display the original accepted sentence. These entries are approved for display only when returned by the provider; never add them to other results as generic advice. All other advice is omitted until explicitly reviewed. This conservative proposal may hide useful guidance for other plants, while leaving arbitrary-photo identification fully supported.
+For non-weeds, guidance is always empty and UI shows the approved no-weed-control message. For weeds, use a deliberately narrow whole-item allowlist for reviewed small-garden advice. Initially allow only the two reviewed live sentences about hand-digging the taproot and applying mulch in garden beds, after whitespace/case normalization. Store/display the original accepted sentence. These entries are approved for display only when returned by the provider; never add them to other results as generic advice. All other advice is omitted. Do not expand this allowlist during implementation to increase guidance coverage. Any future expansion requires explicit review and agreement; use the approved fallback whenever no reviewed advice survives. This conservative policy may hide useful guidance for other plants, while leaving arbitrary-photo identification fully supported.
 
-Initial proposed entries, taken from the sanitized dandelion fixture:
+Approved allowlist entries, taken from the sanitized dandelion fixture:
 
 - “Hand-dig or fork out the entire taproot, especially after rain when soil is soft.”
 - “Apply mulch in garden beds to suppress seedling establishment.”
@@ -176,7 +176,7 @@ Capture user identity, garden ID/revision, and a browser-generated UUID request 
 
 After confident normalization, create a signed result receipt bound to user, garden/revision, request ID, normalized result, and expiry; then attempt persistence. Database failure returns the result with `saveState: failed` and the receipt. Retry verifies signature, expiry, schema, identity, revision, confidence/evidence, and guidance policy, then inserts idempotently without calling RapidAPI. A unique request ID prevents duplicate saved entries, including ambiguous network failures. Repeated simultaneous requests can still spend extra provider quota before either saves; the client prevents duplicate submissions and no exactly-once upstream guarantee is claimed.
 
-Proposed receipts use HMAC-SHA256 with Node crypto, purpose tags, constant-time verification, and a 24-hour expiry. Plan receipts contain normalized plan, original inputs, and plan ID; result receipts also retain the minimal evidence needed to revalidate confidence. Keep result receipts in memory during save retry; no photo, key, or raw provider response is included. Expired receipts cannot save: retain visible information and explain that a new analysis/plan is needed. This tradeoff avoids an extra pending-results table or storage service.
+Receipts use HMAC-SHA256 with Node crypto, purpose tags, constant-time verification, and a 24-hour expiry. Plan receipts contain normalized plan, original inputs, and plan ID; result receipts also retain the minimal evidence needed to revalidate confidence. Keep result receipts in memory during save retry; no photo, key, or raw provider response is included. Expired receipts cannot save: retain visible information and explain that a new analysis/plan is needed. This tradeoff avoids an extra pending-results table or storage service.
 
 ## Data Model
 
@@ -334,6 +334,6 @@ One Next.js application, two database models, one saved garden, native bounded p
 
 - **Learner choices:** the stack, one-garden persistence, visitor-first planning, confidence threshold, non-weed history, excluded controls, bounded browser preparation, and conflict evidence policy are explicitly agreed.
 - **Learning uncertainty resolved:** the learner asked what the APIs actually supply. Public contracts plus four live checks established row/pair guidance, no reliable capacity model, two classification outcomes, and unsafe contextual control content. Provider accuracy, score calibration, and uncertain/failure response shapes remain unverified; tests simulate those branches honestly.
-- **Implementation proposals for this review:** signed receipts and their extra local secret/expiry, revision-based transactions, exact bounded compression settings, and the initial two-sentence guidance allowlist. The allowlist intentionally favors omission; expanding it requires reviewing complete advice for the small food-garden context.
+- **Approved implementation choices:** signed receipts and their extra local secret/expiry, revision-based transactions, bounded compression settings, and the two-sentence guidance allowlist. Do not expand the allowlist during implementation. The map uses bounded deterministic arrangements; an unrepresentable strong conflict produces a clear warning rather than additional engine complexity.
 - **Build checks still needed:** package compatibility, Clerk/Neon provisioning, test database configuration, actual Vercel limits/settings, browser photo detail/readability, and the deterministic map's treatment of simulated strong conflicts. They are verification work, not invitations to add product features.
-- **Readiness:** every PRD behavior has a component and data flow. Authentication, safe replacement, and retry add meaningful work beyond a basic API demo, but the design avoids additional services and stores only the approved data. Approve or revise this draft before scaffolding.
+- **Readiness:** every PRD behavior has a component and data flow. Authentication, safe replacement, and retry add meaningful work beyond a basic API demo, but the design avoids additional services and stores only the approved data. Technical planning is approved. The next stage is review of the ordered build slices in `checklist.md`, then implementation after that build order is approved.
