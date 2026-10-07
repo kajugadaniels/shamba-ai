@@ -5,7 +5,7 @@ status: approved
 
 # Shamba AI — Technical Specification
 
-Approved by the learner. This specification implements the approved scope and PRD, including signed receipts, garden revision guards, and the narrow reviewed guidance allowlist. No application code has been built yet.
+Approved by the learner. This specification implements the approved scope and PRD, including signed receipts, garden revision guards, and the narrow reviewed guidance allowlist. Slice 1 implementation is mechanically verified and awaiting the learner check; later slices are not built yet.
 
 ## How This Works, In Plain Language
 
@@ -53,7 +53,7 @@ flowchart LR
 | Vitest + React Testing Library | Focused service and client-component tests; [Vitest](https://vitest.dev/guide/), [RTL](https://testing-library.com/docs/react-testing-library/intro/), [Next.js test setup](https://nextjs.org/docs/app/guides/testing/vitest) |
 | Vercel | Intended deployment host; [function limits](https://vercel.com/docs/functions/limitations) |
 
-Planned compatibility baseline: Node.js 22.12 or newer in the 22.x line, Next.js 16 with its matching React version, Prisma 7 packages at matching versions, Zod 4, and current compatible Clerk/Motion/test packages. Pin actual resolved versions in the lockfile during setup and verify installation/build before integration. Use Prisma's PostgreSQL adapter (`@prisma/adapter-pg` and `pg`), an explicitly generated client, and Node runtime handlers. No separate backend, queue, object storage, or additional AI service.
+Planned compatibility baseline: Node.js 22.12+ or supported Node.js 24 (24.19.0 used for Slice 1), Next.js 16 with its matching React version, Prisma 7 packages at matching versions, Zod 4, and current compatible Clerk/Motion/test packages. Pin actual resolved versions in the lockfile during setup and verify installation/build before integration. Use Prisma's PostgreSQL adapter (`@prisma/adapter-pg` and `pg`), an explicitly generated client, and Node runtime handlers. No separate backend, queue, object storage, or additional AI service.
 
 ## Where It Runs and How Someone Tries It
 
@@ -119,7 +119,7 @@ Normalize crop names case-insensitively using the four explicit aliases. Validat
 
 Store versioned normalized rows with stable IDs, selected crop IDs, and relative order. Render illustrative equal-height row bands and labeled zones within them; preserve the overall rectangular proportions. Compass labels become neutral row positions. Do not display generated quantities, stages, exact spacing, location/sun assumptions, or claim planting capacity. Explanations use pair guidance with its qualifications; omit contextual prose that cannot be presented without unsupported environmental assumptions. No capacity rejection is implemented without reliable capacity data.
 
-Normalize unordered pairs and deduplicate with precedence: strong structured conflict, traditional structured conflict, generated negative advisory, positive companion guidance. Unknown evidence values never become strong warnings. Conflicting positive prose is omitted when stronger conflict guidance applies. UI labels: **Provider code-checked conflict**, **Companion advisory**, and supported companion notes; never provider field names. The first label is attributed to the provider, not an independent verification claim.
+Normalize unordered pairs and deduplicate with precedence: strong structured conflict, traditional structured conflict, generated negative advisory, positive companion guidance. Unknown evidence values never become strong warnings. Conflicting positive prose is omitted when stronger conflict guidance applies. UI labels: **Provider code-checked conflict**, **Companion advisory**, and supported companion notes; never provider field names. The first label is attributed to the provider, not an independent verification claim. Very wide beds use compact numbered crop zones with a named/icon crop key to preserve proportions without clipping names; each zone retains its accessible crop name.
 
 Advisories use the approved cautious wording even when raw provider prose sounds categorical. Any retained rationale is explicitly attributed to the provider and must not reintroduce a proven-incompatibility or mandatory-separation claim.
 
@@ -267,6 +267,7 @@ shamba-ai/
 │   │       └── identifications/[id]/route.ts  # Owned historical details
 │   ├── components/
 │   │   ├── GardenWorkspace.tsx + .module.css  # Draft/saved/auth orchestration
+│   │   ├── PlantIcon.tsx                      # Shared local vector crop icons
 │   │   ├── GardenForm.tsx + .module.css       # Dimensions and crop selection
 │   │   ├── GardenMap.tsx + .module.css        # Proportional labeled guide
 │   │   ├── GardenPlan.tsx + .module.css       # Summary/explanations/actions
@@ -300,6 +301,8 @@ shamba-ai/
 ├── tests/
 │   ├── setup.ts                              # RTL setup and explicit test mocks
 │   ├── validation.test.ts                    # Input boundaries
+│   ├── receipts.test.ts                      # Receipt integrity/expiry
+│   ├── plans-route.test.ts                   # Validated server/provider boundary
 │   ├── companion.test.ts                     # Coverage and evidence
 │   ├── identification.test.ts                # Confidence/guidance/non-weeds
 │   ├── garden.integration.test.ts            # Disposable DB replacement/retry
