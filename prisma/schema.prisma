@@ -1,0 +1,39 @@
+generator client {
+  provider = "prisma-client"
+  output = "../src/generated/prisma"
+}
+datasource db {
+  provider = "postgresql"
+}
+enum Classification {
+  weed
+  not_weed
+}
+model Garden {
+  id String @id @default(uuid()) @db.Uuid
+  clerkUserId String @unique
+  widthM Float
+  lengthM Float
+  crops String[]
+  plan Json
+  planId String @db.Uuid
+  revision Int @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  identifications Identification[]
+}
+model Identification {
+  id String @id @default(uuid()) @db.Uuid
+  gardenId String @db.Uuid
+  garden Garden @relation(fields: [gardenId], references: [id], onDelete: Cascade)
+  gardenRevision Int
+  requestId String @unique @db.Uuid
+  classification Classification
+  commonName String?
+  scientificName String?
+  confidence Float
+  explanation String
+  guidance Json
+  identifiedAt DateTime @default(now())
+  @@index([gardenId, identifiedAt])
+}
