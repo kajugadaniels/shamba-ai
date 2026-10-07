@@ -29,7 +29,9 @@ A beginner enters a garden size such as 2m × 3m or 3m × 4m and selects crops. 
 
 If identification is uncertain, the app says “We couldn't confidently identify this plant” and suggests a clearer photo showing the leaves and whole plant, rather than guessing. Validate the flow with a small number of known weed photos without claiming that only those weeds are supported.
 
-The demo proves both useful results are connected to the same garden and that signing in restores the saved dimensions, selected crops, generated layout, and identification history. Each saved identification includes the plant name, confidence if available, explanation, control guidance, and date/time.
+A confidently identified non-weed is also a successful identification and enters history with a clear Not a weed classification, scientific name if available, and API-grounded explanation. It shows no weed-control sections or invented removal advice. For weeds, show only control guidance suitable for a small mixed food garden; exclude chemical, flame, concentrated-acid, grazing, and broad field-management advice.
+
+The demo proves both useful results are connected to the same garden and that signing in restores the saved dimensions, selected crops, generated layout, and identification history. Each saved identification includes the common name, scientific name if available, Weed or Not a weed classification, confidence under the final policy, API-grounded explanation, and date/time. Applicable filtered control guidance is shown for weeds only.
 
 Keep the journey concise enough for a short demo; the hackathon targets 2–4 hours of active work and requires a short demo video and public GitHub repository. Deployment is optional. Authentication and persistence make this target tighter; avoid adding account or garden-management features beyond the boundary below.
 
@@ -38,13 +40,13 @@ Keep the journey concise enough for a short demo; the hackathon targets 2–4 ho
 - Four supported crops: tomato, carrot, onion, and basil.
 - A simple companion-planting layout and explanation of which selected crops grow well together.
 - Upload any unwanted-plant photo and attempt identification through an API; acceptance of a photo does not guarantee identification.
-- Present an identification only when the result is strong enough, with confidence if available, a short explanation, and practical control guidance.
+- Present an identification only when the result is strong enough, with confidence under the final policy, a short API-grounded explanation, classification, and practical small-garden control guidance for weeds only.
 - Provide a clear uncertain-identification result and better-photo guidance.
 - Keep planning and unwanted-plant identification within the same garden journey.
 - Minimal sign up, sign in, and sign out using a managed authentication service; Clerk is a candidate for the technical specification.
 - Require authentication to save a garden, while keeping initial plan generation available to visitors.
 - One saved garden per authenticated user, with updates or replacement and restoration on return.
-- Save garden dimensions, selected crops, generated layout, and that garden's identification results with date/time.
+- Save garden dimensions, selected crops, generated layout, and that garden's confident weed/non-weed identification results with classification and date/time. Uncertain identifications are excluded.
 - Identification-result persistence is sufficient; storing uploaded photos is not required for this proof of concept.
 
 ## Later
