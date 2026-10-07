@@ -1,0 +1,236 @@
+{
+  "case": "companion-four",
+  "request": {
+    "method": "POST",
+    "url": "https://companion-planting-api-ai-garden-planner-layout.p.rapidapi.com/analyze",
+    "contentType": "application/json",
+    "body": {
+      "plants": "tomato,carrot,onion,basil",
+      "bedWidthM": "3",
+      "bedLengthM": "4",
+      "language": "en"
+    }
+  },
+  "observation": {
+    "case": "companion-four",
+    "service": "companion",
+    "startedAt": "2026-10-07T16:32:37.307129+00:00",
+    "attempted": true,
+    "httpStatus": 200,
+    "elapsedSeconds": 20.37,
+    "quotaHeaders": {
+      "x-ratelimit-requests-limit": "50",
+      "x-ratelimit-requests-remaining": "48",
+      "x-ratelimit-requests-reset": "2678027",
+      "x-ratelimit-rapid-free-plans-hard-limit-limit": "500000",
+      "x-ratelimit-rapid-free-plans-hard-limit-remaining": "499998",
+      "x-ratelimit-rapid-free-plans-hard-limit-reset": "2678027"
+    }
+  },
+  "response": {
+    "status": "success",
+    "message": "Companion planting plan completed successfully",
+    "result": {
+      "plants": [
+        {
+          "name": "Tomato",
+          "englishName": "Tomato",
+          "scientificName": "Solanum lycopersicum",
+          "source": "list",
+          "count": 5,
+          "growthStage": "not provided",
+          "family": "Solanaceae"
+        },
+        {
+          "name": "Carrot",
+          "englishName": "Carrot",
+          "scientificName": "Daucus carota subsp. sativus",
+          "source": "list",
+          "count": 240,
+          "growthStage": "not provided",
+          "family": "Apiaceae"
+        },
+        {
+          "name": "Onion",
+          "englishName": "Onion",
+          "scientificName": "Allium cepa",
+          "source": "list",
+          "count": 120,
+          "growthStage": "not provided",
+          "family": "Amaryllidaceae"
+        },
+        {
+          "name": "Basil",
+          "englishName": "Basil",
+          "scientificName": "Ocimum basilicum",
+          "source": "list",
+          "count": 6,
+          "growthStage": "not provided",
+          "family": "Lamiaceae"
+        }
+      ],
+      "goodPairs": [
+        {
+          "plants": [
+            "Tomato",
+            "Basil"
+          ],
+          "benefit": "pest deterrence",
+          "explanation": "Traditional companion planting: basil volatiles may help repel whiteflies, thrips, and tomato hornworm, and the flowers attract pollinators. Evidence is mixed, so treat it as a supportive companion rather than a standalone control."
+        },
+        {
+          "plants": [
+            "Carrot",
+            "Onion"
+          ],
+          "benefit": "pest deterrence",
+          "explanation": "Onion odor can mask carrots from carrot fly, while carrots may disrupt onion fly. This is a widely used traditional intercropping combination with some research support."
+        }
+      ],
+      "badPairs": [
+        {
+          "plants": [
+            "Tomato",
+            "Onion"
+          ],
+          "problem": "allelopathy and competition",
+          "explanation": "Alliums can release compounds that inhibit tomato growth, and both compete for water and nutrients. Keep onions in a separate row or bed away from tomato roots."
+        }
+      ],
+      "layout": {
+        "description": "Assuming a northern-hemisphere full-sun site. Place tall tomatoes and basil on the north side so they do not shade the shorter carrots and onions. If the site is in the southern hemisphere, mirror the layout so tomatoes are on the south side. The 4 m x 3 m bed is divided into three strips: north for tomato/basil, middle for carrot, and south for onion.",
+        "rows": [
+          {
+            "position": "north",
+            "plants": [
+              "Tomato",
+              "Basil"
+            ],
+            "spacingCm": 70,
+            "why": "Tall tomatoes on the north side prevent shading of shorter crops. Space tomatoes about 70 cm apart along the 4 m length, and interplant basil at about 25-30 cm from tomato stems without crowding."
+          },
+          {
+            "position": "middle",
+            "plants": [
+              "Carrot"
+            ],
+            "spacingCm": 5,
+            "why": "Carrots need loose, fine soil and low competition. Sow in rows about 20 cm apart with 5 cm between seeds, then thin to 5-8 cm for straight roots."
+          },
+          {
+            "position": "south",
+            "plants": [
+              "Onion"
+            ],
+            "spacingCm": 10,
+            "why": "Onions stay low and tolerate full sun. Plant sets or transplants in rows about 20 cm apart with 10 cm between bulbs, close enough to carrots to help deter carrot fly."
+          }
+        ]
+      },
+      "suggestedAdditions": [
+        {
+          "name": "Marigold",
+          "englishName": "Marigold",
+          "role": "pest deterrence and nematode suppression",
+          "where": "Border rows around the bed and between tomato plants."
+        },
+        {
+          "name": "Borage",
+          "englishName": "Borage",
+          "role": "pollination and beneficial insect habitat",
+          "where": "North edge or corners so it does not shade vegetables."
+        },
+        {
+          "name": "Calendula",
+          "englishName": "Calendula",
+          "role": "trap crop and beneficial insect habitat",
+          "where": "Edges of the bed or nearby pollinator strip."
+        }
+      ],
+      "successionPlan": [
+        {
+          "when": "2-4 weeks before last frost",
+          "action": "Start tomato and basil transplants indoors. Prepare the bed with compost and loosen the top 30 cm of soil."
+        },
+        {
+          "when": "At last frost",
+          "action": "Transplant tomatoes on the north side with basil between them. Set onion sets or transplants on the south side."
+        },
+        {
+          "when": "Every 2-3 weeks from early spring to midsummer",
+          "action": "Direct sow small patches of carrots to spread the harvest and reduce carrot fly buildup."
+        },
+        {
+          "when": "6-8 weeks after tomato transplant",
+          "action": "Side-dress tomatoes with compost and mulch carrots and onions to conserve moisture and suppress weeds."
+        },
+        {
+          "when": "After tomato harvest",
+          "action": "Remove tomato debris and sow a cover crop such as crimson clover or fall rye if the season allows."
+        }
+      ],
+      "issuesSeen": [
+        {
+          "issue": "other",
+          "detail": "Sun exposure, climate or hardiness zone, location, and season were not provided.",
+          "fix": "Confirm at least 6-8 hours of full sun and adjust the north-south row orientation for the hemisphere. If the site is in the southern hemisphere, place tomatoes on the south side."
+        },
+        {
+          "issue": "crowding",
+          "detail": "Tomato and basil can crowd each other in a 4 m x 3 m bed if basil is planted too close to tomato stems.",
+          "fix": "Keep basil at least 25 cm from tomato stems, limit tomatoes to about 5 plants, and prune tomato suckers to improve airflow."
+        },
+        {
+          "issue": "shading",
+          "detail": "Tall tomatoes can shade carrots and onions if placed on the sunny side of the bed.",
+          "fix": "Keep tomatoes on the north side in the northern hemisphere or on the south side in the southern hemisphere."
+        }
+      ],
+      "pestManagement": [
+        {
+          "pest": "Aphids",
+          "action": "Encourage ladybirds and lacewings with basil and borage. Spray with water or insecticidal soap only if populations are severe."
+        },
+        {
+          "pest": "Tomato hornworm",
+          "action": "Handpick caterpillars and inspect undersides of leaves. Basil nearby is a traditional deterrent but not a reliable standalone control."
+        },
+        {
+          "pest": "Carrot fly",
+          "action": "Interplant onions with carrots, use fine mesh or row cover, sow thinly, and remove thinnings promptly."
+        },
+        {
+          "pest": "Onion fly",
+          "action": "Rotate alliums, avoid fresh manure, and use row cover during egg-laying periods."
+        },
+        {
+          "pest": "Whitefly",
+          "action": "Use yellow sticky traps, remove infested leaves, and grow basil nearby as a traditional repellent companion."
+        },
+        {
+          "pest": "Slugs and snails",
+          "action": "Keep bed edges clear, water in the morning, and use beer traps or copper tape around vulnerable seedlings."
+        }
+      ],
+      "rotationNextYear": "Next year, rotate plant families. Do not follow tomato with tomato, pepper, eggplant, or potato. Move carrots away from this year's carrot row, and do not follow onions with onions or garlic. A useful sequence is tomato and basil this year, then legumes or leafy greens, then carrots and onions in a different section of the bed. If the bed is fixed, rotate crops within the 4 m x 3 m area and add compost each season.",
+      "overallConfidence": 70,
+      "knownConflicts": []
+    },
+    "cacheTime": 1791390777170,
+    "metadata": {
+      "language": "en",
+      "plants": "tomato,carrot,onion,basil",
+      "bedLengthM": "4",
+      "bedWidthM": "3",
+      "sun": "",
+      "climate": "",
+      "country": "",
+      "season": "",
+      "goal": "",
+      "photoAnalyzed": false,
+      "plantCount": 4,
+      "knownConflictCount": 0,
+      "queryTime": "2026-10-07T16:32:57.170Z"
+    }
+  }
+}
