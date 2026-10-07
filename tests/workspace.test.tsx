@@ -1,8 +1,9 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import { GardenWorkspace } from "@/components/GardenWorkspace";
 import { GardenMap } from "@/components/GardenMap";
+import { GardenPlan } from "@/components/GardenPlan";
 import { normalizeCompanion } from "@/lib/server/companion";
 import two from "../devpost/api-checks/companion-two-decimal.json";
 
@@ -14,13 +15,39 @@ async function fill() {
 }
 
 describe("visitor planning experience", () => {
-  it("keeps a named key and accessible crop zones for compact wide beds", () => {
-    const plan = normalizeCompanion(two.response, { widthM: 5, lengthM: 1, crops: ["tomato", "basil"] });
+  it.each([[5, 1], [1, 5]])("keeps numbered zones, named key, and proportions for extreme %sm × %sm beds", (widthM, lengthM) => {
+    const plan = normalizeCompanion(two.response, { widthM, lengthM, crops: ["tomato", "basil"] });
     render(<GardenMap plan={plan} />);
     expect(screen.getByRole("group", { name: "Tomato" })).toBeInTheDocument();
     expect(screen.getAllByRole("group", { name: "Basil" })).toHaveLength(2);
     expect(screen.getByText("Tomato")).toBeVisible();
     expect(screen.getByText("Basil")).toBeVisible();
+    const tomatoZone = screen.getByRole("group", { name: "Tomato" });
+    expect(within(tomatoZone).getByText("1")).toBeInTheDocument();
+    expect(within(tomatoZone).queryByText("Tomato")).not.toBeInTheDocument();
+    const bed = screen.getByRole("group", { name: "Row 1" }).parentElement!;
+    expect(bed.style.getPropertyValue("--map-ratio")).toBe(`${widthM} / ${lengthM}`);
+  });
+  it("gives simulated strong conflicts a distinct warning treatment while retaining advisory wording", () => {
+    const plan = normalizeCompanion(two.response, { widthM: 1.5, lengthM: 2.5, crops: ["tomato", "basil"] });
+    // Presentation-only simulated evidence; no claim of observed provider output.
+    plan.relationships = [
+      { crops: ["tomato", "basil"], kind: "conflict", evidence: "strong", explanation: "Simulated strong conflict." },
+      { crops: ["tomato", "basil"], kind: "advisory", evidence: "traditional", explanation: "Some gardening guidance suggests keeping these crops apart." },
+    ];
+    // Distinct pair keys normally come from the normalizer; render each separately
+    // to compare styles without introducing contradictory notes into one plan.
+    const advisory = plan.relationships[1];
+    plan.relationships = [plan.relationships[0]];
+    const { rerender } = render(<GardenPlan plan={plan} onChange={() => {}} />);
+    const strong = screen.getByText("Provider code-checked conflict");
+    const strongClass = strong.parentElement!.className;
+    expect(strong).toBeVisible();
+    expect(screen.getByText(/not independent verification/)).toBeVisible();
+    rerender(<GardenPlan plan={{ ...plan, relationships: [advisory] }} onChange={() => {}} />);
+    expect(screen.getByText("Companion advisory").parentElement!.className).not.toBe(strongClass);
+    expect(screen.getByText("Some gardening guidance suggests keeping these crops apart.")).toBeVisible();
+    expect(screen.queryByText("Provider code-checked conflict")).not.toBeInTheDocument();
   });
   it("shows inline errors instead of generating an incomplete plan", async () => {
     const fetcher = vi.fn(); vi.stubGlobal("fetch", fetcher);
