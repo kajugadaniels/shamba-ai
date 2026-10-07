@@ -7,7 +7,7 @@ status: approved
 
 Build mode: learn — pause after each mechanically verified slice for the learner check and a brief explanation of important implementation decisions. Keep final learner review and feedback.
 
-The scope, PRD, and technical specification are approved. The learner approved this build order without reordering or merging slices. Slice 1 is complete; Slice 2 is next, pending local Clerk/Neon configuration. Each slice delivers usable behavior across the necessary layers. Styling, responsive behavior, error handling, and verification are part of each slice rather than deferred plumbing tasks.
+The scope, PRD, and technical specification are approved. The learner approved this build order without reordering or merging slices. Slice 1 is complete; Slice 2 is implemented but awaiting disposable database verification and the authenticated browser/learner checks. Each slice delivers usable behavior across the necessary layers. Styling, responsive behavior, error handling, and verification are part of each slice rather than deferred plumbing tasks.
 
 Git execution override: `AGENTS.md` and `git.md` require developer-only Git mutations. `Commit:` describes the checkpoint intent; the assistant supplies a separate exact-path add/Conventional Commit block for every changed non-ignored file, never executes those commands, and never stages secrets or the learner profile. Record implementation verification separately from developer commit confirmation; never claim a commit happened without read-only evidence or developer confirmation.
 
@@ -45,12 +45,12 @@ Git execution override: `AGENTS.md` and `git.md` require developer-only Git muta
 
 ## Current Checkpoint
 
-Slice 1 is complete. The learner reported that the planning flow looked good and conditionally approved completion after two requested refinements; both are implemented and verified. Slice 2 is next. Its required Clerk and Neon settings are currently absent from ignored .env.local; setup has been requested without asking for credential values in chat.
+Slice 1 is complete. The learner reported that the planning flow looked good and conditionally approved completion after two requested refinements; both are implemented and verified. Slice 2 implementation is in progress. The five local configuration values are present; DIRECT_URL was derived locally from the supplied Neon pooled URL at the learner’s request. No values were printed or recorded.
 
 - Checks passed: 42 tests across five Vitest files, ESLint, TypeScript, and production build on Node 24.19.0 / Next.js 16.4.0.
 - Browser checks passed: inline validation, preview/change preserving inputs, widths 320/390/768/1440, reduced motion, extreme garden proportions, and no page errors. Both landscape and portrait extreme ratios use the numbered crop key. Strong conflicts now have a distinct calm warning outline and badge; ordinary advisories retain softer amber styling.
 - Live integration: one companion request through the running app, HTTP 200, 1.5m × 2.5m tomato/basil guide; no automatic retries or weed calls. Sanitized observations are in the existing API request ledger and verification notes. Mocked edge-case checks consume no quota.
-- Local app is running at http://localhost:3000. Save Garden is explicitly unavailable in Slice 1; it does not imply persistence.
+- Local app is running at http://localhost:3000. Slice 1 originally disabled Save Garden; Slice 2 now connects it to Clerk and Neon.
 - Learner feedback: received and resolved; the learner authorized completion after these checks passed. The working tree was clean before refinements, confirming the preceding checkpoint had no uncommitted changes. Refinement commits remain developer actions; exact per-file commands are supplied and no assistant Git mutations occur.
 
 ## Hands-on Checkpoints
@@ -86,3 +86,12 @@ Activity mode: Planned focused planning-to-code verification walkthrough; learne
 - Disabled Next.js automatic agent-rule generation after it appended to the existing AGENTS.md; restored the original project instructions without a Git mutation.
 
 - Applied the learner's two Slice 1 refinements: compact map labels at extreme ratios in both directions, and distinct calm styling for strong conflict warnings. Focused regression tests, lint, typecheck, build, and simulated browser presentation checks pass; evidence policy is unchanged.
+
+### Slice 2 verification checkpoint — 2026-10-08
+
+- Implemented Clerk routes/provider, public planning, owned garden/history reads, signed-plan saving, one-garden uniqueness, bounded serializable replacement/retry logic, revision checks, pending visitor draft preservation, replacement confirmation, restoration errors, cancel editing, and private state clearing on sign-out. Identification remains unavailable until Slice 3.
+- Applied the additive initial Prisma migration successfully to the configured application Neon database. CLI provider output was withheld. No garden or identification test records were written to the application database.
+- Checks passed: 56 focused tests across eight Vitest files, lint, typecheck, and production build. Live browser checks confirmed public mobile planning/validation and real Clerk sign-in/sign-up rendering. No account was created by the assistant.
+- Remaining: guarded disposable database integration tests (TEST_DATABASE_URL not configured), authenticated sign-in/save/return/replacement browser checks, and the learn-mode learner check. Slice 2 remains unchecked; Slice 3 has not started. No Git mutations were executed.
+- Next setup: create a regular Neon child branch named `shamba-slice-2-tests` from the application branch, with a distinct compute endpoint and its own direct connection string. Save it as TEST_DATABASE_URL in ignored .env.local; retain runtime/migration URLs for the application. Regular branching preserves migration metadata. Tests apply migrations to the test target and clean only their run’s fixtures.
+- Dependency audit currently reports nine high findings in development/tooling chains (ESLint glob dependencies and Prisma CLI dependencies). No force-fix or stack downgrade was applied; dependency remediation remains a release follow-up. This is not a production-readiness claim.
