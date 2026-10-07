@@ -13,7 +13,7 @@ Source: `scope.md > The Unique Kernel`, `Who It's For`, and `The POC Boundary`.
 1. A visitor opens Shamba AI and enters garden width and length, then selects two to four supported crops.
 2. They generate a plan without an account and see a labeled top-down garden map with short companion explanations.
 3. They choose Save Garden, sign up or sign in if needed, and save their one garden.
-4. From the saved garden, they upload one unwanted-plant photo, preview it, and request identification.
+4. From the saved garden, they select one JPG, PNG, or WEBP unwanted-plant photo. If it exceeds 3 MB, the browser resizes/compresses it locally. They preview the exact prepared file, upload it only when it is at most 3 MB, and request identification.
 5. A confident result shows common name, scientific name if available, Weed or Not a weed classification, confidence under the final policy, API-grounded explanation, and date/time. Weed results show only applicable filtered control guidance; non-weeds show a classification message without control sections. Both are automatically saved to that garden's history.
 6. They return to My Garden to see the map and newest-first history. Returning after signing in restores these saved results.
 
@@ -50,7 +50,7 @@ Source: `scope.md > The Core Loop` and `What "Working" Looks Like`.
 
 - **Identify an unwanted plant**, with visible context identifying the saved garden.
 - Instruction: **Upload a clear photo showing the plant, especially its leaves and as much of the whole plant as possible.**
-- One-photo upload, preview, removal/replacement, and **Identify Plant** action.
+- One-photo selection, local preparation when needed, preview of the exact prepared file, removal/replacement, and **Identify Plant** action. Show preparation progress and prevent analysis until the file is ready.
 - A distinct analysis loading state followed by a result, uncertainty message, or failure message.
 - A successful result is an informative plant card: prominent common name, scientific name if available, **Weed** or **Not a weed** classification, confidence under the final policy, date/time, API-grounded explanation, and saved-garden context. Only weed results can show applicable filtered control guidance.
 - The current photo can remain visible during this result; permanent photo storage is not required.
@@ -131,7 +131,10 @@ Source: `scope.md > Questions for the Next Planning Steps` and `The POC Boundary
 
 - Start from a saved garden. The user selects one photo and can remove or replace it before analysis.
 - Identify Plant starts analysis only with a usable photo selected. Show clear progress without duplicate submissions.
-- Accept arbitrary unwanted-plant subjects rather than a fixed supported-weed list, subject to supported file formats and size limits to be defined in the technical spec.
+- Accept arbitrary unwanted-plant subjects rather than a fixed supported-weed list. Source formats are JPG, PNG, and WEBP only; HEIC conversion and additional formats are excluded.
+- Use valid supported files of **3,000,000 bytes or smaller** unchanged. For larger supported images, resize/compress in the browser while preserving enough visual detail for identification. Keep this a small local preparation feature, with no permanent image storage or separate service.
+- The prepared upload must be **3,000,000 bytes or smaller**. Preview that exact file, and send the same bytes for analysis. The server independently checks format and size before forwarding.
+- If decoding/preparation fails or reasonable compression cannot meet the limit, show a clear message asking for a smaller or clearer photo. Do not upload the oversized original or keep shrinking until the image becomes unsuitable.
 - Unsupported/unusable files show a clear message allowing another selection without losing the saved garden.
 - Present a plant name as an identification only when the API evidence is strong enough under the technical spec's decision policy.
 - A confident result includes common name, scientific name if available, classification, confidence under the final policy, date/time, and visible garden association. Build its short explanation only from API identification features and plant information. Non-weed and control-guidance behavior is specified below.
@@ -142,6 +145,8 @@ Source: `scope.md > Questions for the Next Planning Steps` and `The POC Boundary
 - If identification succeeds but history saving fails, keep the result visible, clearly state **The identification was not saved**, and offer a save retry. A retry must not create duplicate history entries.
 
 Acceptance: confident weed and non-weed results each appear once in history with their classification; uncertain/API-failed requests add nothing. A history-save failure shows the result with an unsaved notice, and successful retry adds it once.
+
+Upload acceptance: supported files at or below 3 MB pass through unchanged; larger supported sources are processed locally and only files at or below 3 MB can upload. Preview and analysis use the same prepared image. Unsupported, unprocessable, and still-oversized images produce actionable messages. Direct oversized requests are also rejected by the server.
 
 Source: `scope.md > What "Working" Looks Like` and `The POC Boundary`.
 
@@ -230,6 +235,7 @@ Source: `scope.md > Explicitly Cut` and `Later`.
 - Balconies, containers, hydroponics, greenhouses, or commercial farms.
 - Unsupported exact spacing, capacity claims, or forced identifications.
 - Chemical, flame, concentrated-acid, grazing, and broad field-management control recommendations.
+- HEIC conversion, additional photo formats, permanent image storage, or a separate image-processing service.
 
 No later-release features are committed. Deployment remains optional; required submission artifacts are a short demo video and public GitHub repository.
 
@@ -244,6 +250,6 @@ No later-release features are committed. Deployment remains optional; required s
 - Verify companion relationships and whether reliable fit data exists. Resolve the map's capacity claims before spec approval; the placement-guide fallback is already agreed.
 - The selected identification API's live checks returned confident weed and non-weed results. Define sufficient evidence for confident identification, including absent/invalid confidence, and how explanations are assembled only from identification features/plant information. Implement the agreed non-weed/history behavior and a small-garden-only control mapping; confidence calibration and uncertainty/failure behavior remain unverified.
 - Choose managed authentication and persistence; Clerk is a candidate, not a settled stack decision.
-- Define supported upload formats and size limits, how dates/times are presented, and handling of session expiry or garden replacement during an in-flight identification so results cannot attach to the wrong garden.
+- Implement the agreed JPG/PNG/WEBP browser preparation and 3 MB client/server limit. Define bounded compression settings, date/time presentation, and handling of session expiry or garden replacement during an in-flight identification so results cannot attach to the wrong garden.
 
 These investigations belong in the technical specification; they do not authorize additional product features.
