@@ -189,8 +189,20 @@ The publicly licensed originals were downloaded unchanged to temporary files, vi
 3. Retain qualifications in companion explanations; distinguish generated warnings from code-checked conflicts and agree how unsupported claims are handled.
 4. The learner confirmed confident non-weeds are successful identifications and must save automatically to history with common name, optional scientific name, confidence under the final policy, API-grounded explanation, date/time, and **Not a weed** classification. Hide control sections and display the agreed no-weed-control message. Do not equate `isWeed: false` with low confidence. History cards distinguish **Weed** and **Not a weed**.
 5. The learner requires control guidance mapped to the small mixed food garden only, excluding chemical, flame, concentrated-acid, grazing, and broad field-management advice. Apply this to current results and history/details, and do not invent replacement advice. The technical spec must define a conservative mapping; category names such as mechanical or organicApproved are insufficient because the live arrays contain excluded/contextually unsuitable entries. Do not assume the API's singular crop input validates safety for all chosen crops.
-6. Choose a conservative confidence policy, stating what is known and unknown. Missing or invalid evidence must not be treated as a confident identification.
+6. The learner agreed to the deterministic identification policy below. Missing or invalid evidence must not be treated as a confident identification; provider calibration and uncertainty/failure shapes remain unverified.
 7. Preserve the observed loading durations in hosting/timeout planning. Failure and uncertainty branches can be checked with clearly labeled simulated fixtures without spending more quota; simulated cases are not provider-runtime verification.
+
+## Agreed Identification Confidence Policy
+
+Treat a successful provider analysis as a confident identification only when all of the following are satisfied:
+- A valid common or scientific plant name is supplied.
+- `result.isWeed` is a boolean.
+- `result.confidence` is a finite number in 0–100 inclusive and is at least **90**.
+- Identification features or plant information provide enough usable evidence for a short explanation without invented content.
+
+No string/boolean coercion and no fallback to `result.overallConfidence`. If any condition fails, use Shamba AI's uncertain state, save no history item, and ask for another clearer photo. A confidently identified non-weed passes the same rule and is saved with Not a weed classification.
+
+Display **Provider confidence: 98/100**, using the supplied score, rather than a percent chance of correctness. The 90 threshold is a conservative Shamba AI application threshold chosen by the learner for this proof of concept; it is not a provider accuracy guarantee or an empirically calibrated decision boundary. No multiple confidence bands are included. Future testing can motivate changing the threshold later. HTTP/provider failure remains a distinct retryable error rather than being relabeled uncertainty.
 
 ## Chosen Hosting and Upload Constraint
 
