@@ -6,7 +6,9 @@ Checked 2026-10-07. Research supporting `prd.md > Technical-Spec Investigations`
 
 Read the public RapidAPI listings' embedded provider README, OpenAPI 3.0.3 definitions (API version 1.0.0), public gateway host metadata, and public billing-plan metadata. The web reader could not open the listings; direct HTTPS retrieval succeeded. Both provider-origin `GET /` service-info endpoints returned HTTP 200 and `status: active`.
 
-No authenticated `/analyze` call has been made. Documented examples verify the provider's stated contract, not actual prediction quality, field completeness, latency, confidence calibration, or subscription access. No subscription has been purchased. A live analysis check is required before finalizing response adapters and identification policy.
+The learner confirmed both RapidAPI subscriptions are active and authorized a maximum initial test set of two companion requests and two weed requests. One shared key is loaded locally from ignored `.env.local` as `RAPIDAPI_KEY`; it must never appear in planning documents, request recordings, logs, or commits. All four authenticated checks completed with HTTP 200. Sanitized requests, actual responses, timing, and quota headers are recorded under `api-checks/`. A first local sandbox connection failed before an HTTP response; the authorized network retry completed successfully. No automatic API retries or additional analysis cases were run.
+
+Documentation establishes the provider's stated contract; the four live checks establish only the observed behavior below. They do not establish general accuracy, complete field coverage, confidence calibration, or uncertainty/failure behavior. No paid plan has been selected or purchased by the agent.
 
 Sources:
 - [Companion listing, README, and OpenAPI](https://rapidapi.com/bilgisamapi-api6-bilgisam/api/companion-planting-api-ai-garden-planner-layout/playground/serviceInfo)
@@ -25,7 +27,7 @@ Use the RapidAPI gateways, with `X-RapidAPI-Key` and `X-RapidAPI-Host`, as docum
 - `https://companion-planting-api-ai-garden-planner-layout.p.rapidapi.com`
 - `https://weed-identification-api-ai-weed-detection-control.p.rapidapi.com`
 
-OpenAPI lists provider-origin servers instead of these gateways. The public service-info checks used those origins only; they do not verify authenticated gateway access. API keys belong on the application server, never in the browser or committed files.
+OpenAPI lists provider-origin servers instead of these gateways. The public service-info checks used those origins only; the four analysis checks verified authenticated gateway access. API keys belong on the application server, never in the browser or committed files.
 
 ## Companion Request
 
@@ -64,7 +66,7 @@ Both APIs document the top-level envelope `status`, `message`, `result`, `metada
 | Incompatible pairs | `result.badPairs[].plants`, `.problem`, `.explanation`; `result.knownConflicts[].plants`, `.evidence`, `.reason` | Known-conflict evidence distinguishes `strong` and `traditional`; absence does not prove compatibility |
 | Layout advice | `result.layout.description`; `.rows[].position`, `.plants`, `.why` | Rows/directional labels, not crop polygons or numeric placement coordinates |
 | Spacing | `result.layout.rows[].spacingCm` | Described as distance between plants in that row; not a complete capacity model |
-| Plant quantities | `result.plants[].count` | Photo detection count; list-only sample crops have zero counts, not planned quantities |
+| Plant quantities | `result.plants[].count` | README has list-only crops with zero counts; live list-only requests generated nonzero quantities. Semantics/reliability are inconsistent; do not treat as validated capacity |
 | Capacity/fit | No dedicated field documented | No `fits`, bed-capacity value, row widths, planned quantities, or complete spacing constraints |
 | Confidence | `result.overallConfidence` | Not a capacity guarantee or per-relationship evidence measure |
 
@@ -139,4 +141,53 @@ Both READMEs claim typical processing of 10–40 seconds; this has not been meas
 4. Confirm authentication/quota errors, empty/malformed output handling, upload formats/size, and gateway timeout behavior. Do not exhaust quotas deliberately.
 5. Agree on the confidence policy, control-guidance filtering, and behavior for confidently identified non-weeds. Finalize normalized application fields only after these checks.
 
-Until live checks are possible, retain these as integration risks rather than treating README samples as validated runtime fixtures.
+The four authorized checks are complete. Further checks require a reason to expand this small quota budget; remaining untested cases must remain explicit rather than be treated as verified runtime behavior.
+
+## Authenticated Runtime Findings
+
+### Requests and Quota
+
+| Case | Input | HTTP | Elapsed | Remaining monthly requests |
+|---|---|---:|---:|---:|
+| [Four crops](api-checks/companion-four.json) | Tomato, carrot, onion, basil; 3m × 4m; JSON strings | 200 | 20.37s | 48/50 |
+| [Decimal two-crop plan](api-checks/companion-two-decimal.json) | Tomato, basil; 1.5m × 2.5m; JSON strings | 200 | 17.58s | 47/50 |
+| [Known weed](api-checks/weed-dandelion.json) | Dandelion JPEG uploaded as multipart; system=garden; language=en | 200 | 19.76s | 29/30 |
+| [Non-weed](api-checks/weed-basil.json) | Sweet basil JPEG uploaded as multipart; system=garden; language=en | 200 | 11.87s | 28/30 |
+
+These are gateway-reported remaining quotas, not a claim that all prior usage was ours. Two companion calls and two weed calls completed in this check session. The first companion response indicated an existing prior account request. No quota exhaustion or error was deliberately induced.
+
+### Companion Observations
+
+- Both responses contained `plants`, `goodPairs`, `badPairs`, `layout`, `overallConfidence`, `knownConflicts`, and the extra documented sections. All selected crops were represented; no extra crop entered the tested layouts.
+- The four-crop response returned Tomato/Basil and Carrot/Onion good pairs with qualified explanations. It also returned a generated Tomato/Onion bad pair claiming allelopathy/competition, while `knownConflicts` was empty. This is not an independently verified incompatibility; do not present it as an established code-checked conflict. App policy for unsupported generated warnings requires agreement.
+- The four-crop map grouped Tomato/Basil in the north row, Carrot in the middle, and Onion in the south. The two-crop map returned Tomato in one row and Basil in two rows. The renderer must support repeated crop labels across rows and case-insensitive names.
+- Both outputs assumed northern-hemisphere placement, with a note to mirror it in the southern hemisphere. The four-crop response also assumed full sun. Metadata confirmed `country`, `sun`, and `climate` were empty. An omitted context input does not prevent generated location/sun assumptions. Treat the map as an illustrative placement guide; do not imply those assumptions came from the user or promise orientation suitability.
+- Both generated nonzero crop counts from list-only input: the four-crop response returned 5 tomatoes, 240 carrots, 120 onions, and 6 basil; the two-crop response returned 4 tomatoes and 8 basil. Growth stages were also generated without being provided. These are model outputs, not observed plant counts or verified capacity constraints. Do not display them as established planting quantities or facts about the user's garden.
+- Decimal dimensions were echoed correctly as strings. Row spacing was numeric. No explicit capacity/fit verdict, coordinate geometry, or row dimensions appeared. The agreed capacity-free companion-placement guide remains the justified baseline.
+
+### Weed Observations
+
+- The uploaded dandelion was returned as `Dandelion` / `Taraxacum officinale`, with `isWeed: true`, `confidence: 98`, and `overallConfidence: 98`.
+- The uploaded basil was returned as `sweet basil` / `Ocimum basilicum`, with `isWeed: false`, `confidence: 99`, and `overallConfidence: 99`. This was a confident non-weed result, not uncertainty or API failure.
+- Both returned identification features, plant characteristics, threat information, and the documented result keys. There was no standalone explanation field. Their common/scientific names matched the source labels; two examples are not an accuracy benchmark.
+- Dandelion control was not consistently specific to a small food garden: it included lawn care, grazing, broad cultivation, concentrated-acid/flame treatments, and chemical entries under `notSafeOnThisCrop`. `control.chemical` was empty even though system=garden; this observation is not a guarantee that garden mode removes chemicals.
+- Basil returned all control arrays empty. Do not fill those arrays with invented removal guidance or relabel the result a weed merely because it was submitted through the unwanted-plant flow.
+- Both observed confidence values are integer, percentage-like values; calibration, full scale/range, missing confidence, and low-confidence responses remain unverified. The spec must state its conservative application policy explicitly rather than claiming a validated accuracy probability.
+- Both accepted multipart JPEG files below 10 MB without permanent photo hosting. PNG/WEBP, size-limit rejection, uncertain images, non-plant images, and authentication/quota failures were not tested under this four-request budget.
+
+### Image Provenance
+
+The publicly licensed originals were downloaded unchanged to temporary files, visually inspected, and uploaded as JPEGs. No image bytes are committed in the response fixtures; the sanitized request records include source URL and size.
+
+- Dandelion: [Taraxacum officinale — whole plant, flowers, leaves](https://commons.wikimedia.org/wiki/File:Taraxacum_officinale_-_whole_plant,_flowers,_leaves_(18444028083).jpg), NY State IPM Program at Cornell University, [CC BY 2.0](https://creativecommons.org/licenses/by/2.0/).
+- Basil: [Lush basil (Ocimum basilicum)](https://commons.wikimedia.org/wiki/File:Lush_basil_(Ocimum_basilicum).jpg), O, [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/).
+
+### Consequences for the Technical Specification
+
+1. Validate and normalize actual result fields, including case-insensitive crop matching, repeated crop rows, and complete selected-crop coverage.
+2. Label maps as companion-placement guides. Do not use generated counts, growth stages, or one spacing value as a capacity calculation.
+3. Retain qualifications in companion explanations; distinguish generated warnings from code-checked conflicts and agree how unsupported claims are handled.
+4. Agree a clear result for confidently identified non-weeds, including whether to save it to identification history. Do not equate `isWeed: false` with low confidence.
+5. Agree how to select only practical guidance appropriate to a mixed food garden. Do not assume the API's singular crop input validates safety for all chosen crops.
+6. Choose a conservative confidence policy, stating what is known and unknown. Missing or invalid evidence must not be treated as a confident identification.
+7. Preserve the observed loading durations in hosting/timeout planning. Failure and uncertainty branches can be checked with clearly labeled simulated fixtures without spending more quota; simulated cases are not provider-runtime verification.
