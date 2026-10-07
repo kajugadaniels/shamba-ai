@@ -15,7 +15,7 @@ export function GardenPlan({ plan, onChange }: { plan: Plan; onChange: () => voi
     <GardenMap plan={plan} />
     <section className={styles.explanations} aria-labelledby="why-heading">
       <h3 id="why-heading">Why this layout works</h3>
-      {plan.relationships.length ? plan.relationships.map((pair) => <div key={pair.crops.join(":")} className={`${styles.note} ${pair.kind !== "companion" ? styles.advisory : ""}`}>
+      {plan.relationships.length ? plan.relationships.map((pair) => <div key={pair.crops.join(":")} className={`${styles.note} ${pair.kind === "conflict" ? styles.conflict : pair.kind === "advisory" ? styles.advisory : ""}`}>
         <span className={styles.label}>{pair.kind === "conflict" ? "Provider code-checked conflict" : pair.kind === "advisory" ? "Companion advisory" : "Companion guidance"}</span>
         <h4>{pair.crops.map((crop) => CROPS[crop].name).join(" + ")}</h4><p>{pair.explanation}</p>
         {pair.kind === "conflict" ? <p className={styles.attribution}>This is the provider&apos;s evidence category, not independent verification by Shamba AI.</p> : null}
