@@ -70,5 +70,36 @@
       "x-ratelimit-rapid-free-plans-hard-limit-remaining": "499998",
       "x-ratelimit-rapid-free-plans-hard-limit-reset": "2677901"
     }
+  },
+  {
+    "case": "companion-slice-one",
+    "service": "companion",
+    "startedAt": "2026-10-07T21:34:03.021Z",
+    "attempted": true,
+    "source": "running Next.js app",
+    "httpStatus": 200,
+    "elapsedSeconds": 2.04,
+    "applicationRequests": 1,
+    "quotaHeadersCaptured": false,
+    "request": {
+      "widthM": 1.5,
+      "lengthM": 2.5,
+      "crops": [
+        "tomato",
+        "basil"
+      ]
+    },
+    "normalizedRows": [
+      [
+        "tomato"
+      ],
+      [
+        "basil"
+      ],
+      [
+        "basil"
+      ]
+    ],
+    "relationshipCount": 1
   }
 ]
