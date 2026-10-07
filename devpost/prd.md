@@ -1,6 +1,6 @@
 ---
 doc: prd
-status: draft
+status: approved
 ---
 
 # Shamba AI — Product Requirements
@@ -206,11 +206,11 @@ Source: `scope.md > Explicitly Cut` and `Later`.
 
 No later-release features are committed. Deployment remains optional; required submission artifacts are a short demo video and public GitHub repository.
 
-## Open Questions and Proposed Behavior
+## Confirmed Save Behavior and Technical Investigations
 
 ### Save After Signing In to an Existing Garden
 
-**Proposed behavior; requires learner confirmation before PRD approval:** if a visitor generates a draft and chooses Save Garden, then signs in to an account that already has a garden, preserve that draft and show the same replacement confirmation. Do not silently overwrite the existing garden or discard the visitor's draft. Normal returning sign-in (without a pending save) opens My Garden.
+**Confirmed by the learner:** if a visitor generates a draft and chooses Save Garden, then signs in to an account that already has a garden, preserve that draft and show the same replacement confirmation. Do not silently overwrite the existing garden or discard the visitor's draft. Normal returning sign-in (without a pending save) opens My Garden.
 
 ### Technical-Spec Investigations
 
