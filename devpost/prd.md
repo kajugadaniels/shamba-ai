@@ -14,7 +14,7 @@ Source: `scope.md > The Unique Kernel`, `Who It's For`, and `The POC Boundary`.
 2. They generate a plan without an account and see a labeled top-down garden map with short companion explanations.
 3. They choose Save Garden, sign up or sign in if needed, and save their one garden.
 4. From the saved garden, they upload one unwanted-plant photo, preview it, and request identification.
-5. A confident result shows the plant name, confidence if supplied, explanation, practical control guidance, and date/time. It is automatically saved to that garden's history.
+5. A confident result shows common name, scientific name if available, Weed or Not a weed classification, confidence under the final policy, API-grounded explanation, and date/time. Weed results show only applicable filtered control guidance; non-weeds show a classification message without control sections. Both are automatically saved to that garden's history.
 6. They return to My Garden to see the map and newest-first history. Returning after signing in restores these saved results.
 
 Source: `scope.md > The Core Loop` and `What "Working" Looks Like`.
@@ -42,8 +42,8 @@ Source: `scope.md > The Core Loop` and `What "Working" Looks Like`.
 - **My Garden**, with dimensions and crop names, for example **3m × 4m · Tomato, Carrot, Onion, Basil**.
 - The saved map and companion explanations, preserving the plan that was saved.
 - Primary actions: **Identify an unwanted plant**, **Change Garden**, and **Sign out**.
-- **Identification History** below the plan, newest first. Each card shows plant name, confidence if available, date/time, a one-line summary, and **View details**.
-- Empty history explains that identified weeds will appear after the first successful identification is saved.
+- **Identification History** below the plan, newest first. Each card shows plant name, a clear **Weed** or **Not a weed** classification, confidence under the final policy, date/time, a one-line summary, and **View details**.
+- Empty history explains that confidently identified plants will appear after the first successful identification is saved, whether or not classified as weeds.
 - Returning sign-in opens this view when a saved garden exists.
 
 ### Plant Upload and Current Result
@@ -52,13 +52,13 @@ Source: `scope.md > The Core Loop` and `What "Working" Looks Like`.
 - Instruction: **Upload a clear photo showing the plant, especially its leaves and as much of the whole plant as possible.**
 - One-photo upload, preview, removal/replacement, and **Identify Plant** action.
 - A distinct analysis loading state followed by a result, uncertainty message, or failure message.
-- A successful result is an informative plant card: prominent name, optional confidence, date/time, explanation, separate control guidance, and saved-garden context.
+- A successful result is an informative plant card: prominent common name, scientific name if available, **Weed** or **Not a weed** classification, confidence under the final policy, date/time, API-grounded explanation, and saved-garden context. Only weed results can show applicable filtered control guidance.
 - The current photo can remain visible during this result; permanent photo storage is not required.
 - Actions after a successful identification: **Identify another plant** and **Back to my garden**.
 
 ### Historical Result
 
-- A focused view with name, optional confidence, date/time, explanation, and control guidance.
+- A focused view with common name, scientific name if available, classification, confidence under the final policy, date/time, and API-grounded explanation. Weed results show saved applicable control guidance; non-weeds show the same classification message as the current result and no empty control sections.
 - A clear return action to **My Garden**. No historical photo is required.
 
 Source for these surfaces: `scope.md > The Core Loop`, `The POC Boundary`, and `Questions for the Next Planning Steps`.
@@ -134,20 +134,44 @@ Source: `scope.md > Questions for the Next Planning Steps` and `The POC Boundary
 - Accept arbitrary unwanted-plant subjects rather than a fixed supported-weed list, subject to supported file formats and size limits to be defined in the technical spec.
 - Unsupported/unusable files show a clear message allowing another selection without losing the saved garden.
 - Present a plant name as an identification only when the API evidence is strong enough under the technical spec's decision policy.
-- A confident result includes name, confidence if available, short explanation, practical control guidance, date/time, and visible garden association.
+- A confident result includes common name, scientific name if available, classification, confidence under the final policy, date/time, and visible garden association. Build its short explanation only from API identification features and plant information. Non-weed and control-guidance behavior is specified below.
 - Do not invent a confidence value if none is supplied.
-- Automatically save confident results to the same garden's history; no separate Save result action.
+- Automatically save confident weed and non-weed results to the same garden's history; no separate Save result action. `isWeed: false` is a classification, not an uncertainty or failure condition.
 - Uncertainty shows **We couldn't confidently identify this plant.**, clear-photo tips, and **Try another photo**. Do not save uncertain results to history.
 - Complete API failure shows a retry message and adds nothing to history.
 - If identification succeeds but history saving fails, keep the result visible, clearly state **The identification was not saved**, and offer a save retry. A retry must not create duplicate history entries.
 
-Acceptance: confident saved results appear once in history; uncertain/API-failed requests add nothing. A history-save failure shows the result with an unsaved notice, and successful retry adds it once.
+Acceptance: confident weed and non-weed results each appear once in history with their classification; uncertain/API-failed requests add nothing. A history-save failure shows the result with an unsaved notice, and successful retry adds it once.
 
 Source: `scope.md > What "Working" Looks Like` and `The POC Boundary`.
 
+### Confident Non-Weed Results
+
+- A confidently identified plant with API `isWeed: false` is a successful identification.
+- Show its common name, scientific name if available, confidence under the final policy, API-grounded explanation, date/time, and a clear **Not a weed** status. Supporting copy can say **Not classified as a weed**.
+- Show: **Shamba AI identified this plant, but the service does not classify it as a weed, so no weed-control guidance is shown.**
+- Hide all weed-control sections, including empty ones. Do not invent removal or herbicide advice, even if other API content suggests control actions.
+- Automatically save it and restore the same classification/fields in history and details.
+
+Acceptance: the live basil example is displayed as **Not a weed**, remains a successful identification, and can be restored from history without a control section. Uncertain plant identifications still do not enter history.
+
+Source: `scope.md > The Core Loop` and `The POC Boundary`, refined by the learner after live API verification.
+
+### Small-Garden Control Guidance
+
+- Only expose advice that can be safely mapped to a small mixed food garden. An API field or category alone does not establish suitability.
+- Exclude chemical/herbicide advice, flame treatments, concentrated-acid treatments, grazing, and broad field-management advice from current results, historical cards, and details.
+- Define the mapping/filtering policy in the technical specification. Unrecognized, ambiguous, or unsuitable advice must not pass through merely because the API returned it.
+- Do not invent replacement advice. If no applicable guidance remains, clearly state that no suitable control guidance was provided rather than displaying empty sections.
+- Non-weeds never show weed-control guidance. Identification success is independent of whether applicable control advice is available.
+
+Acceptance: excluded advice in the live dandelion fixture never appears in product views; any shown advice is appropriate to the agreed small-garden mapping. A non-weed result shows only its classification message.
+
+Source: `scope.md > Who It's For` and `The POC Boundary`, refined by the learner after live API verification.
+
 ### Garden History and Restoration
 
-- Store each successful identification's name, optional confidence, explanation, control guidance, and date/time with its garden.
+- Store each successful identification's common name, scientific name if available, classification, confidence under the final policy, API-grounded explanation, applicable filtered control guidance for weeds only, and date/time with its garden. Store non-weed results without fabricated control content.
 - Display newest first, with readable summary cards and a details action.
 - Historical details reproduce saved information without requiring stored photos.
 - Keep the saved garden view usable while history loads; distinguish loading, no history, and failure to load. A load failure must not appear as an empty history and should allow retry.
@@ -174,7 +198,7 @@ Acceptance: the complete journey works on narrow mobile and wider tablet/desktop
 - **Saved garden:** one per authenticated user, restored on return; identification operates on that garden.
 - **Replacement:** confirmed saving replaces the plan and clears its old history together.
 - **Current photo:** usable during upload/result display; permanent storage and historical display are not required.
-- **History:** contains successfully saved confident identifications only.
+- **History:** contains successfully saved confident weed and non-weed identifications with explicit classification; uncertainty is excluded.
 - **Authentication interruption:** failed/canceled sign-in must not imply saving succeeded; keep the generated draft available for retry.
 - **Sign-out:** saved data remains stored but is inaccessible in the signed-out experience.
 - **Loading/error:** distinguish progress, uncertainty, API failure, persistence failure, and empty data with clear text and actions.
@@ -185,6 +209,8 @@ Acceptance: the complete journey works on narrow mobile and wider tablet/desktop
 - One saved garden provides continuity without multiple-garden management.
 - Explicit replacement confirmation and history clearing prevent mixing old and new garden data.
 - Automatic history saving removes an extra user action; uncertain identification does not become a reliable history record.
+- Confident non-weeds count as successful identifications and are saved with **Not a weed** status, making history a record of identified plants rather than only removal targets.
+- Control guidance is restricted to advice suitable for the small mixed food garden; unsuitable API content is excluded rather than displayed automatically.
 - Result-only persistence avoids photo-library complexity.
 - A placement guide is acceptable when planting data cannot justify exact capacity claims.
 - Mobile use outdoors is important; readable responsive layouts and restrained motion support this context.
@@ -203,6 +229,7 @@ Source: `scope.md > Explicitly Cut` and `Later`.
 - Weather, watering reminders, climate/location recommendations, disease diagnosis, marketplace features, or full farm management.
 - Balconies, containers, hydroponics, greenhouses, or commercial farms.
 - Unsupported exact spacing, capacity claims, or forced identifications.
+- Chemical, flame, concentrated-acid, grazing, and broad field-management control recommendations.
 
 No later-release features are committed. Deployment remains optional; required submission artifacts are a short demo video and public GitHub repository.
 
@@ -215,7 +242,7 @@ No later-release features are committed. Deployment remains optional; required s
 ### Technical-Spec Investigations
 
 - Verify companion relationships and whether reliable fit data exists. Resolve the map's capacity claims before spec approval; the placement-guide fallback is already agreed.
-- Select identification API and define sufficient evidence for confident identification, including behavior when confidence is absent. Define how explanation and control guidance are obtained reliably.
+- The selected identification API's live checks returned confident weed and non-weed results. Define sufficient evidence for confident identification, including absent/invalid confidence, and how explanations are assembled only from identification features/plant information. Implement the agreed non-weed/history behavior and a small-garden-only control mapping; confidence calibration and uncertainty/failure behavior remain unverified.
 - Choose managed authentication and persistence; Clerk is a candidate, not a settled stack decision.
 - Define supported upload formats and size limits, how dates/times are presented, and handling of session expiry or garden replacement during an in-flight identification so results cannot attach to the wrong garden.
 
