@@ -191,3 +191,13 @@ The publicly licensed originals were downloaded unchanged to temporary files, vi
 5. The learner requires control guidance mapped to the small mixed food garden only, excluding chemical, flame, concentrated-acid, grazing, and broad field-management advice. Apply this to current results and history/details, and do not invent replacement advice. The technical spec must define a conservative mapping; category names such as mechanical or organicApproved are insufficient because the live arrays contain excluded/contextually unsuitable entries. Do not assume the API's singular crop input validates safety for all chosen crops.
 6. Choose a conservative confidence policy, stating what is known and unknown. Missing or invalid evidence must not be treated as a confident identification.
 7. Preserve the observed loading durations in hosting/timeout planning. Failure and uncertainty branches can be checked with clearly labeled simulated fixtures without spending more quota; simulated cases are not provider-runtime verification.
+
+## Chosen Hosting and Upload Constraint
+
+The learner selected Next.js App Router/TypeScript with Node.js Route Handlers for both RapidAPI integrations and Vercel as the intended host. Raw responses must be normalized through application types and Zod before UI use. Weed images will be received temporarily and forwarded as multipart without permanent storage; no separate backend or image-storage service is selected.
+
+[Vercel Function limits](https://vercel.com/docs/functions/limitations) document a **4.5 MB request/response body limit**, including the multipart request rather than just the image. The provider's 10 MB image allowance does not override this limit. Vercel can reject oversized requests before the Route Handler runs, so validate uploads in the browser as well as the server.
+
+**Proposed, not yet agreed:** cap individual uploads at **3,000,000 bytes** to leave room for multipart fields/headers, with a clear message for larger images. Whether to reject larger originals or add browser resizing/compression remains a learner decision. Do not silently implement a 10 MB application limit or add permanent storage to bypass the hosting constraint.
+
+Vercel's documented Fluid Compute Hobby duration limit is 300 seconds. The observed 12–21 second calls fit inside it, but upstream timeouts and actual deployment settings must still be configured and verified. No additional RapidAPI calls were made for this hosting research.
