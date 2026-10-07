@@ -136,7 +136,7 @@ Source: `scope.md > Questions for the Next Planning Steps` and `The POC Boundary
 - The prepared upload must be **3,000,000 bytes or smaller**. Preview that exact file, and send the same bytes for analysis. The server independently checks format and size before forwarding.
 - If decoding/preparation fails or reasonable compression cannot meet the limit, show a clear message asking for a smaller or clearer photo. Do not upload the oversized original or keep shrinking until the image becomes unsuitable.
 - Unsupported/unusable files show a clear message allowing another selection without losing the saved garden.
-- Present a plant name as an identification only when the API evidence is strong enough under the technical spec's decision policy.
+- Present a plant name as an identification only when every condition in Identification Confidence Policy below is satisfied.
 - A confident result includes common name, scientific name if available, classification, confidence under the final policy, date/time, and visible garden association. Build its short explanation only from API identification features and plant information. Non-weed and control-guidance behavior is specified below.
 - Do not invent a confidence value if none is supplied.
 - Automatically save confident weed and non-weed results to the same garden's history; no separate Save result action. `isWeed: false` is a classification, not an uncertainty or failure condition.
@@ -149,6 +149,19 @@ Acceptance: confident weed and non-weed results each appear once in history with
 Upload acceptance: supported files at or below 3 MB pass through unchanged; larger supported sources are processed locally and only files at or below 3 MB can upload. Preview and analysis use the same prepared image. Unsupported, unprocessable, and still-oversized images produce actionable messages. Direct oversized requests are also rejected by the server.
 
 Source: `scope.md > What "Working" Looks Like` and `The POC Boundary`.
+
+### Identification Confidence Policy
+
+- Accept a confident identification only if a valid common or scientific name is present, `result.isWeed` is an actual boolean, and `result.confidence` is a finite numeric value in the inclusive range 0–100 with a value of at least **90**.
+- Also require usable identification features or plant information sufficient to explain the result without inventing content. If only a scientific name is available, use it as the displayed name; do not invent a common name.
+- Do not coerce numeric strings or truthy values into valid evidence. Do not substitute `result.overallConfidence` when identification confidence is missing or invalid.
+- If any condition fails, show the uncertain-identification state, offer another clearer photo, and save nothing to history.
+- Display confident results as **Provider confidence: 98/100** (using the actual score), including in history/details. Never describe the score as a probability of correctness.
+- The threshold is a conservative Shamba AI application rule for this proof of concept, not a provider accuracy guarantee. Use one deterministic rule without additional confidence bands; later testing may justify a future change.
+
+Acceptance: score 90 with valid name, boolean classification, and usable evidence passes; score below 90, out-of-range, non-finite, missing, or string confidence fails. Missing/invalid names, classification, or usable explanatory evidence fail even with a high score. A valid overallConfidence cannot rescue invalid identification confidence. Passing weed/non-weed results save and show the provider-score label; uncertain results do not save.
+
+Source: `scope.md > The POC Boundary`, refined by the learner after live API verification.
 
 ### Confident Non-Weed Results
 
@@ -248,7 +261,7 @@ No later-release features are committed. Deployment remains optional; required s
 ### Technical-Spec Investigations
 
 - Verify companion relationships and whether reliable fit data exists. Resolve the map's capacity claims before spec approval; the placement-guide fallback is already agreed.
-- The selected identification API's live checks returned confident weed and non-weed results. Define sufficient evidence for confident identification, including absent/invalid confidence, and how explanations are assembled only from identification features/plant information. Implement the agreed non-weed/history behavior and a small-garden-only control mapping; confidence calibration and uncertainty/failure behavior remain unverified.
+- The selected identification API's live checks returned confident weed and non-weed results. Implement the agreed Identification Confidence Policy and define usable explanatory evidence using only identification features/plant information. Implement the agreed non-weed/history behavior and a small-garden-only control mapping; confidence calibration and provider uncertainty/failure behavior remain unverified.
 - Choose managed authentication and persistence; Clerk is a candidate, not a settled stack decision.
 - Implement the agreed JPG/PNG/WEBP browser preparation and 3 MB client/server limit. Define bounded compression settings, date/time presentation, and handling of session expiry or garden replacement during an in-flight identification so results cannot attach to the wrong garden.
 
