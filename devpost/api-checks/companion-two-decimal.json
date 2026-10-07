@@ -1,0 +1,190 @@
+{
+  "case": "companion-two-decimal",
+  "request": {
+    "method": "POST",
+    "url": "https://companion-planting-api-ai-garden-planner-layout.p.rapidapi.com/analyze",
+    "contentType": "application/json",
+    "body": {
+      "plants": "tomato,basil",
+      "bedWidthM": "1.5",
+      "bedLengthM": "2.5",
+      "language": "en"
+    }
+  },
+  "observation": {
+    "case": "companion-two-decimal",
+    "service": "companion",
+    "startedAt": "2026-10-07T16:34:36.698244+00:00",
+    "attempted": true,
+    "httpStatus": 200,
+    "elapsedSeconds": 17.58,
+    "quotaHeaders": {
+      "x-ratelimit-requests-limit": "50",
+      "x-ratelimit-requests-remaining": "47",
+      "x-ratelimit-requests-reset": "2677910",
+      "x-ratelimit-rapid-free-plans-hard-limit-limit": "500000",
+      "x-ratelimit-rapid-free-plans-hard-limit-remaining": "499997",
+      "x-ratelimit-rapid-free-plans-hard-limit-reset": "2677910"
+    }
+  },
+  "response": {
+    "status": "success",
+    "message": "Companion planting plan completed successfully",
+    "result": {
+      "plants": [
+        {
+          "name": "tomato",
+          "englishName": "tomato",
+          "scientificName": "Solanum lycopersicum",
+          "source": "list",
+          "count": 4,
+          "growthStage": "transplant to vegetative/fruiting",
+          "family": "Solanaceae"
+        },
+        {
+          "name": "basil",
+          "englishName": "basil",
+          "scientificName": "Ocimum basilicum",
+          "source": "list",
+          "count": 8,
+          "growthStage": "seedling to vegetative",
+          "family": "Lamiaceae"
+        }
+      ],
+      "goodPairs": [
+        {
+          "plants": [
+            "tomato",
+            "basil"
+          ],
+          "benefit": "pest deterrence",
+          "explanation": "Traditional companion planting claims basil may repel thrips, whiteflies, and some tomato pests, and it can attract beneficial insects if allowed to flower. Research support is mixed, so treat this as a useful traditional practice rather than a guaranteed control."
+        },
+        {
+          "plants": [
+            "tomato",
+            "basil"
+          ],
+          "benefit": "space use",
+          "explanation": "Basil grows lower than tomatoes and can use the understory space if it is not crowded. This works best with staked or caged tomatoes, regular pruning, and consistent watering."
+        }
+      ],
+      "badPairs": [],
+      "layout": {
+        "description": "For a 2.5 m x 1.5 m bed, assume northern hemisphere unless local conditions say otherwise. Place tall tomatoes on the north side so they do not shade basil. Use 4 tomato plants along the north edge at about 60 cm spacing. Use two basil rows in the middle and south, with about 25 cm between basil plants in each row and roughly 40-50 cm between rows. Provide cages or stakes for tomatoes and keep airflow open.",
+        "rows": [
+          {
+            "position": "north",
+            "plants": [
+              "tomato"
+            ],
+            "spacingCm": 60,
+            "why": "Tall crop on the north side in the northern hemisphere prevents shading of lower basil. In the southern hemisphere, place tomatoes on the south side instead."
+          },
+          {
+            "position": "middle",
+            "plants": [
+              "basil"
+            ],
+            "spacingCm": 25,
+            "why": "Basil benefits from nearby tomato but still needs airflow and access for harvest."
+          },
+          {
+            "position": "south",
+            "plants": [
+              "basil"
+            ],
+            "spacingCm": 25,
+            "why": "Second basil row uses the south edge and can be harvested first if airflow or disease pressure becomes an issue."
+          }
+        ]
+      },
+      "suggestedAdditions": [
+        {
+          "name": "French marigold",
+          "englishName": "French marigold",
+          "role": "pest deterrence and beneficial insect habitat",
+          "where": "A few plants along bed edges, especially near tomatoes."
+        },
+        {
+          "name": "borage",
+          "englishName": "borage",
+          "role": "pollination and beneficial insect habitat",
+          "where": "One or two plants at corners or edges; can self-seed, so remove spent flowers if unwanted."
+        },
+        {
+          "name": "nasturtium",
+          "englishName": "nasturtium",
+          "role": "trap crop for aphids",
+          "where": "Edge or separate trap row; monitor and remove heavily infested leaves before aphids spread."
+        }
+      ],
+      "successionPlan": [
+        {
+          "when": "Spring after last frost",
+          "action": "Transplant tomatoes on the north side and plant basil after soil is warm, ideally above 10-12 C."
+        },
+        {
+          "when": "3-4 weeks after first basil planting",
+          "action": "Sow or transplant another small batch of basil to replace bolting plants and extend harvest."
+        },
+        {
+          "when": "Midseason",
+          "action": "Pinch most basil to keep leaves tender, but let a few plants flower to support pollinators and beneficial insects."
+        },
+        {
+          "when": "After tomato harvest or before frost",
+          "action": "Remove diseased tomato debris and sow a cover crop such as oats and peas if the season allows."
+        }
+      ],
+      "issuesSeen": [
+        {
+          "issue": "crowding",
+          "detail": "Four tomatoes and eight basil plants in 3.75 square meters can become dense, especially with indeterminate tomatoes.",
+          "fix": "Use staking or caging, prune tomato suckers as needed, and reduce basil to 4-6 plants if airflow or disease pressure is poor."
+        },
+        {
+          "issue": "shading",
+          "detail": "Sun direction was not provided, so placing tomatoes on the wrong side could shade basil.",
+          "fix": "In the northern hemisphere, keep tomatoes on the north side. In the southern hemisphere, keep tomatoes on the south side."
+        },
+        {
+          "issue": "water stress",
+          "detail": "Tomatoes need consistent moisture to reduce blossom end rot and cracking, while basil wilts quickly in dry conditions.",
+          "fix": "Mulch the bed and water deeply 2-3 times per week depending on climate; drip irrigation is ideal."
+        },
+        {
+          "issue": "other",
+          "detail": "Sun, climate, hardiness zone, location, and season were not provided.",
+          "fix": "Confirm at least 6-8 hours of sun for tomatoes and adjust planting dates to local frost dates."
+        }
+      ],
+      "pestManagement": [
+        "Inspect weekly for tomato hornworm, aphids, whiteflies, thrips, and leaf spots; handpick large pests or use a strong water spray for aphids.",
+        "Keep basil nearby and let some plants flower to attract beneficial insects, but avoid broad-spectrum pesticides.",
+        "Use marigold or nasturtium at bed edges as beneficial habitat or trap plants, and monitor them regularly.",
+        "Stake or cage tomatoes, prune for airflow, and water at soil level to reduce fungal disease.",
+        "Rotate crops and remove tomato debris at season end to reduce soilborne disease carryover."
+      ],
+      "rotationNextYear": "Do not plant tomatoes or other Solanaceae such as pepper, eggplant, or potato in this bed next year. Rotate tomatoes to a different bed and use this space for beans, lettuce, carrots, chives, or another non-Solanaceous crop. Basil can be rotated or kept with tomatoes, but avoid planting it into heavily diseased tomato soil.",
+      "overallConfidence": 70,
+      "knownConflicts": []
+    },
+    "cacheTime": 1791390894059,
+    "metadata": {
+      "language": "en",
+      "plants": "tomato,basil",
+      "bedLengthM": "2.5",
+      "bedWidthM": "1.5",
+      "sun": "",
+      "climate": "",
+      "country": "",
+      "season": "",
+      "goal": "",
+      "photoAnalyzed": false,
+      "plantCount": 2,
+      "knownConflictCount": 0,
+      "queryTime": "2026-10-07T16:34:54.059Z"
+    }
+  }
+}
