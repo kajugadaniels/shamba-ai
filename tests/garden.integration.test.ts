@@ -29,6 +29,8 @@ describe("disposable PostgreSQL garden transactions", () => {
     expect(a.id).not.toBe(b.id);
     expect(await db.garden.count({ where: { clerkUserId: `${prefix}a` } })).toBe(1);
     await expect(db.garden.create({ data: { clerkUserId: `${prefix}a`, widthM: 2, lengthM: 2, crops: ["tomato", "basil"], plan: {}, planId: randomUUID() } })).rejects.toMatchObject({ code: "P2002" });
+    await seed(a.id, a.revision);
+    expect(await db.identification.count({ where: { garden: { clerkUserId: `${prefix}a` } } })).toBe(1);
     expect(await db.identification.count({ where: { garden: { clerkUserId: `${prefix}b` } } })).toBe(0);
   });
   it("rejects stale and unconfirmed replacement without deleting history", async () => {
