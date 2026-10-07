@@ -7,13 +7,13 @@ status: approved
 
 Build mode: learn — pause after each mechanically verified slice for the learner check and a brief explanation of important implementation decisions. Keep final learner review and feedback.
 
-The scope, PRD, and technical specification are approved. The learner approved this build order without reordering or merging slices. Slice 1 is in progress. Each slice delivers usable behavior across the necessary layers. Styling, responsive behavior, error handling, and verification are part of each slice rather than deferred plumbing tasks.
+The scope, PRD, and technical specification are approved. The learner approved this build order without reordering or merging slices. Slice 1 is complete; Slice 2 is next, pending local Clerk/Neon configuration. Each slice delivers usable behavior across the necessary layers. Styling, responsive behavior, error handling, and verification are part of each slice rather than deferred plumbing tasks.
 
 Git execution override: `AGENTS.md` and `git.md` require developer-only Git mutations. `Commit:` describes the checkpoint intent; the assistant supplies a separate exact-path add/Conventional Commit block for every changed non-ignored file, never executes those commands, and never stages secrets or the learner profile. Record implementation verification separately from developer commit confirmation; never claim a commit happened without read-only evidence or developer confirmation.
 
 ## Slices
 
-- [ ] **1. Generate and adjust a real companion-placement guide**
+- [x] **1. Generate and adjust a real companion-placement guide**
   Becomes usable: A visitor enters valid dimensions, selects two to four crops, calls the companion API, and sees a proportional labeled map with evidence-aware explanations; Change Garden returns to editable inputs.
   Why now: Delivers the planning half of the kernel immediately and tests the real API-to-map path before adding accounts or persistence. Scaffold and configuration support this behavior within the slice.
   PRD ref: `prd.md > Garden Planning Form`, `prd.md > Garden Plan Preview`, `prd.md > Input Validation`, `prd.md > Companion-Planting Layout`, `prd.md > Companion Conflict Evidence`, `prd.md > Responsive Layout and Motion`.
@@ -45,17 +45,17 @@ Git execution override: `AGENTS.md` and `git.md` require developer-only Git muta
 
 ## Current Checkpoint
 
-Slice 1 implementation and mechanical verification are complete; the slice box remains unchecked until the learn-mode learner check is reported and checkpoint commit status is recorded. Slice 2 has not started.
+Slice 1 is complete. The learner reported that the planning flow looked good and conditionally approved completion after two requested refinements; both are implemented and verified. Slice 2 is next. Its required Clerk and Neon settings are currently absent from ignored .env.local; setup has been requested without asking for credential values in chat.
 
-- Checks passed: 40 tests across five Vitest files, ESLint, TypeScript, and production build on Node 24.19.0 / Next.js 16.4.0.
-- Browser checks passed: inline validation, preview/change preserving inputs, widths 320/390/768/1440, reduced motion, extreme garden proportions, and no page errors. Wide-bed labels use a numbered crop key after screenshot inspection found clipping.
+- Checks passed: 42 tests across five Vitest files, ESLint, TypeScript, and production build on Node 24.19.0 / Next.js 16.4.0.
+- Browser checks passed: inline validation, preview/change preserving inputs, widths 320/390/768/1440, reduced motion, extreme garden proportions, and no page errors. Both landscape and portrait extreme ratios use the numbered crop key. Strong conflicts now have a distinct calm warning outline and badge; ordinary advisories retain softer amber styling.
 - Live integration: one companion request through the running app, HTTP 200, 1.5m × 2.5m tomato/basil guide; no automatic retries or weed calls. Sanitized observations are in the existing API request ledger and verification notes. Mocked edge-case checks consume no quota.
 - Local app is running at http://localhost:3000. Save Garden is explicitly unavailable in Slice 1; it does not imply persistence.
-- Learner feedback: pending. Developer commits: pending; exact per-file commands will be supplied, with no assistant Git mutations.
+- Learner feedback: received and resolved; the learner authorized completion after these checks passed. The working tree was clean before refinements, confirming the preceding checkpoint had no uncommitted changes. Refinement commits remain developer actions; exact per-file commands are supplied and no assistant Git mutations occur.
 
 ## Hands-on Checkpoints
 
-- [ ] Early usable behavior explored — after slice 1, review the form, real map, evidence wording, and mobile layout while feedback can shape the remaining interfaces.
+- [x] Early usable behavior explored — after slice 1, review the form, real map, evidence wording, and mobile layout while feedback can shape the remaining interfaces.
 - [ ] Final kick-the-tires exploration and feedback completed — after slice 3, explore the integrated planning/save/identification/return journey, including replacement and awkward inputs. This session supplies the Final Review feedback below.
 
 In learn mode, also complete each slice's Learner check before advancing. In fast mode, slice 2 is mechanically verified without an extra mandatory hands-on pause; its behavior remains part of the final integrated review. Add a checkpoint only if a discovered issue needs learner feedback.
@@ -84,3 +84,5 @@ Activity mode: Planned focused planning-to-code verification walkthrough; learne
 - Added compact numbered zones with a named crop key for very wide beds after browser screenshots exposed clipped labels; rectangular proportions and accessible crop names remain intact.
 - Added focused receipt/Route Handler tests and a shared local PlantIcon component to the planned file structure; these support the approved behavior without adding product features.
 - Disabled Next.js automatic agent-rule generation after it appended to the existing AGENTS.md; restored the original project instructions without a Git mutation.
+
+- Applied the learner's two Slice 1 refinements: compact map labels at extreme ratios in both directions, and distinct calm styling for strong conflict warnings. Focused regression tests, lint, typecheck, build, and simulated browser presentation checks pass; evidence policy is unchanged.
