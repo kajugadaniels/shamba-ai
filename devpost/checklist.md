@@ -1,13 +1,13 @@
 ---
 doc: checklist
-status: draft
+status: approved
 ---
 
 # Shamba AI — Build Checklist
 
-Build mode: not yet chosen — learn pauses after each verified slice with a brief code explanation; fast uses the planned hands-on checkpoints with less code discussion. Both keep learner review and final feedback.
+Build mode: learn — pause after each mechanically verified slice for the learner check and a brief explanation of important implementation decisions. Keep final learner review and feedback.
 
-The scope, PRD, and technical specification are approved. This build order awaits approval before application scaffolding. Each slice delivers usable behavior across the necessary layers. Styling, responsive behavior, error handling, and verification are part of each slice rather than deferred plumbing tasks.
+The scope, PRD, and technical specification are approved. The learner approved this build order without reordering or merging slices. Slice 1 is in progress. Each slice delivers usable behavior across the necessary layers. Styling, responsive behavior, error handling, and verification are part of each slice rather than deferred plumbing tasks.
 
 Git execution override: `AGENTS.md` and `git.md` require developer-only Git mutations. `Commit:` describes the checkpoint intent; the assistant supplies a separate exact-path add/Conventional Commit block for every changed non-ignored file, never executes those commands, and never stages secrets or the learner profile. Record implementation verification separately from developer commit confirmation; never claim a commit happened without read-only evidence or developer confirmation.
 
@@ -43,6 +43,16 @@ Git execution override: `AGENTS.md` and `git.md` require developer-only Git muta
   Learner check: From My Garden, upload and replace a photo, inspect the prepared preview, identify a plant, and return to history/details. Confirm score wording, classification, explanation, appropriate guidance or fallback, and returning sign-in restoration. Try the clearly labeled simulated uncertainty/save-failure checks provided during development and confirm no uncertain history entry or duplicate save. Then explore the complete journey on a phone or narrow viewport and report anything confusing or broken.
   Commit: Identification checkpoint intent: `feat(identification): connect plant results to garden history`; provide per-file commands under the manual Git rules.
 
+## Current Checkpoint
+
+Slice 1 implementation and mechanical verification are complete; the slice box remains unchecked until the learn-mode learner check is reported and checkpoint commit status is recorded. Slice 2 has not started.
+
+- Checks passed: 40 tests across five Vitest files, ESLint, TypeScript, and production build on Node 24.19.0 / Next.js 16.4.0.
+- Browser checks passed: inline validation, preview/change preserving inputs, widths 320/390/768/1440, reduced motion, extreme garden proportions, and no page errors. Wide-bed labels use a numbered crop key after screenshot inspection found clipping.
+- Live integration: one companion request through the running app, HTTP 200, 1.5m × 2.5m tomato/basil guide; no automatic retries or weed calls. Sanitized observations are in the existing API request ledger and verification notes. Mocked edge-case checks consume no quota.
+- Local app is running at http://localhost:3000. Save Garden is explicitly unavailable in Slice 1; it does not imply persistence.
+- Learner feedback: pending. Developer commits: pending; exact per-file commands will be supplied, with no assistant Git mutations.
+
 ## Hands-on Checkpoints
 
 - [ ] Early usable behavior explored — after slice 1, review the form, real map, evidence wording, and mobile layout while feedback can shape the remaining interfaces.
@@ -69,3 +79,8 @@ Reflection: Not yet offered; personal answers belong only in the ignored profile
 Activity mode: Planned focused planning-to-code verification walkthrough; learner may redirect.
 
 ## Revisions
+
+- Used the installed Node 24.19.0 runtime rather than installing Node 22; it supports the selected stack and is documented in the spec/startup instructions.
+- Added compact numbered zones with a named crop key for very wide beds after browser screenshots exposed clipped labels; rectangular proportions and accessible crop names remain intact.
+- Added focused receipt/Route Handler tests and a shared local PlantIcon component to the planned file structure; these support the approved behavior without adding product features.
+- Disabled Next.js automatic agent-rule generation after it appended to the existing AGENTS.md; restored the original project instructions without a Git mutation.
