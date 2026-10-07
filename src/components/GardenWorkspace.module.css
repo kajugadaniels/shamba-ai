@@ -12,3 +12,9 @@
 .footer { display: flex; justify-content: center; align-items: center; gap: 7px; color: var(--muted); font-size: 11px; margin-top: 26px; text-align: center; }
 .footer svg { width: 20px; height: 20px; flex-shrink: 0; }
 @media (max-width: 540px) { .workspace { width: min(100% - 28px,700px); padding-top: 25px; } .intro { margin-top: 24px; } .lineBreak { display: none; } }
+.account { display: flex; justify-content: flex-end; margin: 14px 0; }
+.account button, .account a, .cancel { min-height: 44px; padding: 10px 14px; border: 1px solid var(--border); border-radius: 10px; color: var(--forest); background: transparent; font-size: 13px; text-decoration: none; }
+.cancel { margin-top: 16px; }
+.history { border: 1px solid var(--border); border-radius: 20px; padding: 24px; margin-top: 20px; background: var(--surface); }
+.history h2 { font-size: 20px; margin-bottom: 12px; }
+.history p { font-size: 14px; line-height: 1.7; color: var(--muted); }
