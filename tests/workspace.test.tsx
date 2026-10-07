@@ -65,7 +65,7 @@ describe("visitor planning experience", () => {
     await userEvent.click(screen.getByRole("button", { name: /Generate Garden Plan/ }));
     expect(await screen.findByRole("heading", { name: "Your Garden Plan" })).toHaveFocus();
     await waitFor(() => expect(screen.getByRole("figure", { name: /Top-down/ })).toBeVisible());
-    expect(screen.getByRole("button", { name: "Save Garden" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Save Garden" })).toBeEnabled();
     await userEvent.click(screen.getByRole("button", { name: "Change Garden" }));
     expect(screen.getByLabelText(/Width/)).toHaveValue(1.5);
     expect(screen.getByLabelText(/Length/)).toHaveValue(2.5);
