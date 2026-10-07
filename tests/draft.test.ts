@@ -15,7 +15,13 @@ describe("same-tab draft and database safeguards", () => {
   });
   it("refuses a missing test URL and the pooled alias of the runtime database", () => {
     expect(() => assertTestDatabase({})).toThrow("TEST_DATABASE_URL_REQUIRED");
-    expect(() => assertTestDatabase({ TEST_DATABASE_URL: "postgresql://test:fake@ep-demo.neon.tech/neondb", DATABASE_URL: "postgresql://runtime:fake@ep-demo-pooler.neon.tech/neondb" })).toThrow("TEST_DATABASE_MUST_BE_SEPARATE");
-    expect(assertTestDatabase({ TEST_DATABASE_URL: "postgresql://test:fake@ep-tests.neon.tech/neondb", DIRECT_URL: "postgresql://runtime:fake@ep-demo.neon.tech/neondb" })).toContain("ep-tests");
+    expect(() => assertTestDatabase({ TEST_DATABASE_URL: "postgresql://test:fake@ep-demo.neon.tech/neondb", DATABASE_URL: "postgresql://runtime:fake@ep-demo-pooler.neon.tech/neondb", DIRECT_URL: "postgresql://runtime:fake@ep-demo.neon.tech/neondb" })).toThrow("TEST_DATABASE_MUST_BE_SEPARATE");
+    expect(assertTestDatabase({ TEST_DATABASE_URL: "postgresql://test:fake@ep-tests.neon.tech/neondb", DATABASE_URL: "postgresql://runtime:fake@ep-demo-pooler.neon.tech/neondb", DIRECT_URL: "postgresql://runtime:fake@ep-demo.neon.tech/neondb" })).toContain("ep-tests");
   });
+  it("fails closed when either application reference is missing or the test target is pooled", () => {
+    const references = { DATABASE_URL: "postgresql://runtime:fake@ep-app-pooler.neon.tech/neondb", DIRECT_URL: "postgresql://runtime:fake@ep-app.neon.tech/neondb" };
+    expect(() => assertTestDatabase({ TEST_DATABASE_URL: "postgresql://test:fake@ep-tests.neon.tech/neondb" })).toThrow("APPLICATION_DATABASE_REFERENCES_REQUIRED");
+    expect(() => assertTestDatabase({ ...references, TEST_DATABASE_URL: "postgresql://test:fake@ep-tests-pooler.neon.tech/neondb" })).toThrow("DIRECT_TEST_DATABASE_REQUIRED");
+  });
+
 });
