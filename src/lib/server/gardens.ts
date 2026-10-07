@@ -25,7 +25,7 @@ export async function saveGarden(db: PrismaClient, userId: string, plan: GardenP
         if (!current) return gardenView(await tx.garden.create({ data: { ...data, clerkUserId: userId } }));
         await tx.identification.deleteMany({ where: { gardenId: current.id } });
         return gardenView(await tx.garden.update({ where: { id: current.id }, data: { ...data, revision: { increment: 1 } } }));
-      }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
+      }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable, maxWait: 10000, timeout: 10000 });
     } catch (error) {
       const retryable = error instanceof Prisma.PrismaClientKnownRequestError && ["P2034", "P2002"].includes(error.code);
       if (!retryable || attempt === 2) throw error;
