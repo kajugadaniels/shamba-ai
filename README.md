@@ -2,7 +2,7 @@
 
 Plan a small food garden that works better together.
 
-Slice 1 supports visitor planning for a rectangular outdoor garden/raised bed: dimensions of 1–5 meters each, two to four selected crops (tomato, carrot, onion, basil), and a real server-generated companion-placement guide. Change Garden preserves the inputs. Slice 2 adds Clerk sign-in at saving, one saved garden per user, restoration, and confirmed replacement. Its disposable database and authenticated browser checks are still pending; Slice 2 is not marked complete. Plant identification arrives in Slice 3.
+Slice 1 supports visitor planning for a rectangular outdoor garden/raised bed: dimensions of 1–5 meters each, two to four selected crops (tomato, carrot, onion, basil), and a real server-generated companion-placement guide. Change Garden preserves the inputs. Slice 2 adds Clerk sign-in at saving, one saved garden per user, restoration, and confirmed replacement. Its disposable database checks pass; the authenticated browser and learner review remain pending, so Slice 2 is not marked complete. Plant identification arrives in Slice 3.
 
 ## Local setup
 
@@ -41,6 +41,6 @@ Create a separate Neon branch named `shamba-slice-2-tests` from the application 
 npm run test:integration
 ```
 
-The runner refuses a missing test URL or an application database target, applies committed migrations only to the test branch, and runs real PostgreSQL transaction checks. Cleanup deletes only records created by the test run. These checks have not run yet. Do not use `prisma migrate reset` against the application database.
+The runner refuses a missing test URL or an application database target, applies committed migrations only to the test branch, and runs real PostgreSQL transaction checks. Cleanup deletes only records created by the test run. All five checks passed against the guarded disposable branch. Do not use `prisma migrate reset` against the application database.
 
-`npm install` generates the ignored Prisma client without connecting to the database. Migration scripts suppress provider output so connection settings stay private. Ordinary unit/component tests use simulated identity/database responses and do not prove PostgreSQL rollback by themselves. Actual signed-in browser checks and the learner check remain required after disposable tests pass.
+`npm install` generates the ignored Prisma client without connecting to the database. Migration scripts suppress provider output so connection settings stay private. Ordinary unit/component tests use simulated identity/database responses and do not prove PostgreSQL rollback by themselves. Actual signed-in browser checks and the learner review remain pending.
