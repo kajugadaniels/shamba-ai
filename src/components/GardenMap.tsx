@@ -6,7 +6,8 @@ import styles from "./GardenMap.module.css";
 
 export function GardenMap({ plan }: { plan: GardenPlan }) {
   const { widthM, lengthM } = plan.input;
-  const compact = widthM / lengthM >= 3;
+  const ratio = widthM / lengthM;
+  const compact = ratio >= 3 || ratio <= 1 / 3;
   return <figure className={styles.figure} aria-label="Top-down companion-placement guide">
     <div className={styles.width}>{widthM} m <span aria-hidden="true">↔</span></div>
     <div className={styles.frame}>
