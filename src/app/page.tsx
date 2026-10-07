@@ -1,3 +1,3 @@
-import { GardenWorkspace } from "@/components/GardenWorkspace";
+import { AuthenticatedWorkspace } from "@/components/AuthenticatedWorkspace";
 
-export default function Home() { return <GardenWorkspace />; }
+export default function Home() { return <AuthenticatedWorkspace />; }
