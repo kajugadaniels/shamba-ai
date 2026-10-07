@@ -186,11 +186,22 @@ The publicly licensed originals were downloaded unchanged to temporary files, vi
 
 1. Validate and normalize actual result fields, including case-insensitive crop matching, repeated crop rows, and complete selected-crop coverage.
 2. Label maps as companion-placement guides. Do not use generated counts, growth stages, or one spacing value as a capacity calculation.
-3. Retain qualifications in companion explanations; distinguish generated warnings from code-checked conflicts and agree how unsupported claims are handled.
+3. Retain qualifications in companion explanations and apply the agreed Companion Conflict Evidence Policy below. Generated warnings are advisories, distinct from strong structured conflicts.
 4. The learner confirmed confident non-weeds are successful identifications and must save automatically to history with common name, optional scientific name, confidence under the final policy, API-grounded explanation, date/time, and **Not a weed** classification. Hide control sections and display the agreed no-weed-control message. Do not equate `isWeed: false` with low confidence. History cards distinguish **Weed** and **Not a weed**.
 5. The learner requires control guidance mapped to the small mixed food garden only, excluding chemical, flame, concentrated-acid, grazing, and broad field-management advice. Apply this to current results and history/details, and do not invent replacement advice. The technical spec must define a conservative mapping; category names such as mechanical or organicApproved are insufficient because the live arrays contain excluded/contextually unsuitable entries. Do not assume the API's singular crop input validates safety for all chosen crops.
 6. The learner agreed to the deterministic identification policy below. Missing or invalid evidence must not be treated as a confident identification; provider calibration and uncertainty/failure shapes remain unverified.
 7. Preserve the observed loading durations in hosting/timeout planning. Failure and uncertainty branches can be checked with clearly labeled simulated fixtures without spending more quota; simulated cases are not provider-runtime verification.
+
+## Agreed Companion Conflict Evidence Policy
+
+- `knownConflicts` with `evidence: strong`: clear separation warning labeled **Provider code-checked conflict**. This is the provider's classification, not Shamba AI's independent agronomic verification.
+- `knownConflicts` with `evidence: traditional`: softer advisory note.
+- Generated `badPairs`: advisory guidance only, even if generated prose sounds categorical.
+- Advisory copy: **Some gardening guidance suggests keeping these crops apart.** or **The provider recommends separating these crops, but this is not presented as a strongly verified conflict.** Never say **must not be planted together** for these categories.
+- The map separates strong conflicts and can attempt advisory separation when practical; it does not invent a minimum separation distance.
+- For contradictions on the same pair, stronger structured conflict evidence takes priority over generated pair guidance. Preserve evidence in normalized/saved data, deduplicate messages, and do not expose technical field names in the UI.
+
+The four-crop live Tomato/Onion `badPairs` entry therefore becomes an advisory. Neither tested response contained a strong or traditional `knownConflicts` entry; those branches will use explicitly simulated fixtures in tests, not be described as observed runtime responses.
 
 ## Agreed Identification Confidence Policy
 
