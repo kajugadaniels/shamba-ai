@@ -7,32 +7,21 @@ import styles from "./GlobalLoading.module.css";
 type LoadingContext = { start: (label: string) => () => void };
 const Context = createContext<LoadingContext | null>(null);
 
-function LoadingCard({ label }: { label: string }) {
-  return <div className={styles.overlay}>
+// A small status pill, never a second dialog. It fades in after a short delay so quick requests do not flash.
+function LoadingStatus({ label, inline = false }: { label: string; inline?: boolean }) {
+  return <div className={inline ? styles.inline : styles.floating}>
     <div className={styles.indicator} role="status" aria-label="Application loading" aria-live="polite" aria-atomic="true">
-      <div className={styles.illustration} aria-hidden="true">
-        <svg viewBox="0 0 120 120" fill="none" focusable="false">
-          <circle cx="60" cy="60" r="51" className={styles.track} />
-          <circle cx="60" cy="60" r="51" className={styles.orbit} />
-          <ellipse cx="60" cy="82" rx="25" ry="6" className={styles.soil} />
-          <path d="M60 82V48" className={styles.stem} />
-          <path d="M60 65C41 65 35 55 36 43C51 41 63 50 60 65Z" className={styles.leftLeaf} />
-          <path d="M60 54C59 37 72 29 85 32C86 47 76 57 60 54Z" className={styles.rightLeaf} />
-          <path d="M44 50L60 65M77 39L60 54" className={styles.veins} />
-        </svg>
-      </div>
-      <span className={styles.brand}>Shamba AI</span>
-      <p className={styles.label}>{label}</p>
-      <p className={styles.note}>This may take a moment.</p>
+      <span className={styles.spinner} aria-hidden="true" />
+      <span className={styles.label}>{label}</span>
     </div>
   </div>;
 }
 
-// Route fallbacks join the same operation registry rather than drawing a second card.
+// Route fallbacks join the same operation registry rather than drawing a second status.
 export function LoadingIndicator({ label = "Loading Shamba AI…" }: { label?: string }) {
   const context = useContext(Context);
   usePageLoading(true, label);
-  return context ? null : <LoadingCard label={label} />;
+  return context ? null : <LoadingStatus label={label} />;
 }
 
 export function GlobalLoadingProvider({ children }: { children: ReactNode }) {
@@ -45,8 +34,8 @@ export function GlobalLoadingProvider({ children }: { children: ReactNode }) {
     return () => setRequests((current) => { const next = new Map(current); next.delete(token); return next; });
   }, []);
   useEffect(() => {
-    // Native dialogs occupy the browser's top layer. Render inside the owned
-    // replacement dialog while it is open so saving progress stays visible.
+    // Native dialogs occupy the browser's top layer. While the owned replacement dialog is open,
+    // the status renders inside it as an inline row so it stays visible without stacking dialogs.
     let active = true;
     const updateHost = () => {
       if (!active) return;
@@ -60,7 +49,8 @@ export function GlobalLoadingProvider({ children }: { children: ReactNode }) {
   }, []);
   const context = useMemo(() => ({ start }), [start]);
   const label = [...requests.values()].at(-1);
-  return <Context.Provider value={context}>{children}{label && host && !progressDialogOpen ? createPortal(<LoadingCard label={label} />, host) : null}</Context.Provider>;
+  const inline = host !== null && host !== document.body;
+  return <Context.Provider value={context}>{children}{label && host && !progressDialogOpen ? createPortal(<LoadingStatus label={label} inline={inline} />, host) : null}</Context.Provider>;
 }
 
 // Each operation owns its token; completion/unmount cannot hide another request.
