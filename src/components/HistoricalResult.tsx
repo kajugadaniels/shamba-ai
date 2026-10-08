@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { usePageLoading } from "./GlobalLoading";
 import { z } from "zod";
 import { historyItemSchema } from "@/lib/schemas";
+import { Button } from "./Button";
 import styles from "./PlantUpload.module.css";
 import { IdentificationResult } from "./IdentificationResult";
 export function HistoricalResult({ id, onBack }: { id: string; onBack: () => void }) {
@@ -16,5 +17,11 @@ export function HistoricalResult({ id, onBack }: { id: string; onBack: () => voi
     }).catch(() => { if (!controller.signal.aborted) setFailure(true); });
     return () => controller.abort();
   }, [id, retry]);
-  return result ? <IdentificationResult result={result} onBack={onBack} /> : <section className={styles.result} aria-busy={!failure}>{failure ? <div role="alert"><p>This identification could not be loaded.</p><button onClick={() => { setFailure(false); setResult(null); setRetry((value) => value + 1); }}>Retry loading result</button></div> : null}<button onClick={onBack}>Back to my garden</button></section>;
+  return result ? <IdentificationResult result={result} onBack={onBack} /> : <section className={styles.result} aria-busy={!failure}>
+    {failure ? <p role="alert">This identification could not be loaded.</p> : null}
+    <div className={styles.actions}>
+      {failure || retry > 0 ? <Button loading={!failure} onClick={() => { setFailure(false); setResult(null); setRetry((value) => value + 1); }}>Retry loading result</Button> : null}
+      <Button onClick={onBack}>Back to my garden</Button>
+    </div>
+  </section>;
 }
