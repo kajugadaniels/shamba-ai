@@ -5,7 +5,7 @@ status: approved
 
 # Shamba AI — Technical Specification
 
-Approved by the learner. This specification implements the approved scope and PRD, including signed receipts, garden revision guards, and the narrow reviewed guidance allowlist. Slices 1 and 2 are complete after verification and learner review; Slice 3 is implemented and mechanically verified, awaiting learner review.
+Approved by the learner. This specification implements the approved scope and PRD, including signed receipts, garden revision guards, and the narrow reviewed guidance allowlist. All three slices are complete after implementation verification and learner reviews. Final verification of later UI refinements, final readiness confirmation, and the 5-build learning wrap-up remain pending.
 
 ## How This Works, In Plain Language
 
