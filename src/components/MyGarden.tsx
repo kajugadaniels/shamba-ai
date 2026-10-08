@@ -1,12 +1,11 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { usePageLoading } from "./GlobalLoading";
 import { z } from "zod";
 import type { GardenPlan as Plan } from "@/lib/types";
 import { gsap, motionAllowed, useGSAP } from "@/lib/client/motion";
 import { GardenPlan } from "./GardenPlan";
 import { Button } from "./Button";
-import { AlertIcon, ArrowRightIcon, ClockIcon, LeafIcon } from "./Icons";
+import { AlertIcon, RefreshIcon, ScanIcon } from "./Icons";
 import styles from "./MyGarden.module.css";
 const historySchema = z.object({ history: z.array(z.object({
   id: z.uuid(), classification: z.enum(["weed", "not_weed"]), commonName: z.string().nullable(), scientificName: z.string().nullable(),
@@ -17,7 +16,6 @@ export function MyGarden({ plan, onChange, onIdentify, onDetails }: { plan: Plan
   const [failed, setFailed] = useState(false);
   const [retry, setRetry] = useState(0);
   const root = useRef<HTMLElement>(null);
-  usePageLoading(history === null && !failed, "Loading identification history…");
   useEffect(() => {
     const controller = new AbortController();
     void fetch("/api/garden/history", { cache: "no-store", signal: controller.signal }).then(async (response) => {
@@ -28,30 +26,30 @@ export function MyGarden({ plan, onChange, onIdentify, onDetails }: { plan: Plan
     return () => controller.abort();
   }, [retry]);
   useGSAP(() => {
-    if (!history || !motionAllowed()) return;
-    gsap.from("[data-history-item]", { y: 18, opacity: 0, duration: 0.45, stagger: 0.07 });
+    if (!history?.length || !motionAllowed()) return;
+    gsap.from("[data-history-item]", { y: 8, opacity: 0, duration: 0.3, stagger: 0.05 });
   }, { scope: root, dependencies: [history] });
+  // History loads inside this section; placeholder rows avoid a second page-level loader over a visible page.
+  const loading = history === null && !failed;
   return <><GardenPlan plan={plan} saved onChange={onChange} onIdentify={onIdentify} />
-    <section ref={root} className={styles.history} aria-labelledby="history-heading" aria-busy={history === null && !failed}>
+    <section ref={root} className={styles.history} aria-labelledby="history-heading" aria-busy={loading}>
       <header className={styles.header}>
-        <div><h2 id="history-heading">Identification History</h2><p>Newest first. Confident results are saved here automatically.</p></div>
-        {history?.length ? <span className={styles.count}>{history.length} saved</span> : null}
+        <h2 id="history-heading">Identification History</h2>
+        <p>Plants you identify in this garden appear here, newest first. Only confident results are saved.</p>
       </header>
-      {failed || (retry > 0 && history === null) ? <div role={failed ? "alert" : undefined} className={failed ? styles.failed : undefined}>{failed ? <p><AlertIcon />Identification history could not be loaded.</p> : null}<Button loading={!failed && history === null} onClick={() => { setFailed(false); setHistory(null); setRetry((value) => value + 1); }}>Retry history</Button></div>
-        : history === null ? null
-        : history.length === 0 ? <div className={styles.empty} data-history-item>
-          <span className={styles.emptyArt} aria-hidden="true"><LeafIcon /></span>
-          <p>Identified plants will appear here after you scan your first unwanted plant.</p>
+      {failed ? <div role="alert" className={styles.failed}><p><AlertIcon />Identification history could not be loaded.</p><Button size="sm" onClick={() => { setFailed(false); setHistory(null); setRetry((value) => value + 1); }}><RefreshIcon />Retry history</Button></div>
+        : loading ? <div className={styles.placeholder}><span className="sr-only">Loading identification history…</span><span aria-hidden="true" /><span aria-hidden="true" /></div>
+        : history?.length === 0 ? <div className={styles.empty}>
+          <p><strong>No plants identified yet.</strong> Identified plants will appear here after you scan your first unwanted plant.</p>
+          {onIdentify ? <Button size="sm" variant="secondary" onClick={onIdentify}><ScanIcon />Identify your first plant</Button> : null}
         </div>
-        : <ul className={styles.grid}>{history.map((item) => <li key={item.id} data-history-item><article className={styles.card} data-kind={item.classification}>
-          <div className={styles.cardTop}>
-            <span className={styles.badge}>{item.classification === "weed" ? "Weed" : "Not a weed"}</span>
-            <time dateTime={item.identifiedAt}><ClockIcon />{new Date(item.identifiedAt).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" })}</time>
+        : <ul className={styles.list}>{history?.map((item) => <li key={item.id} className={styles.item} data-history-item data-kind={item.classification}>
+          <div className={styles.itemMain}>
+            <h3 id={`history-${item.id}`}>{item.commonName ?? item.scientificName}</h3>
+            <p className={styles.itemMeta}><span className={styles.badge}>{item.classification === "weed" ? "Weed" : "Not a weed"}</span><span>Provider confidence: {item.confidence}/100</span><time dateTime={item.identifiedAt}>{new Date(item.identifiedAt).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" })}</time></p>
+            <p className={styles.summary}>{item.explanation}</p>
           </div>
-          <h3 id={`history-${item.id}`}>{item.commonName ?? item.scientificName}</h3>
-          <p className={styles.confidence}>Provider confidence: {item.confidence}/100</p>
-          <p className={styles.summary}>{item.explanation}</p>
-          <Button className={styles.details} aria-describedby={`history-${item.id}`} onClick={() => onDetails?.(item.id)}>View details<ArrowRightIcon data-nudge /></Button>
-        </article></li>)}</ul>}
+          <Button size="sm" aria-describedby={`history-${item.id}`} onClick={() => onDetails?.(item.id)}>View details</Button>
+        </li>)}</ul>}
     </section></>;
 }
