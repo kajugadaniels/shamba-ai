@@ -26,10 +26,8 @@
 .generate:hover:not(:disabled) { background: #153d2c; }
 .generate:active:not(:disabled) { transform: translateY(1px); }
 .generate:disabled { opacity: .8; }
-.generate > span:last-child:not(.spinner) { margin-left: 6px; font-size: 21px; }
+.generate > span:last-child { margin-left: 6px; font-size: 21px; }
 .bottomNote { text-align: center; color: var(--muted); font-size: 12px; margin-top: 13px; }
 .error { color: var(--error); font-size: 13px; margin-top: 9px; }
-.spinner { width: 16px; height: 16px; border: 2px solid #ffffff60; border-top-color: #fff; border-radius: 50%; animation: spin 1s linear infinite; }
-@keyframes spin { to { transform: rotate(360deg); } }
 @media (max-width: 540px) { .crops { grid-template-columns: 1fr 1fr; } .section { margin-bottom: 26px; } }
 @media (max-width: 380px) { .dimensions { grid-template-columns: 1fr; gap: 16px; } .cropHint { align-items: flex-start; } }
