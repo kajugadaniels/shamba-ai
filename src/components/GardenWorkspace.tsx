@@ -12,17 +12,10 @@ import { ReplaceGardenDialog } from "./ReplaceGardenDialog";
 import type { PlanResponse } from "@/lib/types";
 import { GardenForm, type FormErrors, type FormValues } from "./GardenForm";
 import { GardenPlan } from "./GardenPlan";
-import { GardenScene } from "./GardenScene";
 import { usePageLoading } from "./GlobalLoading";
 import { Button } from "./Button";
-import { AlertIcon, BrandMark, MapIcon, PencilIcon, RulerIcon, LeafIcon } from "./Icons";
+import { AlertIcon, BrandMark, LogOutIcon, PencilIcon, RefreshIcon } from "./Icons";
 import styles from "./GardenWorkspace.module.css";
-
-const STEPS = [
-  { icon: <RulerIcon />, title: "Measure", text: "Your bed, 1–5 m each way" },
-  { icon: <LeafIcon />, title: "Choose", text: "Two to four crops" },
-  { icon: <MapIcon />, title: "Plan", text: "See where each crop goes" },
-];
 
 export function GardenWorkspace({ userId = null, authReady = true, onSignOut, onSignIn }: { userId?: string | null; authReady?: boolean; onSignOut?: () => Promise<void>; onSignIn?: () => void }) {
   const [values, setValues] = useState<FormValues>({ width: "", length: "", crops: [] });
@@ -184,11 +177,11 @@ export function GardenWorkspace({ userId = null, authReady = true, onSignOut, on
 
   const view = restoring ? "loading" : saved && identifying ? "identify" : saved && detailId ? "detail" : saved && !editing && !draft ? "garden" : draft ? "plan" : "form";
   const notices = <>
-    {failure ? <div className={styles.alert} role="alert"><AlertIcon /><div><strong>Let&apos;s try that again</strong><p>{failure}</p>{sessionExpired ? <Button variant="primary" onClick={signIn} disabled={!authReady}>Sign in again</Button> : null}</div></div> : null}
-    {restoreFailure || (restoreAttempt > 0 && restoring) ? <div role={restoreFailure ? "alert" : undefined} className={restoreFailure ? styles.alert : styles.retry}>{restoreFailure ? <AlertIcon /> : null}<div>{restoreFailure ? <p>{restoreFailure}</p> : null}<Button loading={restoring} onClick={() => { setRestoring(true); setRestoreAttempt((attempt) => attempt + 1); }}>Retry loading garden</Button></div></div> : null}
+    {failure ? <div className={styles.alert} role="alert"><AlertIcon /><div><strong>Let&apos;s try that again</strong><p>{failure}</p>{sessionExpired ? <Button variant="primary" size="sm" onClick={signIn} disabled={!authReady}>Sign in again</Button> : null}</div></div> : null}
+    {restoreFailure || (restoreAttempt > 0 && restoring) ? <div role={restoreFailure ? "alert" : undefined} className={restoreFailure ? styles.alert : styles.retry}>{restoreFailure ? <AlertIcon /> : null}<div>{restoreFailure ? <p>{restoreFailure}</p> : null}<Button size="sm" loading={restoring} onClick={() => { setRestoring(true); setRestoreAttempt((attempt) => attempt + 1); }}><RefreshIcon />Retry loading garden</Button></div></div> : null}
     {saved && editing ? <div className={styles.editing}>
-      <PencilIcon /><p><strong>Editing your saved garden.</strong> It stays unchanged unless you save and confirm a replacement.</p>
-      <Button variant="secondary" aria-label="Cancel changes and return to my garden" disabled={busy || saving} onClick={cancelEdit}>Cancel changes</Button>
+      <PencilIcon /><p><strong>You&apos;re editing your saved garden.</strong> Nothing changes until you save a new plan and confirm the replacement.</p>
+      <Button variant="outline" size="sm" aria-label="Cancel changes and return to my garden" disabled={busy || saving} onClick={cancelEdit}>Cancel changes</Button>
     </div> : null}
   </>;
 
@@ -196,41 +189,32 @@ export function GardenWorkspace({ userId = null, authReady = true, onSignOut, on
     <header className={styles.topbar}>
       <div className={styles.topbarInner}>
         <span className={styles.brand}><BrandMark className={styles.brandMark} /><span>Shamba AI</span></span>
-        <nav className={styles.account} aria-label="Account">{userId ? <Button onClick={() => { void signOut(); }} disabled={saving} loading={signingOut}>Sign out</Button> : <Button onClick={signIn} disabled={!authReady}>Sign in</Button>}</nav>
+        <nav className={styles.account} aria-label="Account">{userId ? <Button size="sm" onClick={() => { void signOut(); }} disabled={saving} loading={signingOut}><LogOutIcon />Sign out</Button> : <Button size="sm" onClick={signIn} disabled={!authReady}>Sign in</Button>}</nav>
       </div>
     </header>
     <main className={styles.workspace} data-view={view}>
-      {view === "form" ? <div className={styles.planner}>
-        <div className={styles.hero} ref={formStart} tabIndex={-1}>
-          <p className={styles.eyebrow}><LeafIcon />Companion planting, made simple</p>
-          <h1>Plan a small food garden that works <span className={styles.highlight}>better together.</span></h1>
-          <p className={styles.lead}>A little space. A few crops. A good place to start.</p>
-          <ol className={styles.steps}>{STEPS.map((step, index) => <li key={step.title}>
-            <span className={styles.stepIcon} aria-hidden="true">{step.icon}</span>
-            <div><strong><span className="sr-only">Step {index + 1}: </span>{step.title}</strong><p>{step.text}</p></div>
-          </li>)}</ol>
-          <div className={styles.sceneWrap}><GardenScene crops={values.crops} /></div>
+      {view === "form" ? <>
+        <div className={styles.intro} ref={formStart} tabIndex={-1}>
+          <h1>Plan a small food garden that works better together.</h1>
+          <p>Tell us the size of your bed and the crops you want to grow. We&apos;ll suggest where each crop goes. No account needed.</p>
         </div>
-        <div className={styles.formColumn}>
-          {notices}
-          <GardenForm values={values} errors={errors} busy={busy} onChange={(next) => { setValues(next); setErrors({}); setFailure(""); }} onGenerate={generate} />
-        </div>
-      </div> : <>
+        {notices}
+        <GardenForm values={values} errors={errors} busy={busy} onChange={(next) => { setValues(next); setErrors({}); setFailure(""); }} onGenerate={generate} />
+      </> : <>
         <h1 className="sr-only">Shamba AI</h1>
-        <div className={styles.view}>
-          {notices}
-          {view === "identify" && saved ? <PlantUpload garden={saved} onSignIn={onSignIn} onBack={() => setIdentifying(false)} />
-            : view === "detail" && detailId ? <HistoricalResult id={detailId} onBack={() => setDetailId(null)} />
-            : view === "garden" && saved ? <MyGarden key={`${saved.id}:${saved.revision}`} plan={saved.plan} onChange={change} onIdentify={() => setIdentifying(true)} onDetails={setDetailId} />
-            : view === "plan" && draft ? <GardenPlan key={draft.plan.planId} plan={draft.plan} onChange={change} onSave={() => { void save(); }} saving={saving} saveDisabled={!authReady || sessionExpired || restoring || Boolean(restoreFailure)} />
-            : null}
-        </div>
+        {notices}
+        {view === "identify" && saved ? <PlantUpload garden={saved} onSignIn={onSignIn} onBack={() => setIdentifying(false)} />
+          : view === "detail" && detailId ? <HistoricalResult id={detailId} onBack={() => setDetailId(null)} />
+          : view === "garden" && saved ? <MyGarden key={`${saved.id}:${saved.revision}`} plan={saved.plan} onChange={change} onIdentify={() => setIdentifying(true)} onDetails={setDetailId} />
+          : view === "plan" && draft ? <GardenPlan key={draft.plan.planId} plan={draft.plan} onChange={change} onSave={() => { void save(); }} saving={saving} saveDisabled={!authReady || sessionExpired || restoring || Boolean(restoreFailure)} />
+          : view === "loading" ? <div className={styles.skeleton} aria-hidden="true"><span /><span /><span /><span /></div>
+          : null}
       </>}
       {busy ? <GardenProgressDialog width={values.width} length={values.length} crops={values.crops} onCancel={cancelGeneration} /> : null}
       {confirming ? <ReplaceGardenDialog busy={saving} onCancel={() => setConfirming(false)} onConfirm={() => { void save(true); }} /> : null}
     </main>
     <footer className={styles.footer}>
-      <div className={styles.footerInner}><BrandMark className={styles.footerMark} /><p>Made for small outdoor gardens and raised beds.</p></div>
+      <div className={styles.footerInner}><p>Made for small outdoor gardens and raised beds.</p></div>
     </footer>
   </div>;
 }
