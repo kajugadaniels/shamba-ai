@@ -21,10 +21,11 @@
   },
   "dependencies": {
     "@clerk/nextjs": "^7.9.11",
+    "@gsap/react": "^2.1.2",
     "@prisma/adapter-pg": "^7.10.0",
     "@prisma/client": "^7.10.0",
     "dotenv": "^18.0.6",
-    "motion": "^12.0.0",
+    "gsap": "^3.13.0",
     "next": "^16.0.0",
     "pg": "^8.23.1",
     "react": "^19.0.0",
