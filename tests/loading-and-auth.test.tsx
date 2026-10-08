@@ -1,8 +1,9 @@
-import { render, screen, waitFor, act } from "@testing-library/react";
+import { render, screen, waitFor, act, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { GlobalLoadingProvider, usePageLoading } from "@/components/GlobalLoading";
+import { GlobalLoadingProvider, LoadingIndicator, usePageLoading } from "@/components/GlobalLoading";
 import { AuthenticatedWorkspace } from "@/components/AuthenticatedWorkspace";
+import { ReplaceGardenDialog } from "@/components/ReplaceGardenDialog";
 import { GardenWorkspace } from "@/components/GardenWorkspace";
 import { rememberDraft, restoreDraft } from "@/lib/client/draft";
 import { normalizeCompanion } from "@/lib/server/companion";
@@ -40,12 +41,29 @@ describe("modal sign-in and application loading", () => {
     expect(screen.queryByRole("status", { name: "Application loading" })).not.toBeInTheDocument();
     unmount();
   });
+  it("shows only one loading status when a route fallback overlaps a page request", () => {
+    const { rerender } = render(<GlobalLoadingProvider><Request active label="Loading garden…" /><LoadingIndicator /></GlobalLoadingProvider>);
+    expect(screen.getAllByRole("status", { name: "Application loading" })).toHaveLength(1);
+    rerender(<GlobalLoadingProvider><Request active label="Loading garden…" /></GlobalLoadingProvider>);
+    expect(screen.getAllByRole("status", { name: "Application loading" })).toHaveLength(1);
+    expect(screen.getByRole("status", { name: "Application loading" })).toHaveTextContent("Loading garden…");
+  });
+  it("keeps the single progress card inside the native replacement dialog", async () => {
+    HTMLDialogElement.prototype.showModal = function () { this.setAttribute("open", ""); };
+    HTMLDialogElement.prototype.close = function () { this.removeAttribute("open"); };
+    render(<GlobalLoadingProvider><Request active label="Replacing your garden…" /><ReplaceGardenDialog busy onCancel={() => {}} onConfirm={() => {}} /></GlobalLoadingProvider>);
+    const dialog = screen.getByRole("dialog");
+    expect(await within(dialog).findByRole("status", { name: "Application loading" })).toHaveTextContent("Replacing your garden…");
+    expect(screen.getAllByRole("status", { name: "Application loading" })).toHaveLength(1);
+    expect(screen.getByRole("button", { name: "Replace Garden" })).toBeDisabled();
+  });
   it("clears progress on restoration failure and registers a retry until it completes", async () => {
     let reject!: (error: Error) => void;
     let resolve!: (response: Response) => void;
     vi.stubGlobal("fetch", vi.fn().mockReturnValueOnce(new Promise((_, fail) => { reject = fail; })).mockReturnValueOnce(new Promise((done) => { resolve = done; })));
     render(<GlobalLoadingProvider><GardenWorkspace userId="simulated-owner" /></GlobalLoadingProvider>);
     expect(screen.getByRole("status", { name: "Application loading" })).toHaveTextContent("Loading your saved garden…");
+    expect(screen.getAllByRole("status")).toHaveLength(1);
     await waitFor(() => expect(reject).toBeTypeOf("function"));
     await act(async () => reject(new Error("simulated failure")));
     expect(await screen.findByRole("alert")).toHaveTextContent("could not be loaded");
