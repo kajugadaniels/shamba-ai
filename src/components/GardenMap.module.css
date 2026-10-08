@@ -1,8 +1,8 @@
-.figure { margin: 0; padding: clamp(18px, 3vw, 28px); background: var(--leaf-tint); border: 1.5px solid var(--border); border-radius: var(--radius-lg); }
+.figure { margin: 0; padding: clamp(14px, 3vw, 22px); background: var(--leaf-tint); border-radius: var(--radius-md); }
 
 /* Dimension lines */
 .measureTop { display: flex; align-items: center; gap: 10px; margin: 0 26px 12px 0; color: var(--soil); }
-.measureTop b, .measureSide b { flex-shrink: 0; font-size: 13px; font-weight: 800; letter-spacing: -.01em; }
+.measureTop b, .measureSide b { flex-shrink: 0; font-size: 12px; font-weight: 700; }
 .line { flex: 1; min-width: 12px; height: 2px; background: color-mix(in srgb, var(--soil) 45%, transparent); position: relative; }
 .measureTop .line:first-child::before, .measureTop .line:last-child::after { content: ""; position: absolute; top: -5px; width: 2px; height: 12px; background: inherit; }
 .measureTop .line:first-child::before { left: 0; }
@@ -13,20 +13,20 @@
 .measureSide b { writing-mode: vertical-rl; }
 
 /* Bed */
-.bed { flex-shrink: 1; width: min(100%, var(--map-width)); aspect-ratio: var(--map-ratio); display: flex; flex-direction: column; gap: 6px; padding: 6px; border: 10px solid var(--soil); border-radius: 16px; background: var(--soil-deep); box-shadow: inset 0 0 0 2px #a5825f; }
+.bed { flex-shrink: 1; width: min(100%, var(--map-width)); aspect-ratio: var(--map-ratio); display: flex; flex-direction: column; gap: 6px; padding: 6px; border: 8px solid var(--soil); border-radius: 12px; background: var(--soil-deep); box-shadow: inset 0 0 0 2px #a5825f; }
 .row { display: flex; flex: 1; gap: 6px; min-height: 0; }
 .zone { flex: 1; min-width: 0; display: flex; justify-content: center; align-items: center; flex-wrap: wrap; align-content: center; gap: 4px 8px; padding: 4px; border-radius: 9px; background: color-mix(in srgb, var(--crop-color) 34%, #f6efe0); color: var(--forest-ink); overflow: hidden; }
 .plant { display: grid; place-items: center; width: 44px; height: 44px; max-height: 70%; aspect-ratio: 1; border-radius: 50%; background: color-mix(in srgb, var(--paper) 72%, transparent); flex-shrink: 1; }
 .plant svg { width: 78%; height: 78%; }
-.name { padding: 3px 9px; border-radius: 999px; background: var(--paper); font-size: 12px; font-weight: 800; letter-spacing: -.01em; overflow-wrap: anywhere; }
+.name { padding: 2px 8px; border-radius: 999px; background: var(--paper); font-size: 12px; font-weight: 700; letter-spacing: -.01em; overflow-wrap: anywhere; }
 .compact { border-width: 4px; padding: 2px; gap: 2px; border-radius: 8px; }
 .compact .row { gap: 2px; }
 .compact .zone { padding: 0; border-radius: 3px; }
 .compact .zone svg { width: 32px; height: 100%; max-height: 14px; }
 
 /* Legend */
-.legend { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 22px 0 0; padding: 0; list-style: none; }
-.legend li { display: flex; align-items: center; gap: 6px; padding: 5px 12px 5px 6px; border-radius: 999px; background: var(--paper); border: 1.5px solid var(--border); font-size: 13px; font-weight: 700; }
+.legend { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 18px 0 0; padding: 0; list-style: none; }
+.legend li { display: flex; align-items: center; gap: 6px; padding: 5px 12px 5px 6px; border-radius: 999px; background: var(--paper); border: 1px solid var(--border); font-size: 13px; font-weight: 600; }
 .legend svg { width: 24px; height: 24px; padding: 2px; border-radius: 50%; background: color-mix(in srgb, var(--crop-color) 24%, var(--paper)); }
 .legend b { display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--forest); color: var(--paper); font-size: 11px; }
 .figure figcaption { max-width: 52ch; margin: 14px auto 0; text-align: center; color: var(--muted); font-size: 12px; line-height: 1.6; }
