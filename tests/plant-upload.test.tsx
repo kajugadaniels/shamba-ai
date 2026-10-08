@@ -45,4 +45,16 @@ describe("plant upload and result behavior with simulated responses", () => {
     expect(await screen.findByText("Saved to Identification History")).toBeInTheDocument();
     expect(fetcher.mock.calls.map((call) => call[0])).toEqual(["/api/identifications", "/api/identifications/retry"]);
   });
+  it("marks the clicked identification button busy while awaiting the response", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockReturnValue(new Promise(() => {})));
+    render(<PlantUpload garden={garden} onBack={() => {}} />);
+    const photo = new File(["image"], "plant.jpg", { type: "image/jpeg" });
+    mocks.prepare.mockResolvedValue(photo);
+    await userEvent.upload(screen.getByLabelText("Choose or replace photo"), photo);
+    await waitFor(() => expect(screen.getByRole("button", { name: "Identify Plant" })).toBeEnabled());
+    await userEvent.click(screen.getByRole("button", { name: "Identify Plant" }));
+    expect(screen.getByRole("button", { name: "Identify Plant" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Identify Plant" })).toHaveAttribute("data-loading", "true");
+  });
+
 });
