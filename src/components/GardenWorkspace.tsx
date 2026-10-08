@@ -14,6 +14,7 @@ import { GardenForm, type FormErrors, type FormValues } from "./GardenForm";
 import { GardenPlan } from "./GardenPlan";
 import { PlantIcon } from "./PlantIcon";
 import { usePageLoading } from "./GlobalLoading";
+import { Button } from "./Button";
 import styles from "./GardenWorkspace.module.css";
 
 export function GardenWorkspace({ userId = null, authReady = true, onSignOut, onSignIn }: { userId?: string | null; authReady?: boolean; onSignOut?: () => Promise<void>; onSignIn?: () => void }) {
@@ -168,19 +169,19 @@ export function GardenWorkspace({ userId = null, authReady = true, onSignOut, on
 
   return <main className={styles.workspace}>
     <header className={styles.brand}><span className={styles.brandIcon}><PlantIcon crop="sprout" /></span><span>Shamba AI</span></header>
-    <nav className={styles.account} aria-label="Account">{userId ? <button onClick={() => { void signOut(); }} disabled={saving || signingOut} aria-busy={signingOut}>Sign out</button> : <button onClick={signIn} disabled={!authReady}>Sign in</button>}</nav>
+    <nav className={styles.account} aria-label="Account">{userId ? <Button onClick={() => { void signOut(); }} disabled={saving} loading={signingOut}>Sign out</Button> : <Button onClick={signIn} disabled={!authReady}>Sign in</Button>}</nav>
     <div className={styles.intro} ref={formStart} tabIndex={-1}>
       <h1>Plan a small food garden<br className={styles.lineBreak} /> that works better together.</h1>
       <p>A little space. A few crops. A good place to start.</p>
     </div>
-    {failure ? <div className={styles.error} role="alert"><strong>Let&apos;s try that again</strong><p>{failure}</p>{sessionExpired ? <button onClick={signIn} disabled={!authReady}>Sign in again</button> : null}</div> : null}
-    {restoreFailure ? <div role="alert" className={styles.error}><p>{restoreFailure}</p><button onClick={() => setRestoreAttempt((attempt) => attempt + 1)}>Retry loading garden</button></div> : null}
+    {failure ? <div className={styles.error} role="alert"><strong>Let&apos;s try that again</strong><p>{failure}</p>{sessionExpired ? <Button onClick={signIn} disabled={!authReady}>Sign in again</Button> : null}</div> : null}
+    {restoreFailure || (restoreAttempt > 0 && restoring) ? <div role={restoreFailure ? "alert" : undefined} className={restoreFailure ? styles.error : styles.retry}>{restoreFailure ? <p>{restoreFailure}</p> : null}<Button loading={restoring} onClick={() => { setRestoring(true); setRestoreAttempt((attempt) => attempt + 1); }}>Retry loading garden</Button></div> : null}
     {restoring ? null : saved && identifying ? <PlantUpload garden={saved} onSignIn={onSignIn} onBack={() => setIdentifying(false)} /> : saved && detailId ? <HistoricalResult id={detailId} onBack={() => setDetailId(null)} /> : saved && !editing && !draft ? <>
       <MyGarden key={`${saved.id}:${saved.revision}`} plan={saved.plan} onChange={change} onIdentify={() => setIdentifying(true)} onDetails={setDetailId} />
     </> : draft ? <motion.div key={draft.plan.planId} initial={{ opacity: 0, y: reduce ? 0 : 8 }} animate={{ opacity: 1, y: 0 }}>
       <GardenPlan plan={draft.plan} onChange={change} onSave={() => { void save(); }} saving={saving} saveDisabled={!authReady || sessionExpired || restoring || Boolean(restoreFailure)} />
     </motion.div> : <GardenForm values={values} errors={errors} busy={busy} onChange={(next) => { setValues(next); setErrors({}); setFailure(""); }} onGenerate={generate} />}
-    {saved && editing ? <button className={styles.cancel} disabled={busy || saving} onClick={cancelEdit}>Cancel changes · Back to my garden</button> : null}
+    {saved && editing ? <Button variant="secondary" className={styles.cancel} aria-label="Cancel changes and return to my garden" disabled={busy || saving} onClick={cancelEdit}>Cancel changes</Button> : null}
     {confirming ? <ReplaceGardenDialog busy={saving} onCancel={() => setConfirming(false)} onConfirm={() => { void save(true); }} /> : null}
     <footer className={styles.footer}><PlantIcon crop="sprout" /><p>Made for small outdoor gardens and raised beds.</p></footer>
   </main>;
