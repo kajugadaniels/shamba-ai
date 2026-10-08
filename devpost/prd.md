@@ -70,7 +70,7 @@ Source for these surfaces: `scope.md > The Core Loop`, `The POC Boundary`, and `
 - Cream background around `#F7F5EE`, charcoal-green text around `#202A25`, small soil-brown accents around `#8A6746`, and neutral light gray/green borders.
 - Use accessible warning and error colors rather than forcing those states into green. Color alone must not communicate crop identity or state.
 - Manrope or a similar clean modern sans-serif; strong, friendly headings and readable body text. No decorative or handwritten typography.
-- Spacious layouts, rounded controls/cards, simple plant illustrations/icons, and subtle borders/shadows.
+- Spacious layouts, rounded controls/cards, simple plant illustrations/icons, and subtle borders. The premium flat redesign (below) replaces shadows with solid color blocks and borders.
 - The map is the visual focus: a simplified garden bed with separated zones and explicit crop labels.
 
 Source: `scope.md > Inspiration & Identity`, refined by the learner during PRD discovery.
@@ -295,3 +295,12 @@ Use a consistent 48px button height across the application, including compact cr
 After valid Generate Garden Plan submission, show a dedicated modal with the chosen garden dimensions/crops, elapsed seconds, a clearly labeled 20–40 second wait estimate, and playful gardening captions. The progress bar represents elapsed estimated waiting, not provider-reported stages or completion. At 40 seconds, switch to indeterminate “Still waiting” feedback; longer waits explain that the user may continue or cancel. Never claim 100% completion before a valid response.
 
 Cancel generation preserves inputs and ignores any late result. The dialog closes immediately on success, failure, or cancellation; no artificial minimum wait or automatic retry is added. Keep the button’s pending spinner, suppress the centered global card while this dialog is open, and respect reduced motion.
+
+### Premium flat redesign
+
+The learner requested a complete, premium, user-friendly interface in a flat style with animation, permitting GSAP or Three.js. Keep the approved palette, Manrope, journey, wording, and evidence policies; restyle every surface with solid color blocks, crisp borders, and no drop shadows, gradients, or blur.
+
+- The planning view pairs the headline with three short orientation cards and an illustrated garden bed on wider screens; on phones the form follows the headline directly, with no onboarding gate. Selected crops visibly grow in the illustration while unselected crops rest as seedlings.
+- The form adds numbered sections, three quick size presets, a live bed-shape outline that follows the entered dimensions, and larger illustrated crop tiles. The tiles intentionally replace the earlier 48px compact crop selectors; action buttons keep the shared 48px height.
+- The plan places the map beside its explanations and actions on wide screens. History uses a responsive card grid. Upload offers photo tips, drag-and-drop, the prepared-photo size, and a scanning line during analysis. Direct sign-in/sign-up routes use a branded split layout.
+- Motion uses GSAP for the map planting sequence, view entrances, crop selection feedback, history and result reveals, and the ambient illustration. Motion never delays actions; reduced-motion preferences remove it while keeping every state readable. Three.js is not used: a WebGL scene conflicts with flat styling and adds weight for outdoor phone use.
