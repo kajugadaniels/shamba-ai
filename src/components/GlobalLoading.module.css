@@ -5,50 +5,53 @@
   display: grid;
   place-items: center;
   padding: max(20px, env(safe-area-inset-top)) max(20px, env(safe-area-inset-right)) max(20px, env(safe-area-inset-bottom)) max(20px, env(safe-area-inset-left));
-  background: rgb(247 245 238 / 62%);
-  backdrop-filter: blur(3px);
+  background: rgb(247 245 238 / 78%);
   pointer-events: none;
+  animation: fade 200ms ease-out both;
 }
 .indicator {
   position: relative;
   width: min(100%, 340px);
   max-height: calc(100dvh - 40px);
   overflow: auto;
-  padding: clamp(24px, 6vw, 38px) 28px 30px;
-  border: 1px solid var(--border);
-  border-radius: 28px;
-  background: var(--surface);
+  padding: clamp(24px, 6vw, 34px) 28px 28px;
+  border: 1.5px solid var(--border);
+  border-top: 6px solid var(--forest);
+  border-radius: var(--radius-lg);
+  background: var(--paper);
   color: var(--text);
   text-align: center;
-  box-shadow: 0 24px 70px rgb(31 77 58 / 13%), 0 4px 12px rgb(31 77 58 / 4%);
-  animation: reveal 160ms ease-out both;
+  animation: reveal 220ms var(--ease-out) both;
 }
-.illustration { width: 112px; margin: 0 auto 18px; }
+.illustration { width: 104px; margin: 0 auto 16px; padding: 4px; border-radius: 50%; background: var(--leaf-tint); }
 .illustration svg { width: 100%; height: auto; }
-.track { stroke: var(--border); stroke-width: 1; }
+.track { stroke: var(--leaf-soft); stroke-width: 3; }
 .orbit {
-  stroke: var(--leaf);
-  stroke-width: 2.5;
+  stroke: var(--forest);
+  stroke-width: 3;
   stroke-linecap: round;
   stroke-dasharray: 45 276;
   transform-origin: 60px 60px;
-  animation: orbit 2.8s linear infinite;
+  animation: orbit 2.4s linear infinite;
 }
-.soil { fill: #eae2d4; }
+.soil { fill: #e4d8c3; }
 .stem { stroke: var(--forest); stroke-width: 3; stroke-linecap: round; }
-.leftLeaf { fill: var(--leaf); }
-.rightLeaf { fill: var(--forest); }
-.veins { stroke: var(--surface); stroke-opacity: .65; stroke-width: 1.5; stroke-linecap: round; }
-.indicator .brand { display: block; color: var(--forest); font-size: 13px; font-weight: 750; }
-.indicator .label { margin: 9px 0 0; font-size: clamp(19px, 5vw, 23px); font-weight: 650; line-height: 1.4; letter-spacing: -.6px; overflow-wrap: anywhere; }
-.indicator .note { margin: 14px 0 0; font-size: 13px; line-height: 1.6; color: var(--muted); }
+.leftLeaf, .rightLeaf { transform-box: fill-box; animation: sway 2.2s ease-in-out infinite alternate; }
+.leftLeaf { fill: var(--leaf); transform-origin: 100% 100%; }
+.rightLeaf { fill: var(--forest); transform-origin: 0% 100%; animation-delay: -1.1s; }
+.veins { stroke: var(--paper); stroke-opacity: .7; stroke-width: 1.5; stroke-linecap: round; }
+.indicator .brand { display: block; color: var(--forest); font-size: 12px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+.indicator .label { margin: 8px 0 0; font-size: clamp(19px, 5vw, 22px); font-weight: 800; line-height: 1.35; letter-spacing: -.03em; color: var(--forest-ink); overflow-wrap: anywhere; }
+.indicator .note { margin: 10px 0 0; font-size: 13px; line-height: 1.6; color: var(--muted); }
 @keyframes orbit { to { transform: rotate(360deg); } }
-@keyframes reveal { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes sway { from { transform: rotate(-4deg); } to { transform: rotate(4deg); } }
+@keyframes fade { from { opacity: 0; } }
+@keyframes reveal { from { opacity: 0; transform: translateY(10px) scale(.98); } to { opacity: 1; transform: none; } }
 @media (max-height: 420px) {
   .indicator { padding: 18px 24px; }
   .illustration { width: 72px; margin-bottom: 8px; }
   .indicator .note { margin-top: 8px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .indicator, .orbit { animation: none; }
+  .overlay, .indicator, .orbit, .leftLeaf, .rightLeaf { animation: none; }
 }
