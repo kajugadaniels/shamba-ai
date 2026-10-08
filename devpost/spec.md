@@ -350,3 +350,9 @@ Use Clerk’s `openSignIn` with sign-up enabled for in-app authentication action
 ### Shared action buttons
 
 Button.tsx owns primary/secondary/outline/destructive variants, a decorative trailing loading spinner, stable labels, and automatic disabling while pending. Global CSS defines --button-height: 48px and --button-radius: 12px; Button.module.css owns common dimensions and interactions. Crop selectors and Clerk primary/social form buttons use the same height token. Remove per-page button dimension/color overrides; local modules retain placement, spacing, width, and mobile stacking. Request retry controls remain visible while pending so their own spinner can be shown.
+
+### Garden generation progress dialog
+
+GardenProgressDialog mounts only during validated planning requests, uses a native modal for focus/Escape handling, and clears its elapsed timer on unmount. Measure elapsed time with performance.now rather than assuming interval ticks occur on time. The display estimate is 20–40 seconds, informed by limited observations (two provider requests around 18–21 seconds, one app request around 2 seconds, and a documented 10–40 second typical claim); it is neither an SLA nor a calibrated duration model. Do not invent crop-count-specific completion estimates.
+
+The labeled time-based bar advances toward 90% over 40 seconds, then becomes indeterminate. Captions are waiting entertainment, not claims of measured provider stages. Reduced-motion mode disables bar transitions and keeps a static caption. Existing 100-second client request timeout and error behavior remain in place. The global registry retains other requests but suppresses its card while an open data-progress-dialog occupies the top layer. Cancellation aborts the local request and preserves form/saved data; a canceled request’s finally block cannot release a newer request’s controller. Local cancellation does not guarantee the upstream provider stops processing or refunds quota.
