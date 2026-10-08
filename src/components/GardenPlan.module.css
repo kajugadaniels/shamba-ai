@@ -1,20 +1,44 @@
-.plan { padding: clamp(20px,4vw,36px); border-radius: 24px; border: 1px solid var(--border); background: var(--surface); }
-.summary { display: flex; justify-content: space-between; gap: 16px; align-items: start; margin-bottom: 24px; }
-.summary h2 { font-size: clamp(21px,4vw,26px); letter-spacing: -.8px; line-height: 1.25; }
-.summary h2:focus { outline: none; }
-.summary p { color: var(--muted); margin-top: 8px; font-size: 13px; }
-.draft { border: 1px solid var(--border); color: var(--muted); font-size: 11px; border-radius: 20px; padding: 5px 10px; white-space: nowrap; }
-.explanations { margin-top: 28px; }
-.explanations h3 { font-size: 18px; margin-bottom: 15px; letter-spacing: -.4px; }
-.note { border-left: 3px solid #78985d; background: #f3f7ee; padding: 14px 18px; margin-top: 12px; border-radius: 0 10px 10px 0; }
-.note h4 { margin: 4px 0 6px; font-size: 15px; }
-.note p, .noNotes { font-size: 13px; line-height: 1.8; color: #48594e; overflow-wrap: anywhere; }
-.advisory { border-color: #b89755; background: #faf5e9; }
-.conflict { border: 1px solid #c5aa77; border-left: 5px solid #876326; border-radius: 10px; background: #f5ecd9; }
-.label { font-size: 11px; font-weight: 650; color: var(--forest); }
-.advisory .label { color: var(--warning); }
-.conflict .label { display: inline-block; color: #624719; background: #e9d8b5; padding: 3px 8px; border-radius: 5px; font-weight: 750; }
-.note .attribution { font-size: 11px; margin-top: 8px; }
-.actions { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
-.saveNote { font-size: 12px; margin-top: 12px; color: var(--muted); }
-@media (max-width: 540px) { .summary { flex-direction: column; } .actions { flex-direction: column; align-items: stretch; } .actions > button { width: 100%; } }
+.plan { padding: clamp(20px, 4vw, 40px); border-radius: var(--radius-lg); border: 1.5px solid var(--border); background: var(--paper); }
+.header { display: grid; justify-items: start; gap: 10px; margin-bottom: 28px; }
+.status { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 999px; background: var(--warning-soft); color: var(--warning); font-size: 12px; font-weight: 800; letter-spacing: .02em; }
+.dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+.plan[data-saved] .status { background: var(--leaf-soft); color: var(--forest); }
+.header h2 { font-size: clamp(30px, 4.6vw, 46px); line-height: 1.05; letter-spacing: -.045em; font-weight: 800; color: var(--forest-ink); }
+.header h2:focus { outline: none; }
+.meta { color: var(--muted); font-size: 15px; font-weight: 600; }
+
+.body { display: grid; gap: 28px; }
+.aside { display: grid; gap: 22px; align-content: start; min-width: 0; }
+.explanations h3 { font-size: 19px; font-weight: 800; letter-spacing: -.03em; margin-bottom: 14px; color: var(--forest-ink); }
+.notes { display: grid; gap: 12px; list-style: none; }
+.note { display: grid; gap: 6px; padding: 16px 18px; border-radius: var(--radius-md); border: 1.5px solid var(--border); background: var(--paper); }
+.note h4 { display: flex; align-items: center; gap: 10px; margin: 2px 0 0; font-size: 16px; font-weight: 800; letter-spacing: -.02em; }
+.pairIcons { display: flex; }
+.pairIcons svg { width: 28px; height: 28px; padding: 3px; border-radius: 50%; background: var(--leaf-tint); border: 1.5px solid var(--paper); }
+.pairIcons svg + svg { margin-left: -8px; }
+.note p, .noNotes { font-size: 14px; line-height: 1.7; color: #45564b; overflow-wrap: anywhere; }
+.label { display: inline-flex; align-items: center; gap: 6px; justify-self: start; padding: 3px 10px 3px 8px; border-radius: 999px; font-size: 12px; font-weight: 800; }
+.label svg { width: 14px; height: 14px; }
+.companion { background: var(--leaf-tint); border-color: #d3e3c4; }
+.companion .label { background: var(--leaf-soft); color: var(--forest); }
+.advisory { background: var(--warning-soft); border-color: var(--warning-line); }
+.advisory .label { background: #f2e2bb; color: var(--warning); }
+/* Strong conflicts: calm ochre outline, solid side bar and a filled evidence badge. */
+.conflict { background: #f6ebd3; border: 1.5px solid #b88b3e; border-left-width: 6px; }
+.conflict .label { background: #876326; color: #fff; }
+.note .attribution { font-size: 12px; color: #6a5021; }
+.noNotes { display: flex; gap: 10px; padding: 16px 18px; border-radius: var(--radius-md); background: var(--leaf-tint); }
+.noNotes svg { width: 18px; height: 18px; flex-shrink: 0; margin-top: 3px; color: var(--forest); }
+
+.actionCard { padding: 20px; border-radius: var(--radius-md); background: var(--cream); border: 1.5px solid var(--border); }
+.actions { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; }
+.saveNote { font-size: 13px; margin-top: 12px; color: var(--muted); }
+
+@media (min-width: 1000px) {
+  .body { grid-template-columns: minmax(0, 1.15fr) minmax(320px, .85fr); gap: 36px; align-items: start; }
+  .mapColumn { position: sticky; top: 96px; }
+}
+@media (max-width: 540px) {
+  .actions { flex-direction: column; align-items: stretch; }
+  .actions > button { width: 100%; }
+}
