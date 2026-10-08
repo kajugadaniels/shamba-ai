@@ -267,7 +267,7 @@ shamba-ai/
 │   │       └── identifications/[id]/route.ts  # Owned historical details
 │   ├── components/
 │   │   ├── GardenWorkspace.tsx + .module.css  # Draft/saved/auth orchestration
-│   │   ├── Button.tsx + .module.css           # Shared 48px variants and pending state
+│   │   ├── Button.tsx + .module.css           # Shared 44px/36px variants and pending state
 │   │   ├── PlantIcon.tsx                      # Shared local vector crop icons
 │   │   ├── GardenForm.tsx + .module.css       # Dimensions and crop selection
 │   │   ├── GardenMap.tsx + .module.css        # Proportional labeled guide
@@ -277,7 +277,6 @@ shamba-ai/
 │   │   ├── PlantUpload.tsx + .module.css      # Preparation/preview/analysis
 │   │   ├── IdentificationResult.tsx           # Current/history result, shared upload styles
 │   │   ├── HistoricalResult.tsx               # Owned detail retrieval states
-│   │   ├── GardenScene.tsx + .module.css      # Decorative hero bed reflecting selected crops
 │   │   ├── AuthShell.tsx + .module.css        # Branded frame for direct auth routes
 │   │   └── Icons.tsx                         # Shared stroke icons and brand mark
 │   ├── lib/
@@ -287,7 +286,7 @@ shamba-ai/
 │   │   ├── guidance.ts                       # Shared reviewed whole-item allowlist
 │   │   ├── client/draft.ts                   # Same-tab draft preservation
 │   │   ├── client/image.ts                   # Bounded native compression
-│   │   ├── client/motion.ts                  # GSAP setup and reduced-motion helpers
+│   │   ├── client/motion.ts                  # GSAP setup and reduced-motion guard
 │   │   └── server/
 │   │       ├── env.ts                        # Server configuration checks
 │   │       ├── prisma.ts                     # Shared PostgreSQL adapter/client
@@ -367,3 +366,15 @@ Implements `prd.md > Premium flat redesign`. Global tokens extend the approved p
 `src/lib/client/motion.ts` registers `useGSAP`, exposes `motionAllowed()` (true only for `prefers-reduced-motion: no-preference`), `useReducedMotion()`, and `useHydrated()`. Components animate inside `useGSAP` scopes so tweens revert on unmount. The server-rendered hero and form use CSS keyframe entrances to avoid a hydration flash; GardenScene renders its SVG only after hydration. GardenMap runs a planting timeline (bed, rows, sprouts, labels, legend) per plan ID; GardenPlan, MyGarden, PlantUpload, and IdentificationResult reveal content with short staggered transforms. GardenForm pops a crop icon on selection. Dialogs and loaders keep CSS animation. No animation gates an action, and accessible names, roles, and test-visible copy are unchanged.
 
 The replaced `MotionProvider.tsx` and `motion` dependency are removed. Crop selectors become illustrated tiles taller than the 48px action-button height. Quick sizes fill both dimension inputs and are disabled with the fieldset. Upload accepts dropped files through the same `prepareImage` validation. Three.js was considered and declined.
+
+### Calm, minimal layout and loading refinement
+
+Implements `prd.md > Calm, minimal layout and loading`; supersedes the premium redesign's hero illustration, two-column planner/plan layouts, GardenScene, generation captions, `useReducedMotion`/`useHydrated` helpers, and the 48px button height.
+
+Every view sits in one 760px column (`--page-width`) shared by the top bar and footer, so edges align. Headings are 22–34px, body copy 14–15px. Each view states its next step in one sentence: the planning intro, plan guidance (also the actions' `aria-describedby` target), My Garden history header, upload "how it works" list, score note, uncertainty note, and dialog copy. Plan actions sit directly under that guidance, above the map and notes.
+
+Button heights are 44px (`md`) and 36px (`sm`, used in the top bar, notices, retries, and history rows). While pending, the spinner replaces the button's leading icon, so every loading-capable button carries an icon and keeps its width and label. The Generate Garden Plan button is not enlarged.
+
+GlobalLoadingProvider keeps its token registry and accessible `role="status"` named "Application loading", but renders a non-blocking pill fixed under the top bar with no veil. The pill fades in after 400ms by CSS delay, so quick requests do not flash while assistive technology still receives the status immediately. When a `data-loading-host` dialog is open, the status renders inside it as an inline row, never as a card stacked over the dialog; the progress dialog still suppresses it. History retrieval no longer registers a page-level status: MyGarden shows placeholder rows with visually hidden loading text. Saved-garden restoration and history details show flat placeholder skeletons beneath the pill.
+
+GardenProgressDialog keeps the elapsed timer, estimate bar, honesty note, status messages, and cancellation; it drops captions and decorative art and folds the input-preservation note into the estimate note. GSAP use is limited to short fades: plan sections, map rows/plants, history rows, result card, and crop selection.
