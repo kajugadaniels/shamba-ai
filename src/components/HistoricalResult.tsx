@@ -4,7 +4,7 @@ import { usePageLoading } from "./GlobalLoading";
 import { z } from "zod";
 import { historyItemSchema } from "@/lib/schemas";
 import { Button } from "./Button";
-import { AlertIcon, ArrowLeftIcon } from "./Icons";
+import { AlertIcon, ArrowLeftIcon, RefreshIcon } from "./Icons";
 import styles from "./IdentificationResult.module.css";
 import { IdentificationResult } from "./IdentificationResult";
 export function HistoricalResult({ id, onBack }: { id: string; onBack: () => void }) {
@@ -19,9 +19,10 @@ export function HistoricalResult({ id, onBack }: { id: string; onBack: () => voi
     return () => controller.abort();
   }, [id, retry]);
   return result ? <IdentificationResult result={result} onBack={onBack} /> : <section className={styles.result} aria-busy={!failure}>
-    {failure ? <div role="alert" className={styles.warning}><AlertIcon /><p>This identification could not be loaded.</p></div> : null}
+    {failure ? <div role="alert" className={styles.warning}><AlertIcon /><p>This identification could not be loaded. Check your connection and retry, or go back to your garden.</p></div>
+      : <div className={styles.placeholder} aria-hidden="true"><span /><span /><span /></div>}
     <div className={styles.actions}>
-      {failure || retry > 0 ? <Button loading={!failure} onClick={() => { setFailure(false); setResult(null); setRetry((value) => value + 1); }}>Retry loading result</Button> : null}
+      {failure || retry > 0 ? <Button loading={!failure} onClick={() => { setFailure(false); setResult(null); setRetry((value) => value + 1); }}><RefreshIcon />Retry loading result</Button> : null}
       <Button onClick={onBack}><ArrowLeftIcon />Back to my garden</Button>
     </div>
   </section>;
