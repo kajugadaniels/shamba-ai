@@ -54,3 +54,19 @@ export const saveGardenSchema = z.object({
   expectedRevision: z.number().int().positive().nullable(),
   confirmReplacement: z.boolean(),
 }).strict();
+
+const plantName = z.string().trim().min(1).max(160).refine((value) => !/^(unknown|unidentified|n\/?a|none|null|not identified)$/i.test(value));
+const identifiedPlantBase = z.object({
+  classification: z.enum(["weed", "not_weed"]), commonName: plantName.nullable(), scientificName: plantName.nullable(),
+  confidence: z.number().min(90).max(100), evidence: z.array(z.string().trim().min(1).max(800)).min(1).max(2),
+  explanation: z.string().trim().min(1).max(800), guidance: z.array(z.string().max(300)).max(2),
+  identifiedAt: z.iso.datetime(),
+}).strict();
+export const identifiedPlantSchema = identifiedPlantBase.refine((value) => value.commonName !== null || value.scientificName !== null);
+export const identificationContextSchema = z.object({ gardenId: z.uuid(), gardenRevision: z.number().int().positive(), requestId: z.uuid() }).strict();
+export const historyItemSchema = identifiedPlantBase.omit({ evidence: true }).extend({ id: z.uuid(), gardenId: z.uuid(), gardenRevision: z.number().int().positive(), requestId: z.uuid() }).refine((value) => value.commonName !== null || value.scientificName !== null);
+export const identificationResponseSchema = z.discriminatedUnion("outcome", [
+  z.object({ outcome: z.literal("uncertain") }).strict(),
+  z.object({ outcome: z.literal("identified"), result: identifiedPlantSchema, context: identificationContextSchema,
+    saveState: z.enum(["saved", "failed"]), receipt: z.string().min(1).max(12000), saveMessage: z.string().optional(), id: z.uuid().optional() }).strict(),
+]);
