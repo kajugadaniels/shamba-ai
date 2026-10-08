@@ -105,7 +105,7 @@ describe("saved garden journey with simulated server responses", () => {
     fireEvent.change(screen.getByLabelText(/Width/), { target: { value: "4" } });
     await userEvent.click(screen.getByRole("button", { name: "Sign out" }));
     expect(screen.getByLabelText(/Width/)).toHaveValue(null);
-    expect(screen.getByRole("button", { name: "Signing out…" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Sign out" })).toBeDisabled();
     rejectSignOut(new Error("simulated Clerk failure"));
     expect(await screen.findByRole("heading", { name: "My Garden" })).toBeVisible();
     expect(screen.getByRole("alert")).toHaveTextContent("Sign-out could not finish");
