@@ -24,5 +24,6 @@ const appearance = {
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="en"><body className={manrope.variable}><ClerkProvider signInUrl="/sign-in" signUpUrl="/sign-up" signInForceRedirectUrl="/" signUpForceRedirectUrl="/" appearance={appearance}><GlobalLoadingProvider>{children}</GlobalLoadingProvider></ClerkProvider></body></html>;
+  // The font variable sits on <html> so the :root --font-sans token can resolve it.
+  return <html lang="en" className={manrope.variable}><body><ClerkProvider signInUrl="/sign-in" signUpUrl="/sign-up" signInForceRedirectUrl="/" signUpForceRedirectUrl="/" appearance={appearance}><GlobalLoadingProvider>{children}</GlobalLoadingProvider></ClerkProvider></body></html>;
 }
