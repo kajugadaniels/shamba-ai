@@ -1,0 +1,8 @@
+.scene { position: relative; width: 100%; aspect-ratio: 600 / 440; max-height: 380px; overflow: hidden; border-radius: var(--radius-lg); background: #e6f0de; }
+.scene svg { width: 100%; height: 100%; }
+.plant { transform-box: fill-box; transform-origin: 50% 100%; transition: transform 600ms var(--ease-spring), opacity 300ms var(--ease-out); }
+.plant[data-state="resting"] { transform: scale(.42); opacity: .55; }
+.tag rect { fill: var(--paper); transition: fill 240ms var(--ease-out); }
+.tag text { fill: var(--forest); font-family: var(--font-sans); font-size: 13px; font-weight: 750; letter-spacing: -.01em; transition: fill 240ms var(--ease-out); }
+.tag[data-selected] rect { fill: var(--forest); }
+.tag[data-selected] text { fill: var(--paper); }
