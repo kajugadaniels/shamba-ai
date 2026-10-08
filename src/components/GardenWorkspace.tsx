@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { motion, useReducedMotion } from "motion/react";
 import { gardenInputSchema, planResponseSchema, gardenResponseSchema, savedGardenSchema } from "@/lib/schemas";
 import { z } from "zod";
 import { rememberDraft, restoreDraft, forgetDraft } from "@/lib/client/draft";
@@ -13,10 +12,17 @@ import { ReplaceGardenDialog } from "./ReplaceGardenDialog";
 import type { PlanResponse } from "@/lib/types";
 import { GardenForm, type FormErrors, type FormValues } from "./GardenForm";
 import { GardenPlan } from "./GardenPlan";
-import { PlantIcon } from "./PlantIcon";
+import { GardenScene } from "./GardenScene";
 import { usePageLoading } from "./GlobalLoading";
 import { Button } from "./Button";
+import { AlertIcon, BrandMark, MapIcon, PencilIcon, RulerIcon, LeafIcon } from "./Icons";
 import styles from "./GardenWorkspace.module.css";
+
+const STEPS = [
+  { icon: <RulerIcon />, title: "Measure", text: "Your bed, 1–5 m each way" },
+  { icon: <LeafIcon />, title: "Choose", text: "Two to four crops" },
+  { icon: <MapIcon />, title: "Plan", text: "See where each crop goes" },
+];
 
 export function GardenWorkspace({ userId = null, authReady = true, onSignOut, onSignIn }: { userId?: string | null; authReady?: boolean; onSignOut?: () => Promise<void>; onSignIn?: () => void }) {
   const [values, setValues] = useState<FormValues>({ width: "", length: "", crops: [] });
@@ -41,7 +47,6 @@ export function GardenWorkspace({ userId = null, authReady = true, onSignOut, on
   const [busy, setBusy] = useState(false);
   const controller = useRef<AbortController | null>(null);
   const formStart = useRef<HTMLDivElement>(null);
-  const reduce = useReducedMotion();
   usePageLoading(!authReady || restoring || saving || signingOut,
     !authReady ? "Connecting your account…" : restoring ? "Loading your saved garden…" : saving ? (confirming ? "Replacing your garden…" : "Saving your garden…") : signingOut ? "Signing out…" : "Creating your garden guide…");
   useEffect(() => { mounted.current = true; return () => { mounted.current = false; controller.current?.abort(); }; }, []);
@@ -177,23 +182,55 @@ export function GardenWorkspace({ userId = null, authReady = true, onSignOut, on
     requestAnimationFrame(() => formStart.current?.focus());
   }
 
-  return <main className={styles.workspace}>
-    <header className={styles.brand}><span className={styles.brandIcon}><PlantIcon crop="sprout" /></span><span>Shamba AI</span></header>
-    <nav className={styles.account} aria-label="Account">{userId ? <Button onClick={() => { void signOut(); }} disabled={saving} loading={signingOut}>Sign out</Button> : <Button onClick={signIn} disabled={!authReady}>Sign in</Button>}</nav>
-    <div className={styles.intro} ref={formStart} tabIndex={-1}>
-      <h1>Plan a small food garden<br className={styles.lineBreak} /> that works better together.</h1>
-      <p>A little space. A few crops. A good place to start.</p>
-    </div>
-    {failure ? <div className={styles.error} role="alert"><strong>Let&apos;s try that again</strong><p>{failure}</p>{sessionExpired ? <Button onClick={signIn} disabled={!authReady}>Sign in again</Button> : null}</div> : null}
-    {restoreFailure || (restoreAttempt > 0 && restoring) ? <div role={restoreFailure ? "alert" : undefined} className={restoreFailure ? styles.error : styles.retry}>{restoreFailure ? <p>{restoreFailure}</p> : null}<Button loading={restoring} onClick={() => { setRestoring(true); setRestoreAttempt((attempt) => attempt + 1); }}>Retry loading garden</Button></div> : null}
-    {restoring ? null : saved && identifying ? <PlantUpload garden={saved} onSignIn={onSignIn} onBack={() => setIdentifying(false)} /> : saved && detailId ? <HistoricalResult id={detailId} onBack={() => setDetailId(null)} /> : saved && !editing && !draft ? <>
-      <MyGarden key={`${saved.id}:${saved.revision}`} plan={saved.plan} onChange={change} onIdentify={() => setIdentifying(true)} onDetails={setDetailId} />
-    </> : draft ? <motion.div key={draft.plan.planId} initial={{ opacity: 0, y: reduce ? 0 : 8 }} animate={{ opacity: 1, y: 0 }}>
-      <GardenPlan plan={draft.plan} onChange={change} onSave={() => { void save(); }} saving={saving} saveDisabled={!authReady || sessionExpired || restoring || Boolean(restoreFailure)} />
-    </motion.div> : <GardenForm values={values} errors={errors} busy={busy} onChange={(next) => { setValues(next); setErrors({}); setFailure(""); }} onGenerate={generate} />}
-    {saved && editing ? <Button variant="secondary" className={styles.cancel} aria-label="Cancel changes and return to my garden" disabled={busy || saving} onClick={cancelEdit}>Cancel changes</Button> : null}
-    {busy ? <GardenProgressDialog width={values.width} length={values.length} crops={values.crops} onCancel={cancelGeneration} /> : null}
-    {confirming ? <ReplaceGardenDialog busy={saving} onCancel={() => setConfirming(false)} onConfirm={() => { void save(true); }} /> : null}
-    <footer className={styles.footer}><PlantIcon crop="sprout" /><p>Made for small outdoor gardens and raised beds.</p></footer>
-  </main>;
+  const view = restoring ? "loading" : saved && identifying ? "identify" : saved && detailId ? "detail" : saved && !editing && !draft ? "garden" : draft ? "plan" : "form";
+  const notices = <>
+    {failure ? <div className={styles.alert} role="alert"><AlertIcon /><div><strong>Let&apos;s try that again</strong><p>{failure}</p>{sessionExpired ? <Button variant="primary" onClick={signIn} disabled={!authReady}>Sign in again</Button> : null}</div></div> : null}
+    {restoreFailure || (restoreAttempt > 0 && restoring) ? <div role={restoreFailure ? "alert" : undefined} className={restoreFailure ? styles.alert : styles.retry}>{restoreFailure ? <AlertIcon /> : null}<div>{restoreFailure ? <p>{restoreFailure}</p> : null}<Button loading={restoring} onClick={() => { setRestoring(true); setRestoreAttempt((attempt) => attempt + 1); }}>Retry loading garden</Button></div></div> : null}
+    {saved && editing ? <div className={styles.editing}>
+      <PencilIcon /><p><strong>Editing your saved garden.</strong> It stays unchanged unless you save and confirm a replacement.</p>
+      <Button variant="secondary" aria-label="Cancel changes and return to my garden" disabled={busy || saving} onClick={cancelEdit}>Cancel changes</Button>
+    </div> : null}
+  </>;
+
+  return <div className={styles.shell}>
+    <header className={styles.topbar}>
+      <div className={styles.topbarInner}>
+        <span className={styles.brand}><BrandMark className={styles.brandMark} /><span>Shamba AI</span></span>
+        <nav className={styles.account} aria-label="Account">{userId ? <Button onClick={() => { void signOut(); }} disabled={saving} loading={signingOut}>Sign out</Button> : <Button onClick={signIn} disabled={!authReady}>Sign in</Button>}</nav>
+      </div>
+    </header>
+    <main className={styles.workspace} data-view={view}>
+      {view === "form" ? <div className={styles.planner}>
+        <div className={styles.hero} ref={formStart} tabIndex={-1}>
+          <p className={styles.eyebrow}><LeafIcon />Companion planting, made simple</p>
+          <h1>Plan a small food garden that works <span className={styles.highlight}>better together.</span></h1>
+          <p className={styles.lead}>A little space. A few crops. A good place to start.</p>
+          <ol className={styles.steps}>{STEPS.map((step, index) => <li key={step.title}>
+            <span className={styles.stepIcon} aria-hidden="true">{step.icon}</span>
+            <div><strong><span className="sr-only">Step {index + 1}: </span>{step.title}</strong><p>{step.text}</p></div>
+          </li>)}</ol>
+          <div className={styles.sceneWrap}><GardenScene crops={values.crops} /></div>
+        </div>
+        <div className={styles.formColumn}>
+          {notices}
+          <GardenForm values={values} errors={errors} busy={busy} onChange={(next) => { setValues(next); setErrors({}); setFailure(""); }} onGenerate={generate} />
+        </div>
+      </div> : <>
+        <h1 className="sr-only">Shamba AI</h1>
+        <div className={styles.view}>
+          {notices}
+          {view === "identify" && saved ? <PlantUpload garden={saved} onSignIn={onSignIn} onBack={() => setIdentifying(false)} />
+            : view === "detail" && detailId ? <HistoricalResult id={detailId} onBack={() => setDetailId(null)} />
+            : view === "garden" && saved ? <MyGarden key={`${saved.id}:${saved.revision}`} plan={saved.plan} onChange={change} onIdentify={() => setIdentifying(true)} onDetails={setDetailId} />
+            : view === "plan" && draft ? <GardenPlan key={draft.plan.planId} plan={draft.plan} onChange={change} onSave={() => { void save(); }} saving={saving} saveDisabled={!authReady || sessionExpired || restoring || Boolean(restoreFailure)} />
+            : null}
+        </div>
+      </>}
+      {busy ? <GardenProgressDialog width={values.width} length={values.length} crops={values.crops} onCancel={cancelGeneration} /> : null}
+      {confirming ? <ReplaceGardenDialog busy={saving} onCancel={() => setConfirming(false)} onConfirm={() => { void save(true); }} /> : null}
+    </main>
+    <footer className={styles.footer}>
+      <div className={styles.footerInner}><BrandMark className={styles.footerMark} /><p>Made for small outdoor gardens and raised beds.</p></div>
+    </footer>
+  </div>;
 }
