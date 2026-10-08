@@ -38,6 +38,7 @@ export function LoadingIndicator({ label = "Loading Shamba AI…" }: { label?: s
 export function GlobalLoadingProvider({ children }: { children: ReactNode }) {
   const [requests, setRequests] = useState<Map<symbol, string>>(() => new Map());
   const [host, setHost] = useState<HTMLElement | null>(() => typeof document === "undefined" ? null : document.body);
+  const [progressDialogOpen, setProgressDialogOpen] = useState(false);
   const start = useCallback((label: string) => {
     const token = Symbol();
     setRequests((current) => new Map(current).set(token, label));
@@ -47,7 +48,11 @@ export function GlobalLoadingProvider({ children }: { children: ReactNode }) {
     // Native dialogs occupy the browser's top layer. Render inside the owned
     // replacement dialog while it is open so saving progress stays visible.
     let active = true;
-    const updateHost = () => { if (active) setHost(document.querySelector<HTMLElement>('dialog[open][data-loading-host]') ?? document.body); };
+    const updateHost = () => {
+      if (!active) return;
+      setHost(document.querySelector<HTMLElement>('dialog[open][data-loading-host]') ?? document.body);
+      setProgressDialogOpen(Boolean(document.querySelector('dialog[open][data-progress-dialog]')));
+    };
     queueMicrotask(updateHost);
     const observer = new MutationObserver(updateHost);
     observer.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ["open"] });
@@ -55,7 +60,7 @@ export function GlobalLoadingProvider({ children }: { children: ReactNode }) {
   }, []);
   const context = useMemo(() => ({ start }), [start]);
   const label = [...requests.values()].at(-1);
-  return <Context.Provider value={context}>{children}{label && host ? createPortal(<LoadingCard label={label} />, host) : null}</Context.Provider>;
+  return <Context.Provider value={context}>{children}{label && host && !progressDialogOpen ? createPortal(<LoadingCard label={label} />, host) : null}</Context.Provider>;
 }
 
 // Each operation owns its token; completion/unmount cannot hide another request.
