@@ -13,7 +13,6 @@
 .footer svg { width: 20px; height: 20px; flex-shrink: 0; }
 @media (max-width: 540px) { .workspace { width: min(100% - 28px,700px); padding-top: 25px; } .intro { margin-top: 24px; } .lineBreak { display: none; } }
 .account { display: flex; justify-content: flex-end; margin: 14px 0; }
-.account button, .account a, .cancel { min-height: 44px; padding: 10px 14px; border: 1px solid var(--border); border-radius: 10px; color: var(--forest); background: transparent; font-size: 13px; text-decoration: none; }
 .cancel { margin-top: 16px; }
 .history { border: 1px solid var(--border); border-radius: 20px; padding: 24px; margin-top: 20px; background: var(--surface); }
 .history h2 { font-size: 20px; margin-bottom: 12px; }
@@ -21,5 +20,9 @@
 .history article { padding: 18px 0; border-top: 1px solid var(--border); }
 .history article h3 { font-size: 18px; margin-bottom: 8px; }
 .history article time { font-size: 12px; color: var(--muted); }
-.history button { min-height: 44px; border: 1px solid var(--forest); border-radius: 10px; padding: 10px 16px; background: transparent; color: var(--forest); margin-top: 12px; }
+.history button { margin-top: 12px; }
 .summary { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.retry { margin-bottom: 20px; }
+.error button { margin-top: 12px; }
+@media (max-width: 540px) { .cancel { width: 100%; } }
