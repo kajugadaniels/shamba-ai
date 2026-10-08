@@ -289,3 +289,9 @@ A shared, non-blocking loading status appears during account readiness, garden r
 ### Shared button refinement
 
 Use a consistent 48px button height across the application, including compact crop selectors. Action buttons share primary, secondary, outline, and destructive variants; width can vary. Keep labels and widths stable during requests, show an in-button spinner, disable repeat clicks, and respect reduced motion. Align action groups with consistent gaps and stack them on narrow screens.
+
+### Garden generation waiting experience
+
+After valid Generate Garden Plan submission, show a dedicated modal with the chosen garden dimensions/crops, elapsed seconds, a clearly labeled 20–40 second wait estimate, and playful gardening captions. The progress bar represents elapsed estimated waiting, not provider-reported stages or completion. At 40 seconds, switch to indeterminate “Still waiting” feedback; longer waits explain that the user may continue or cancel. Never claim 100% completion before a valid response.
+
+Cancel generation preserves inputs and ignores any late result. The dialog closes immediately on success, failure, or cancellation; no artificial minimum wait or automatic retry is added. Keep the button’s pending spinner, suppress the centered global card while this dialog is open, and respect reduced motion.
