@@ -3,6 +3,9 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { randomUUID } from "node:crypto";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "@/generated/prisma/client";
+import { saveIdentification } from "@/lib/server/history";
+import { normalizeIdentification } from "@/lib/server/identification";
+import basil from "../devpost/api-checks/weed-basil.json";
 import { saveGarden, GardenConflict } from "@/lib/server/gardens";
 import { normalizeCompanion } from "@/lib/server/companion";
 import two from "../devpost/api-checks/companion-two-decimal.json";
@@ -74,4 +77,27 @@ describe("disposable PostgreSQL garden transactions", () => {
     expect(results.filter((result) => result.status === "fulfilled")).toHaveLength(1);
     expect((await db.garden.findUniqueOrThrow({ where: { id: old.id } })).revision).toBe(2);
   });
+  it("saves confident non-weeds idempotently and blocks a result from a replaced revision", async () => {
+    const user = `${prefix}identification`; const garden = await saveGarden(db, user, plan(), null, false);
+    const context = { gardenId: garden.id, gardenRevision: garden.revision, requestId: randomUUID() };
+    const result = normalizeIdentification(basil.response)!;
+    const first = await saveIdentification(db, user, context, result);
+    const duplicate = await saveIdentification(db, user, context, result);
+    expect(first.id).toBe(duplicate.id); expect(first.classification).toBe("not_weed"); expect(first.guidance).toEqual([]);
+    expect(await db.identification.count({ where: { gardenId: garden.id } })).toBe(1);
+    await saveGarden(db, user, plan(), garden.revision, true);
+    await expect(saveIdentification(db, user, { ...context, requestId: randomUUID() }, result)).rejects.toBeInstanceOf(GardenConflict);
+    expect(await db.identification.count({ where: { gardenId: garden.id } })).toBe(0);
+  });
+
+  it("never retains an old-revision identification when saving races replacement", async () => {
+    const user = `${prefix}identification-race`; const garden = await saveGarden(db, user, plan(), null, false);
+    const context = { gardenId: garden.id, gardenRevision: garden.revision, requestId: randomUUID() };
+    const result = normalizeIdentification(basil.response)!;
+    const results = await Promise.allSettled([saveIdentification(db, user, context, result), saveGarden(db, user, plan(), garden.revision, true)]);
+    expect(results[1].status).toBe("fulfilled");
+    expect((await db.garden.findUniqueOrThrow({ where: { id: garden.id } })).revision).toBe(2);
+    expect(await db.identification.count({ where: { gardenId: garden.id } })).toBe(0);
+  });
+
 });
