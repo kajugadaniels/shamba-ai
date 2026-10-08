@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { identificationView } from "@/lib/server/history";
 import { database } from "@/lib/server/prisma";
 export const runtime = "nodejs";
 export async function GET() {
@@ -9,8 +10,7 @@ export async function GET() {
     // Ownership is part of the database predicate; no user-supplied identity.
     const history = await database().identification.findMany({
       where: { garden: { clerkUserId: userId } }, orderBy: [{ identifiedAt: "desc" }, { id: "desc" }],
-      select: { id: true, classification: true, commonName: true, scientificName: true, confidence: true, explanation: true, identifiedAt: true },
     });
-    return Response.json({ history }, { headers });
+    return Response.json({ history: history.map(identificationView) }, { headers });
   } catch { return Response.json({ error: { message: "Identification history could not be loaded. Please retry." } }, { status: 503, headers }); }
 }
