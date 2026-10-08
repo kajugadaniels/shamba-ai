@@ -7,7 +7,7 @@ status: approved
 
 Build mode: learn — pause after each mechanically verified slice for the learner check and a brief explanation of important implementation decisions. Keep final learner review and feedback.
 
-The scope, PRD, and technical specification are approved. The learner approved this build order without reordering or merging slices. Slice 1 is complete; Slice 2 is complete after mechanical verification and the learner’s authenticated review. Slice 3 is implemented and mechanically verified, awaiting its learner review. Each slice delivers usable behavior across the necessary layers. Styling, responsive behavior, error handling, and verification are part of each slice rather than deferred plumbing tasks.
+The scope, PRD, and technical specification are approved. The learner approved this build order without reordering or merging slices. Slice 1 is complete; Slice 2 is complete after mechanical verification and the learner’s authenticated review. Slice 3 is complete after its earlier mechanical verification and the learner’s connected-flow review. Final verification of the later UI refinements and the 5-build wrap-up remain pending. Each slice delivers usable behavior across the necessary layers. Styling, responsive behavior, error handling, and verification are part of each slice rather than deferred plumbing tasks.
 
 Git execution override: `AGENTS.md` and `git.md` require developer-only Git mutations. `Commit:` describes the checkpoint intent; the assistant supplies a separate exact-path add/Conventional Commit block for every changed non-ignored file, never executes those commands, and never stages secrets or the learner profile. Record implementation verification separately from developer commit confirmation; never claim a commit happened without read-only evidence or developer confirmation.
 
@@ -33,7 +33,7 @@ Git execution override: `AGENTS.md` and `git.md` require developer-only Git muta
   Learner check: Generate a plan, sign in through Save Garden, save, sign out, and return. Confirm the same map loads. Edit and cancel; confirm the old garden remains. Generate a new draft and inspect both cancel and confirm replacement. Check that the warning explains history clearing and irreversibility. Confirm a visitor draft survives sign-in to an account that already has a garden.
   Commit: Persistence checkpoint intent: `feat(garden): save and replace one owned garden safely`; provide per-file commands under the manual Git rules.
 
-- [ ] **3. Identify plants and restore trustworthy garden history**
+- [x] **3. Identify plants and restore trustworthy garden history**
   Becomes usable: From the saved garden, prepare/preview/upload a photo, receive a confident weed or non-weed result, save it automatically, and reopen it from newest-first history. Uncertain results stay out of history; failed saves retry without another identification request.
   Why now: Completes the protecting half of the kernel on the established garden identity. This slice joins the journey and verifies that replacement, retries, and returning sessions cannot mix old and new results.
   PRD ref: `prd.md > Photo Identification`, `prd.md > Identification Confidence Policy`, `prd.md > Confident Non-Weed Results`, `prd.md > Small-Garden Control Guidance`, `prd.md > Garden History and Restoration`, `prd.md > Historical Result`, `prd.md > Responsive Layout and Motion`.
@@ -45,18 +45,18 @@ Git execution override: `AGENTS.md` and `git.md` require developer-only Git muta
 
 ## Current Checkpoint
 
-Slices 1 and 2 are complete after verification and learner feedback. Slice 3 is implemented and mechanically verified; its checkbox remains open until the learner completes the identification/history review.
+All three slices are complete. The learner explicitly accepted Slice 3 without additional changes after checking photo preparation, identification, conservative guidance, non-weed behavior, automatic history saving, restored sessions, simulated uncertainty, and receipt-only persistence retry without duplicates.
 
-- Checks passed: 92 focused tests across 14 Vitest files, seven guarded disposable PostgreSQL integration checks, lint, typecheck, and production build.
-- Browser mechanics passed at widths 320/390/768/1440 with keyboard use and reduced motion using a clearly labeled isolated UI harness. Real browser compression reduced an oversized valid JPEG to 269,356 bytes. Simulated uncertainty, failed saves, receipt-only retry, non-weed details, reviewed weed guidance, and history navigation passed without horizontal overflow or page errors.
-- No new RapidAPI requests were made during Slice 3 implementation. Recorded live responses and mocked transport checks establish the contract; actual authenticated upload/history restoration still needs the learner check.
-- Use the real app at http://localhost:3000 for the authenticated flow and the temporary labeled simulation at http://127.0.0.1:3100 for failure states without quota. The simulation has no real authentication, provider calls, or database persistence.
-- No Git mutations were executed. Commit commands are supplied per changed non-ignored file; developer commit confirmation remains separate from verification.
+- Earlier implementation verification passed: 92 focused tests across 14 Vitest files, seven guarded disposable PostgreSQL integration checks, lint, typecheck, and production build. Later UI revisions have no reported current test/build results; historical passes do not verify those revisions.
+- The learner’s Slice 2 and Slice 3 reports cover the connected authenticated journey and final hands-on feedback. No additional product fixes were requested.
+- Next: the developer runs `npm test`, `npm run lint`, `npm run typecheck`, and `npm run build`, reports results, and confirms whether the proof of concept is ready for final sign-off. The assistant must not run tests, lint, typecheck, build, installs, or a server under the learner’s current instruction.
+- The application code was committed through `a36112c` when this wrap-up began (read-only inspection found a clean worktree). This documentation checkpoint is not yet committed; supplied Git commands remain developer-only.
+- A static reference tour and offline app map are prepared below. Final review and the learning wrap-up remain open; do not advance to 6-ship yet.
 
 ## Hands-on Checkpoints
 
 - [x] Early usable behavior explored — after slice 1, review the form, real map, evidence wording, and mobile layout while feedback can shape the remaining interfaces.
-- [ ] Final kick-the-tires exploration and feedback completed — after slice 3, explore the integrated planning/save/identification/return journey, including replacement and awkward inputs. This session supplies the Final Review feedback below.
+- [x] Final kick-the-tires exploration and feedback completed — after slice 3, explore the integrated planning/save/identification/return journey, including replacement and awkward inputs. This session supplies the Final Review feedback below.
 
 In learn mode, also complete each slice's Learner check before advancing. In fast mode, slice 2 is mechanically verified without an extra mandatory hands-on pause; its behavior remains part of the final integrated review. Add a checkpoint only if a discovered issue needs learner feedback.
 
@@ -64,7 +64,7 @@ In learn mode, also complete each slice's Learner check before advancing. In fas
 
 - [ ] Final review complete — feedback resolved, relevant checks pass, developer commit status is accurately recorded, and learner confirms ready to ship.
 
-Record agreed fixes here as unchecked items after feedback. No findings or completion are assumed. Deployment is optional and is not a prerequisite for the local demo.
+The learner reported no additional Slice 3 changes. Final sign-off awaits results for the latest UI revisions and explicit confirmation that the proof of concept is ready. No new fixes are invented. Deployment is optional and is not a prerequisite for the local demo.
 
 ## Code Tour and App Map
 
@@ -72,11 +72,12 @@ Record agreed fixes here as unchecked items after feedback. No findings or compl
 - [ ] Optional edit and transfer reflection addressed — offered/declined/already covered/not applicable as appropriate.
 - [ ] `devpost/app-map.html` generated from finished code, checked, and shown, including a project-grounded practice to reuse.
 
-Activity and evidence: Not started; choose a real build example after final revisions.
-Route and stops: Not yet established; use actual paths/symbols from the finished implementation.
-Edit outcome: Not yet offered; avoid inventing a change solely for this activity.
-Reflection: Not yet offered; personal answers belong only in the ignored profile.
-Activity mode: Planned focused planning-to-code verification walkthrough; learner may redirect.
+Activity and evidence: Prepared a concise reference walkthrough of the agreed rule “uncertain identifications never enter history.” The learner’s uncertainty simulation produced no history entry. Source inspection connects that observation to the PRD confidence policy, the specification’s normalizer contract, the server’s early return before persistence, and a focused regression test. This is a prepared reference route, not a completed interactive code tour or a claim that the latest tests were run.
+Route and stops: `src/lib/server/identification.ts > normalizeIdentification`; `src/app/api/identifications/route.ts > POST`; `src/components/PlantUpload.tsx > uncertain outcome`. Evidence: `tests/identifications-route.test.ts > does not save uncertainty and keeps provider failure distinct`, plus threshold/evidence cases in `tests/identification.test.ts`.
+Edit outcome: No edit is needed; the learner explicitly requested no additional Slice 3 changes. Do not invent an exercise or expand the guidance allowlist.
+Reflection: Optional transfer reflection remains for the final wrap-up; no learner answer is assumed or recorded publicly.
+Activity mode: Short planning-to-code reference walkthrough, tailored to an experienced full-stack developer practicing formal scope/PRD/spec decisions.
+App map: `devpost/app-map.html` created against code snapshot `a36112c`, with inspected source references and a script-free diagram. Opening it locally and confirming its presentation remain pending. The completion boxes stay open until final verification and the wrap-up are addressed.
 
 ## Revisions
 
@@ -159,3 +160,9 @@ Activity mode: Planned focused planning-to-code verification walkthrough; learne
 - Learner feedback: layouts felt crowded, text and buttons too large and misaligned, loading appeared at awkward times, and a loading card appeared over an open dialog. Moved every view into one aligned 760px column, reduced heading/button sizes (44px and 36px), added one-sentence next-step guidance per screen, and removed the hero illustration (`GardenScene`) and generation captions.
 - Replaced the centered loading card with a delayed, non-blocking status pill; inside the replacement dialog it renders as an inline row. History loads inside its section with placeholders instead of a page-level status. Pending buttons swap their icon for a spinner to keep width. Accessible names, roles, honesty copy, and test-visible text are preserved.
 - The assistant ran no installs, tests, lint, typecheck, build, server, or provider calls. Developer checks and Slice 3 learner review remain pending.
+
+### Slice 3 learner review and final-review preparation
+
+- The learner completed the connected authenticated photo/result/history/return flow, confirmed conservative guidance and non-weed presentation, and verified simulated uncertainty exclusion and idempotent save-only retry. No additional changes were requested; Slice 3 is checked complete.
+- Prior “awaiting learner review” entries are historical checkpoints now resolved by this report. Later UI verification remains distinct and pending developer-reported results.
+- Prepared the app-map reference route without executing tests, lint, typecheck, build, installs, a server, provider requests, or Git mutations. Final readiness confirmation and the learning wrap-up remain in 5-build.
