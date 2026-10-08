@@ -128,3 +128,9 @@ Activity mode: Planned focused planning-to-code verification walkthrough; learne
 - Added focused regression coverage for modal invocation/draft preservation, concurrent loading cleanup, restoration failures, and retries. Slice 3 remains unchecked pending learner review.
 
 - Refinement verification passed under the supported Node 24 runtime: 95 tests across 15 files, lint, typecheck, and production build. No new provider or database requests were required. Modal invocation is covered with simulated Clerk identity; live dialog interaction remains part of the learner review.
+
+### Centered loader refinement — awaiting developer checks
+
+- Replaced the corner status panel with one centered cream card, a custom sprout illustration, a restrained orbit, and a soft viewport veil. Reduced-motion preferences stop animation; underlying controls remain reachable.
+- Removed inline loading spinners/messages and busy button label replacements. Kept busy/disabled semantics and success, uncertainty, and failure feedback. Route fallback joins the shared registry; native replacement dialog receives the same loader through a portal.
+- Updated affected regression expectations and added overlapping route/page loader coverage. Per the learner’s instruction, the assistant ran no tests, lint, typecheck, build, installation, or server. Verification and Slice 3 learner review remain pending.
