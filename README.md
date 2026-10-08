@@ -2,7 +2,7 @@
 
 Plan a small food garden that works better together.
 
-All three slices are complete, including the authenticated learner reviews. Final verification of later UI refinements and the 5-build wrap-up remain pending. Visitors can generate a companion-placement guide; signed-in users can save one garden, safely replace it, identify plants, and restore identification history. Supported crops are tomato, carrot, onion, and basil in rectangular outdoor gardens or raised beds measuring 1–5 meters per dimension.
+All three slices are complete, including the authenticated learner reviews. Final verification of later UI refinements passed: 104 tests, lint, typecheck, and production build. The 5-build final review and learning wrap-up are complete; ready to start 6-ship. Visitors can generate a companion-placement guide; signed-in users can save one garden, safely replace it, identify plants, and restore identification history. Supported crops are tomato, carrot, onion, and basil in rectangular outdoor gardens or raised beds measuring 1–5 meters per dimension.
 
 ## Local setup
 
@@ -53,4 +53,4 @@ npm run test:integration
 
 The runner refuses a missing test URL or an application database target, applies committed migrations only to the test branch, and runs real PostgreSQL transaction checks. Cleanup deletes only records created by the test run. All seven checks passed against the guarded disposable branch. Do not use `prisma migrate reset` against the application database.
 
-`npm install` generates the ignored Prisma client without connecting to the database. Migration scripts suppress provider output so connection settings stay private. Ordinary unit/component tests use simulated identity/database responses and do not prove PostgreSQL rollback by themselves. The authenticated Slice 2 and Slice 3 learner checks passed. See [the build checklist](devpost/checklist.md) for remaining final verification and wrap-up steps.
+`npm install` generates the ignored Prisma client without connecting to the database. Migration scripts suppress provider output so connection settings stay private. Ordinary unit/component tests use simulated identity/database responses and do not prove PostgreSQL rollback by themselves. The authenticated Slice 2 and Slice 3 learner checks passed. See [the build checklist](devpost/checklist.md) for the completed verification and wrap-up record.
