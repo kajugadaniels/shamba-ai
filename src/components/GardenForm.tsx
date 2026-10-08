@@ -2,6 +2,7 @@
 
 import { CROP_IDS, CROPS, type CropId } from "@/lib/crops";
 import { PlantIcon } from "./PlantIcon";
+import { Button } from "./Button";
 import styles from "./GardenForm.module.css";
 
 export type FormValues = { width: string; length: string; crops: CropId[] };
@@ -45,9 +46,9 @@ export function GardenForm({ values, errors, busy, onChange, onGenerate }: {
       </div>
       {errors.crops ? <p id="crops-error" tabIndex={-1} className={styles.error}>{errors.crops}</p> : null}
     </fieldset>
-    <button className={styles.generate} type="submit" disabled={busy} aria-busy={busy}>
-      Generate Garden Plan <span aria-hidden="true">↗</span>
-    </button>
+    <Button className={styles.generate} type="submit" variant="primary" loading={busy}>
+      Generate Garden Plan
+    </Button>
     <p className={styles.bottomNote}>No account needed to start planning.</p>
   </form>;
 }
