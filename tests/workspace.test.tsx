@@ -87,7 +87,7 @@ describe("visitor planning experience", () => {
     render(<GardenWorkspace />);
     await fill();
     await userEvent.click(screen.getByRole("button", { name: /Generate Garden Plan/ }));
-    const loading = screen.getByRole("button", { name: /Creating your garden guide/ });
+    const loading = screen.getByRole("button", { name: /Generate Garden Plan/ });
     expect(loading).toBeDisabled();
     await userEvent.click(loading);
     expect(fetcher).toHaveBeenCalledTimes(1);
