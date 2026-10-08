@@ -79,11 +79,13 @@ npm run db:deploy               # prisma migrate deploy: apply committed migrati
 npm run dev                    # next dev; open http://localhost:3000
 ```
 
-During schema development only, `npm run db:migrate` runs `prisma migrate dev` against the development database. `npm test` runs Vitest; `npm run lint`, `npm run typecheck`, and `npm run build` verify the app. Build generates Prisma Client before `next build`. Never run tests that clear data against the application's saved-garden database.
+`npm run db:deploy` applies committed migrations; no `db:migrate` script is supplied. `npm test` runs Vitest; `npm run lint`, `npm run typecheck`, and `npm run build` verify the app. Installation generates Prisma Client through `postinstall`; `npm run db:generate` regenerates it explicitly. The build script runs `next build`. Never run tests that clear data against the application's saved-garden database.
 
 For Vercel: import the developer's repository, configure the same environment variables and Clerk application URLs, apply committed migrations separately with `db:deploy`, then build/deploy. Use Node runtime, Fluid Compute, and `maxDuration: 120` for analysis handlers; the planned upstream timeout is 90 seconds. Vercel documents a 4.5 MB request/response payload limit and a 300-second Hobby Fluid Compute duration limit; verify actual project settings before the demo. These are hosting limits, not provider latency promises.
 
 Record the complete journey locally or on Vercel. Submission still requires a short demo video and public GitHub repository; deployment is optional. No deployment occurs during planning.
+
+Public repository: https://github.com/kajugadaniels/shamba-ai — verified with unauthenticated HTTP 200 responses for the repository page and GitHub API. The audited public main commit is `ffe045c4efdd716a4847d6f18adf6f91bf5d88c7`; its 295 commits match the locally audited history. The demo-video URL remains pending. See `checklist.md > 6-ship Shipping Readiness` for audit scope and remaining submission checks.
 
 ## Look and Feel
 
