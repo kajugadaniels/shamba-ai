@@ -2,7 +2,7 @@
 
 Plan a small food garden that works better together.
 
-Slices 1 and 2 are complete, including the authenticated learner review. Slice 3 is implemented and mechanically verified, awaiting its learner review. Visitors can generate a companion-placement guide; signed-in users can save one garden, safely replace it, identify plants, and restore identification history. Supported crops are tomato, carrot, onion, and basil in rectangular outdoor gardens or raised beds measuring 1–5 meters per dimension.
+All three slices are complete, including the authenticated learner reviews. Final verification of later UI refinements and the 5-build wrap-up remain pending. Visitors can generate a companion-placement guide; signed-in users can save one garden, safely replace it, identify plants, and restore identification history. Supported crops are tomato, carrot, onion, and basil in rectangular outdoor gardens or raised beds measuring 1–5 meters per dimension.
 
 ## Local setup
 
@@ -41,7 +41,7 @@ A confident result requires a valid name, boolean classification, finite provide
 
 Signed result receipts bind save retries to the user and garden revision, avoiding another provider request. Replacement prevents an old result from attaching to the new garden. History is newest first and details show saved information without photos.
 
-For the Slice 3 learner check, use the real app at http://localhost:3000 to upload, identify, and reopen results after returning. Live identification spends provider quota; analysis has no automatic retry. A temporary development-only page at http://127.0.0.1:3100 provides explicitly labeled simulated weed/non-weed, uncertainty, API failure, and save failure states without quota. It uses real UI/photo preparation with simulated identity, API, and persistence; it does not prove authenticated integration and is not part of the application. Reloading it clears simulated history.
+To revisit the completed Slice 3 learner check, use the real app at http://localhost:3000 to upload, identify, and reopen results after returning. Live identification spends provider quota; analysis has no automatic retry. A temporary development-only page at http://127.0.0.1:3100 provides explicitly labeled simulated weed/non-weed, uncertainty, API failure, and save failure states without quota. It uses real UI/photo preparation with simulated identity, API, and persistence; it does not prove authenticated integration and is not part of the application. Reloading it clears simulated history.
 
 ## Disposable database checks
 
@@ -53,4 +53,4 @@ npm run test:integration
 
 The runner refuses a missing test URL or an application database target, applies committed migrations only to the test branch, and runs real PostgreSQL transaction checks. Cleanup deletes only records created by the test run. All seven checks passed against the guarded disposable branch. Do not use `prisma migrate reset` against the application database.
 
-`npm install` generates the ignored Prisma client without connecting to the database. Migration scripts suppress provider output so connection settings stay private. Ordinary unit/component tests use simulated identity/database responses and do not prove PostgreSQL rollback by themselves. The authenticated Slice 2 learner check passed. Slice 3 still awaits the learner’s live upload/history review.
+`npm install` generates the ignored Prisma client without connecting to the database. Migration scripts suppress provider output so connection settings stay private. Ordinary unit/component tests use simulated identity/database responses and do not prove PostgreSQL rollback by themselves. The authenticated Slice 2 and Slice 3 learner checks passed. See [the build checklist](devpost/checklist.md) for remaining final verification and wrap-up steps.
