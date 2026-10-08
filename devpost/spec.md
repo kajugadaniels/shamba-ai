@@ -5,7 +5,7 @@ status: approved
 
 # Shamba AI — Technical Specification
 
-Approved by the learner. This specification implements the approved scope and PRD, including signed receipts, garden revision guards, and the narrow reviewed guidance allowlist. Slice 1 is complete after learner feedback and verified refinements; Slice 2 is next and requires local Clerk/Neon configuration.
+Approved by the learner. This specification implements the approved scope and PRD, including signed receipts, garden revision guards, and the narrow reviewed guidance allowlist. Slices 1 and 2 are complete after verification and learner review; Slice 3 is implemented and mechanically verified, awaiting learner review.
 
 ## How This Works, In Plain Language
 
@@ -271,16 +271,17 @@ shamba-ai/
 │   │   ├── GardenForm.tsx + .module.css       # Dimensions and crop selection
 │   │   ├── GardenMap.tsx + .module.css        # Proportional labeled guide
 │   │   ├── GardenPlan.tsx + .module.css       # Summary/explanations/actions
-│   │   ├── MyGarden.tsx + .module.css         # Saved plan and history
+│   │   ├── MyGarden.tsx                       # Saved plan and history cards
 │   │   ├── ReplaceGardenDialog.tsx + .module.css # Destructive confirmation
 │   │   ├── PlantUpload.tsx + .module.css      # Preparation/preview/analysis
-│   │   ├── IdentificationResult.tsx + .module.css # Current/history result
-│   │   ├── IdentificationHistory.tsx + .module.css # Cards and retrieval states
+│   │   ├── IdentificationResult.tsx           # Current/history result, shared upload styles
+│   │   ├── HistoricalResult.tsx               # Owned detail retrieval states
 │   │   └── MotionProvider.tsx                # Reduced-motion defaults
 │   ├── lib/
 │   │   ├── types.ts                          # Normalized domain contracts
 │   │   ├── schemas.ts                        # Zod input and output checks
 │   │   ├── crops.ts                          # Four IDs, names, icons
+│   │   ├── guidance.ts                       # Shared reviewed whole-item allowlist
 │   │   ├── client/draft.ts                   # Same-tab draft preservation
 │   │   ├── client/image.ts                   # Bounded native compression
 │   │   └── server/
@@ -289,7 +290,7 @@ shamba-ai/
 │   │       ├── rapidapi.ts                   # Hosts, fetch, timeout/errors
 │   │       ├── companion.ts                  # Rows/evidence normalization
 │   │       ├── identification.ts             # Confidence/evidence policy
-│   │       ├── guidance.ts                   # Reviewed whole-item allowlist
+│   │       ├── upload.ts                     # Bounded multipart and image validation
 │   │       ├── receipts.ts                   # Signed plan/result receipts
 │   │       ├── gardens.ts                    # Transactional replacement
 │   │       └── history.ts                    # Owned idempotent result saves
