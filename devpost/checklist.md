@@ -7,7 +7,7 @@ status: approved
 
 Build mode: learn — pause after each mechanically verified slice for the learner check and a brief explanation of important implementation decisions. Keep final learner review and feedback.
 
-The scope, PRD, and technical specification are approved. The learner approved this build order without reordering or merging slices. Slice 1 is complete; Slice 2 has passed mechanical verification and awaits the authenticated browser/learner review. Each slice delivers usable behavior across the necessary layers. Styling, responsive behavior, error handling, and verification are part of each slice rather than deferred plumbing tasks.
+The scope, PRD, and technical specification are approved. The learner approved this build order without reordering or merging slices. Slice 1 is complete; Slice 2 is complete after mechanical verification and the learner’s authenticated review. Slice 3 is implemented and mechanically verified, awaiting its learner review. Each slice delivers usable behavior across the necessary layers. Styling, responsive behavior, error handling, and verification are part of each slice rather than deferred plumbing tasks.
 
 Git execution override: `AGENTS.md` and `git.md` require developer-only Git mutations. `Commit:` describes the checkpoint intent; the assistant supplies a separate exact-path add/Conventional Commit block for every changed non-ignored file, never executes those commands, and never stages secrets or the learner profile. Record implementation verification separately from developer commit confirmation; never claim a commit happened without read-only evidence or developer confirmation.
 
@@ -23,7 +23,7 @@ Git execution override: `AGENTS.md` and `git.md` require developer-only Git muta
   Learner check: Open http://localhost:3000, try an invalid dimension and fewer than two crops, then generate a valid plan. Confirm crop labels, dimensions, advisory wording, and mobile readability. Choose Change Garden and confirm the inputs remain available. Report what feels clear or needs adjustment.
   Commit: Planning checkpoint intent: `feat(planning): deliver visitor garden guide`; provide per-file commands under the manual Git rules.
 
-- [ ] **2. Save, restore, and safely replace one garden**
+- [x] **2. Save, restore, and safely replace one garden**
   Becomes usable: Save Garden introduces Clerk sign-in, the plan persists in Neon, returning sign-in restores it, and editing/canceling leave the saved plan untouched until a confirmed replacement succeeds.
   Why now: Establishes the garden identity and revision that the identification flow needs, while proving continuity and data-loss safeguards before attaching plant history.
   PRD ref: `prd.md > Authentication and Garden Saving`, `prd.md > Changing and Replacing a Garden`, `prd.md > Save After Signing In to an Existing Garden`, `prd.md > My Garden`, `prd.md > Garden History and Restoration`.
@@ -45,13 +45,13 @@ Git execution override: `AGENTS.md` and `git.md` require developer-only Git muta
 
 ## Current Checkpoint
 
-Slice 1 is complete. The learner reported that the planning flow looked good and conditionally approved completion after two requested refinements; both are implemented and verified. Slice 2 implementation is in progress. The five local configuration values are present; DIRECT_URL was derived locally from the supplied Neon pooled URL at the learner’s request. No values were printed or recorded.
+Slices 1 and 2 are complete after verification and learner feedback. Slice 3 is implemented and mechanically verified; its checkbox remains open until the learner completes the identification/history review.
 
-- Checks passed: 42 tests across five Vitest files, ESLint, TypeScript, and production build on Node 24.19.0 / Next.js 16.4.0.
-- Browser checks passed: inline validation, preview/change preserving inputs, widths 320/390/768/1440, reduced motion, extreme garden proportions, and no page errors. Both landscape and portrait extreme ratios use the numbered crop key. Strong conflicts now have a distinct calm warning outline and badge; ordinary advisories retain softer amber styling.
-- Live integration: one companion request through the running app, HTTP 200, 1.5m × 2.5m tomato/basil guide; no automatic retries or weed calls. Sanitized observations are in the existing API request ledger and verification notes. Mocked edge-case checks consume no quota.
-- Local app is running at http://localhost:3000. Slice 1 originally disabled Save Garden; Slice 2 now connects it to Clerk and Neon.
-- Learner feedback: received and resolved; the learner authorized completion after these checks passed. The working tree was clean before refinements, confirming the preceding checkpoint had no uncommitted changes. Refinement commits remain developer actions; exact per-file commands are supplied and no assistant Git mutations occur.
+- Checks passed: 92 focused tests across 14 Vitest files, seven guarded disposable PostgreSQL integration checks, lint, typecheck, and production build.
+- Browser mechanics passed at widths 320/390/768/1440 with keyboard use and reduced motion using a clearly labeled isolated UI harness. Real browser compression reduced an oversized valid JPEG to 269,356 bytes. Simulated uncertainty, failed saves, receipt-only retry, non-weed details, reviewed weed guidance, and history navigation passed without horizontal overflow or page errors.
+- No new RapidAPI requests were made during Slice 3 implementation. Recorded live responses and mocked transport checks establish the contract; actual authenticated upload/history restoration still needs the learner check.
+- Use the real app at http://localhost:3000 for the authenticated flow and the temporary labeled simulation at http://127.0.0.1:3100 for failure states without quota. The simulation has no real authentication, provider calls, or database persistence.
+- No Git mutations were executed. Commit commands are supplied per changed non-ignored file; developer commit confirmation remains separate from verification.
 
 ## Hands-on Checkpoints
 
@@ -103,3 +103,21 @@ Activity mode: Planned focused planning-to-code verification walkthrough; learne
 - The first run exposed transaction acquisition timeouts on initial connections. Increased transaction acquisition and execution deadlines to bounded 10-second values; retained serializable isolation and the existing three-attempt conflict limit. This addresses observed startup latency without weakening replacement safety or adding upstream retries.
 - Reverification passed: five real database integration tests, 57 focused tests across eight files, lint, typecheck, and production build. No RapidAPI calls were made. Test cleanup targets only run-specific fixture gardens in the disposable database; a guarded read-only follow-up confirmed zero remaining test fixture gardens.
 - Authenticated browser/learner instructions have been presented for save, return, edit/cancel, confirmed replacement, and visitor-draft sign-in to an existing garden. Results are pending; do not infer success from service/RTL tests. Slice 2 stays unchecked until the learner completes the review; Slice 3 has not started.
+
+### Slice 2 learner review and sign-out recovery — 2026-10-08
+
+- The learner completed authenticated save/return, edit/cancel, replacement cancel/confirm, and visitor-draft sign-in to an existing account, reported all behaved as expected, and requested proceeding to Slice 3.
+- Fixed the requested failed sign-out recovery before advancing. Private local state is cleared immediately as before; rejected sign-out reloads the authenticated garden through the owned read endpoint and displays retry feedback. Account changes/unmount prevent recovery into the wrong workspace; canceled requests cannot repopulate the cleared draft. Successful sign-out behavior is unchanged.
+- Regression verification passed: 58 focused tests, lint, typecheck, and production build. Existing five disposable PostgreSQL checks remain passing; this UI-only fix does not change database transactions. Slice 2 is checked complete; manual Git commands remain the developer’s responsibility.
+- Slice 3 has begun under the approved order and learn mode. Keep the two-sentence guidance allowlist and deterministic confidence rule unchanged.
+
+### Slice 3 mechanical verification — 2026-10-08
+
+- Implemented temporary photo preparation/upload, independent server validation, provider normalization, deterministic confidence/evidence checks, weed/non-weed results, automatically saved history, owned details, and signed save-only retries. The reviewed two-sentence guidance allowlist remains unchanged; filtered-out advice produces the approved fallback.
+- Revision/ownership checks run before provider analysis and inside persistence transactions. Seven actual PostgreSQL checks passed only against the guarded disposable branch, including idempotent identification saves, stale receipts after replacement, and concurrent identification/replacement preventing old-revision history from remaining in the new garden.
+- Final unit/component verification passed: 92 tests across 14 files, ESLint, TypeScript, and production build. Tests cover recorded dandelion/basil responses, explicit uncertainty/failure simulations, evidence/receipt validation, upload boundaries, bounded compression, exact prepared preview/upload, and failed sign-out recovery.
+- Isolated browser verification passed at 320/390/768/1440 pixels, with keyboard navigation and reduced motion. A valid oversized JPEG was compressed by the native browser pipeline to 269,356 bytes; result/history navigation and simulated uncertainty/save failure were checked. These are simulated UI checks, not authenticated provider/database end-to-end claims.
+- Internal file-structure adjustment: share the conservative guidance policy between server validation and result UI; keep history cards in MyGarden and use HistoricalResult for owned detail retrieval. This preserves the approved behavior without extra product features.
+- Awaiting the learner’s real authenticated upload, identification, history/details, and returning-session check. Slice 3, final review, and learning wrap-up remain unchecked.
+
+- Local startup follow-up: Turbopack cold compilation stalled after the passing build. Restarted the development server with `npm run dev -- --webpack`; it reported ready at localhost:3000, but the bounded signed-out route smoke check timed out. Authenticated Slice 3 runtime readiness is therefore still pending learner confirmation. No provider request was made by this check.
