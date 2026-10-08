@@ -12,5 +12,5 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="en"><body className={manrope.variable}><ClerkProvider signInUrl="/sign-in" signUpUrl="/sign-up" signInForceRedirectUrl="/" signUpForceRedirectUrl="/" appearance={{ variables: { colorPrimary: "#1F4D3A", borderRadius: "12px", fontFamily: "var(--font-manrope)" } }}><MotionProvider><GlobalLoadingProvider>{children}</GlobalLoadingProvider></MotionProvider></ClerkProvider></body></html>;
+  return <html lang="en"><body className={manrope.variable}><ClerkProvider signInUrl="/sign-in" signUpUrl="/sign-up" signInForceRedirectUrl="/" signUpForceRedirectUrl="/" appearance={{ variables: { colorPrimary: "#1F4D3A", borderRadius: "12px", fontFamily: "var(--font-manrope)" }, elements: { formButtonPrimary: { height: "var(--button-height)", minHeight: "var(--button-height)", paddingBlock: "0" }, socialButtonsBlockButton: { height: "var(--button-height)", minHeight: "var(--button-height)", paddingBlock: "0" } } }}><MotionProvider><GlobalLoadingProvider>{children}</GlobalLoadingProvider></MotionProvider></ClerkProvider></body></html>;
 }
