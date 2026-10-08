@@ -1,11 +1,16 @@
-import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { GardenWorkspace } from "@/components/GardenWorkspace";
 import { GardenMap } from "@/components/GardenMap";
 import { GardenPlan } from "@/components/GardenPlan";
 import { normalizeCompanion } from "@/lib/server/companion";
 import two from "../devpost/api-checks/companion-two-decimal.json";
+
+beforeEach(() => {
+  HTMLDialogElement.prototype.showModal = function () { this.setAttribute("open", ""); };
+  HTMLDialogElement.prototype.close = function () { this.removeAttribute("open"); };
+});
 
 async function fill() {
   fireEvent.change(screen.getByLabelText(/Width/), { target: { value: "1.5" } });
@@ -93,4 +98,27 @@ describe("visitor planning experience", () => {
     await userEvent.click(loading);
     expect(fetcher).toHaveBeenCalledTimes(1);
   });
+  it("cancels generation with inputs intact and ignores a late canceled response", async () => {
+    const requests: Array<{ resolve: (response: Response) => void; signal: AbortSignal }> = [];
+    const fetcher = vi.fn().mockImplementation((_url, options) => new Promise<Response>((resolve) => requests.push({ resolve, signal: options.signal })));
+    vi.stubGlobal("fetch", fetcher); render(<GardenWorkspace />);
+    await fill();
+    await userEvent.click(screen.getByRole("button", { name: /Generate Garden Plan/ }));
+    expect(screen.getByRole("dialog", { name: "Growing your garden plan" })).toBeInTheDocument();
+    await userEvent.click(screen.getByRole("button", { name: "Cancel generation" }));
+    expect(requests[0].signal.aborted).toBe(true);
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    expect(screen.getByLabelText(/Width/)).toHaveValue(1.5);
+    expect(screen.getByRole("button", { name: "Basil" })).toHaveAttribute("aria-pressed", "true");
+    await userEvent.click(screen.getByRole("button", { name: /Generate Garden Plan/ }));
+    const plan = normalizeCompanion(two.response, { widthM: 1.5, lengthM: 2.5, crops: ["tomato", "basil"] });
+    await act(async () => requests[0].resolve(Response.json({ plan, receipt: "late-canceled-receipt" })));
+    expect(screen.getByRole("dialog", { name: "Growing your garden plan" })).toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: "Your Garden Plan" })).not.toBeInTheDocument();
+    await act(async () => requests[1].resolve(Response.json({ plan, receipt: "current-receipt" })));
+    expect(await screen.findByRole("heading", { name: "Your Garden Plan" })).toBeInTheDocument();
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    expect(fetcher).toHaveBeenCalledTimes(2);
+  });
+
 });
