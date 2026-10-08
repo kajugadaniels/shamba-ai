@@ -6,7 +6,7 @@ All three slices are complete, including the authenticated learner reviews. Fina
 
 ## Local setup
 
-Use Node 22.12+ or Node 24 and npm. This build was verified with the installed Node 24. Keep `.env.local` ignored; configure `RAPIDAPI_KEY` for both subscribed services and a random server-only `APP_SIGNING_SECRET` of at least 32 bytes. `.env.example` contains placeholders only. Configure `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`, `CLERK_SECRET_KEY`, pooled Neon `DATABASE_URL`, and direct Neon `DIRECT_URL`. Only the Clerk publishable key belongs in a `NEXT_PUBLIC_` variable. Never expose server secrets.
+Use Node 22.12+ or Node 24 and npm. This build was verified with the installed Node 24. Copy `.env.example` to `.env.local` and replace its placeholders with your own service configuration. Keep `.env.local` ignored; configure `RAPIDAPI_KEY` for both subscribed services and a random server-only `APP_SIGNING_SECRET` of at least 32 bytes. `.env.example` contains placeholders only. Configure `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`, `CLERK_SECRET_KEY`, pooled Neon `DATABASE_URL`, and direct Neon `DIRECT_URL`. Only the Clerk publishable key belongs in a `NEXT_PUBLIC_` variable. Never expose server secrets.
 
 ```bash
 npm install
@@ -41,7 +41,7 @@ A confident result requires a valid name, boolean classification, finite provide
 
 Signed result receipts bind save retries to the user and garden revision, avoiding another provider request. Replacement prevents an old result from attaching to the new garden. History is newest first and details show saved information without photos.
 
-To revisit the completed Slice 3 learner check, use the real app at http://localhost:3000 to upload, identify, and reopen results after returning. Live identification spends provider quota; analysis has no automatic retry. A temporary development-only page at http://127.0.0.1:3100 provides explicitly labeled simulated weed/non-weed, uncertainty, API failure, and save failure states without quota. It uses real UI/photo preparation with simulated identity, API, and persistence; it does not prove authenticated integration and is not part of the application. Reloading it clears simulated history.
+To revisit the completed Slice 3 learner check, use the app at http://localhost:3000 to upload, identify, and reopen results after returning. Live identification spends provider quota; analysis has no automatic retry. Uncertainty and save-failure regression tests use explicitly simulated provider/persistence responses without spending quota. The temporary browser simulation used during development is not included in this repository; no separate simulation server is required for setup.
 
 ## Disposable database checks
 
