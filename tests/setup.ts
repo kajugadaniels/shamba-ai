@@ -3,7 +3,7 @@ import { afterEach, vi } from "vitest";
 import { cleanup } from "@testing-library/react";
 
 vi.mock("server-only", () => ({}));
-Object.defineProperty(window, "matchMedia", { writable: true, value: (query: string) => ({
+if (typeof window !== "undefined") Object.defineProperty(window, "matchMedia", { writable: true, value: (query: string) => ({
   matches: false, media: query, onchange: null,
   addListener: vi.fn(), removeListener: vi.fn(), addEventListener: vi.fn(), removeEventListener: vi.fn(), dispatchEvent: vi.fn(),
 }) });
