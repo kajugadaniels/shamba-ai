@@ -94,4 +94,25 @@ describe("saved garden journey with simulated server responses", () => {
     expect(saves).toBe(2);
   });
 
+  it("reloads the owned saved garden after failed sign-out without restoring private drafts", async () => {
+    const fetcher = vi.fn().mockImplementation((url) => Promise.resolve(Response.json(url === "/api/garden" ? { garden: saved } : { history: [] })));
+    vi.stubGlobal("fetch", fetcher);
+    let rejectSignOut!: (reason: Error) => void;
+    const signOut = vi.fn().mockReturnValue(new Promise<void>((_, reject) => { rejectSignOut = reject; }));
+    render(<GardenWorkspace userId="owner-a" onSignOut={signOut} />);
+    await screen.findByRole("heading", { name: "My Garden" });
+    await userEvent.click(screen.getByRole("button", { name: "Change Garden" }));
+    fireEvent.change(screen.getByLabelText(/Width/), { target: { value: "4" } });
+    await userEvent.click(screen.getByRole("button", { name: "Sign out" }));
+    expect(screen.getByLabelText(/Width/)).toHaveValue(null);
+    expect(screen.getByRole("button", { name: "Signing out…" })).toBeDisabled();
+    rejectSignOut(new Error("simulated Clerk failure"));
+    expect(await screen.findByRole("heading", { name: "My Garden" })).toBeVisible();
+    expect(screen.getByRole("alert")).toHaveTextContent("Sign-out could not finish");
+    expect(fetcher.mock.calls.filter((call) => call[0] === "/api/garden")).toHaveLength(2);
+    expect(sessionStorage.length).toBe(0);
+    expect(screen.queryByLabelText(/Width/)).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Sign out" })).toBeEnabled();
+  });
+
 });
