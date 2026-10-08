@@ -26,8 +26,5 @@
 .saved { font-size: 13px; color: var(--forest); }
 @media (max-width: 440px) { .actions { flex-direction: column; } .actions button { width: 100%; } }
 
-.spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid var(--border); border-top-color: var(--forest); border-radius: 50%; margin-right: 8px; animation: spin .8s linear infinite; }
-@keyframes spin { to { transform: rotate(360deg); } }
-@media (prefers-reduced-motion: reduce) { .spinner { animation: none; } }
 
 .error { border: 1px solid #e5bbb0; border-radius: 12px; background: #fbefea; color: var(--error); padding: 18px; margin: 20px 0; font-size: 14px; line-height: 1.7; }
