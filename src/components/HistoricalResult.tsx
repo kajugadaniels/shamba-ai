@@ -16,5 +16,5 @@ export function HistoricalResult({ id, onBack }: { id: string; onBack: () => voi
     }).catch(() => { if (!controller.signal.aborted) setFailure(true); });
     return () => controller.abort();
   }, [id, retry]);
-  return result ? <IdentificationResult result={result} onBack={onBack} /> : <section className={styles.result}>{failure ? <div role="alert"><p>This identification could not be loaded.</p><button onClick={() => { setFailure(false); setResult(null); setRetry((value) => value + 1); }}>Retry loading result</button></div> : <p role="status">Loading identification…</p>}<button onClick={onBack}>Back to my garden</button></section>;
+  return result ? <IdentificationResult result={result} onBack={onBack} /> : <section className={styles.result} aria-busy={!failure}>{failure ? <div role="alert"><p>This identification could not be loaded.</p><button onClick={() => { setFailure(false); setResult(null); setRetry((value) => value + 1); }}>Retry loading result</button></div> : null}<button onClick={onBack}>Back to my garden</button></section>;
 }
