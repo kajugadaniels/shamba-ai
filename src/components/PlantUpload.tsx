@@ -6,6 +6,7 @@ import { identificationResponseSchema, savedGardenSchema } from "@/lib/schemas";
 import { prepareImage } from "@/lib/client/image";
 import { IdentificationResult } from "./IdentificationResult";
 import { usePageLoading } from "./GlobalLoading";
+import { Button } from "./Button";
 import styles from "./PlantUpload.module.css";
 type ResponseData = z.infer<typeof identificationResponseSchema>;
 export function PlantUpload({ garden, onBack, onSignIn }: { garden: z.infer<typeof savedGardenSchema>; onBack: () => void; onSignIn?: () => void }) {
@@ -55,14 +56,17 @@ export function PlantUpload({ garden, onBack, onSignIn }: { garden: z.infer<type
     <h2 tabIndex={-1} ref={heading}>Identify an unwanted plant</h2>
     <p className={styles.intro}>Upload a clear photo showing the plant, especially its leaves and as much of the whole plant as possible.</p>
     <p className={styles.garden}>Your saved garden · {garden.plan.input.widthM}m × {garden.plan.input.lengthM}m</p>
-    {failure ? <div role="alert" className={styles.error}><p>{failure}</p>{/Sign in/i.test(failure) ? <button onClick={onSignIn}>Sign in again to retry</button> : null}</div> : null}
+    {failure ? <div role="alert" className={styles.error}><p>{failure}</p>{/Sign in/i.test(failure) ? <Button onClick={onSignIn}>Sign in again to retry</Button> : null}</div> : null}
     {file && preview ? <div className={styles.preview}>{/* Native blob preview is temporary and needs no image optimization. */}<img src={preview} alt="Processed plant photo that will be analyzed" /></div> : null}
     {outcome?.outcome === "identified" ? <IdentificationResult result={outcome.result} saved={outcome.saveState === "saved"} saveMessage={outcome.saveMessage} busy={busy} onRetry={outcome.saveState === "failed" && !retryUnavailable ? () => { void identify(true); } : undefined} onBack={onBack} onAnother={() => { void choose(undefined); }} />
-      : outcome?.outcome === "uncertain" ? <div role="status" className={styles.uncertain}><h3>We couldn&apos;t confidently identify this plant.</h3><p>Try a clearer photo in good light, showing the leaves and the whole plant.</p><button onClick={() => { void choose(undefined); }}>Try another photo</button></div>
+      : outcome?.outcome === "uncertain" ? <div role="status" className={styles.uncertain}><h3>We couldn&apos;t confidently identify this plant.</h3><p>Try a clearer photo in good light, showing the leaves and the whole plant.</p><Button onClick={() => { void choose(undefined); }}>Try another photo</Button></div>
       : <><label className={styles.picker}>Choose or replace photo<input type="file" accept="image/jpeg,image/png,image/webp" disabled={busy} onChange={(event) => { const selected = event.target.files?.[0]; event.target.value = ""; void choose(selected); }} /></label>
-        {file ? <button disabled={busy} onClick={() => { void choose(undefined); }}>Remove photo</button> : null}
-        <div className={styles.actions}><button disabled={!file || preparing || busy} onClick={() => { void identify(); }}>Identify Plant</button></div>
-        </>}
-    {outcome?.outcome !== "identified" ? <button className={styles.back} disabled={busy} onClick={onBack}>Back to my garden</button> : null}
+        <div className={styles.actions}>
+          <Button variant="primary" loading={busy} disabled={!file || preparing} onClick={() => { void identify(); }}>Identify Plant</Button>
+          {file ? <Button variant="secondary" disabled={busy} onClick={() => { void choose(undefined); }}>Remove photo</Button> : null}
+          <Button disabled={busy} onClick={onBack}>Back to my garden</Button>
+        </div>
+      </>}
+    {outcome?.outcome === "uncertain" ? <Button className={styles.back} onClick={onBack}>Back to my garden</Button> : null}
   </section>;
 }
