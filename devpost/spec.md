@@ -267,6 +267,7 @@ shamba-ai/
 │   │       └── identifications/[id]/route.ts  # Owned historical details
 │   ├── components/
 │   │   ├── GardenWorkspace.tsx + .module.css  # Draft/saved/auth orchestration
+│   │   ├── Button.tsx + .module.css           # Shared 48px variants and pending state
 │   │   ├── PlantIcon.tsx                      # Shared local vector crop icons
 │   │   ├── GardenForm.tsx + .module.css       # Dimensions and crop selection
 │   │   ├── GardenMap.tsx + .module.css        # Proportional labeled guide
@@ -344,4 +345,8 @@ One Next.js application, two database models, one saved garden, native bounded p
 
 ### Approved modal authentication and global loading refinement
 
-Use Clerk’s `openSignIn` with sign-up enabled for in-app authentication actions, preserving the draft before opening. Keep direct auth routes for callbacks and return to the workspace after completion. A layout-level GlobalLoadingProvider tracks independently owned operation tokens; usePageLoading registers active component operations and removes them on completion/unmount. The shared accessible loading indicator is a centered sprout card on a soft viewport veil, with pointer events passing through and reduced motion respected. Remove duplicate inline progress/spinners, keep stable disabled action labels and aria-busy semantics, and retain success/uncertainty/error messages. App Router loading.tsx registers with the same provider so route suspension cannot create a second card. Portal the single card into the owned native replacement dialog while it occupies the top layer.
+Use Clerk’s `openSignIn` with sign-up enabled for in-app authentication actions, preserving the draft before opening. Keep direct auth routes for callbacks and return to the workspace after completion. A layout-level GlobalLoadingProvider tracks independently owned operation tokens; usePageLoading registers active component operations and removes them on completion/unmount. The shared accessible loading indicator is a centered sprout card on a soft viewport veil, with pointer events passing through and reduced motion respected. Remove duplicate inline progress messages; shared action buttons may show a decorative spinner while keeping stable disabled labels and aria-busy semantics, and retain success/uncertainty/error messages. App Router loading.tsx registers with the same provider so route suspension cannot create a second card. Portal the single card into the owned native replacement dialog while it occupies the top layer.
+
+### Shared action buttons
+
+Button.tsx owns primary/secondary/outline/destructive variants, a decorative trailing loading spinner, stable labels, and automatic disabling while pending. Global CSS defines --button-height: 48px and --button-radius: 12px; Button.module.css owns common dimensions and interactions. Crop selectors and Clerk primary/social form buttons use the same height token. Remove per-page button dimension/color overrides; local modules retain placement, spacing, width, and mobile stacking. Request retry controls remain visible while pending so their own spinner can be shown.
