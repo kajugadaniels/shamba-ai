@@ -279,3 +279,9 @@ No later-release features are committed. Deployment remains optional; required s
 - Implement the agreed JPG/PNG/WEBP browser preparation and 3 MB client/server limit. Define bounded compression settings, date/time presentation, and handling of session expiry or garden replacement during an in-flight identification so results cannot attach to the wrong garden.
 
 These investigations belong in the technical specification; they do not authorize additional product features.
+
+### Approved experience refinement
+
+Sign in, Save Garden authentication, and session-recovery sign-in open a dialog over the current experience. Preserve drafts before authentication; closing the dialog leaves the current preview available. Existing replacement confirmation remains required after signing into an account with a saved garden. Direct authentication routes remain available for external callbacks.
+
+A shared, non-blocking loading status appears during account readiness, garden restoration/generation/saving, history/details retrieval, photo preparation, and identification/save retries. Local progress text remains available. Concurrent requests keep the status visible until all finish; cancellation and failure clear it. Respect reduced motion and keep retry controls usable.
