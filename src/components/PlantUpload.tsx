@@ -51,7 +51,7 @@ export function PlantUpload({ garden, onBack, onSignIn }: { garden: z.infer<type
       if (!active.signal.aborted) setFailure(error instanceof Error && !["ZodError", "TypeError", "SyntaxError", "TimeoutError"].includes(error.name) ? error.message : "The request could not complete. Check your connection and retry.");
     } finally { lock.current = false; controller.current = null; if (!active.signal.aborted) setBusy(false); }
   }
-  return <section className={styles.upload}>
+  return <section className={styles.upload} aria-busy={preparing || busy}>
     <h2 tabIndex={-1} ref={heading}>Identify an unwanted plant</h2>
     <p className={styles.intro}>Upload a clear photo showing the plant, especially its leaves and as much of the whole plant as possible.</p>
     <p className={styles.garden}>Your saved garden · {garden.plan.input.widthM}m × {garden.plan.input.lengthM}m</p>
@@ -60,10 +60,9 @@ export function PlantUpload({ garden, onBack, onSignIn }: { garden: z.infer<type
     {outcome?.outcome === "identified" ? <IdentificationResult result={outcome.result} saved={outcome.saveState === "saved"} saveMessage={outcome.saveMessage} busy={busy} onRetry={outcome.saveState === "failed" && !retryUnavailable ? () => { void identify(true); } : undefined} onBack={onBack} onAnother={() => { void choose(undefined); }} />
       : outcome?.outcome === "uncertain" ? <div role="status" className={styles.uncertain}><h3>We couldn&apos;t confidently identify this plant.</h3><p>Try a clearer photo in good light, showing the leaves and the whole plant.</p><button onClick={() => { void choose(undefined); }}>Try another photo</button></div>
       : <><label className={styles.picker}>Choose or replace photo<input type="file" accept="image/jpeg,image/png,image/webp" disabled={busy} onChange={(event) => { const selected = event.target.files?.[0]; event.target.value = ""; void choose(selected); }} /></label>
-        {preparing ? <p role="status">Preparing your photo…</p> : null}
         {file ? <button disabled={busy} onClick={() => { void choose(undefined); }}>Remove photo</button> : null}
-        <div className={styles.actions}><button disabled={!file || preparing || busy} onClick={() => { void identify(); }}>{busy ? "Identifying plant…" : "Identify Plant"}</button></div>
-        {busy ? <p role="status"><span className={styles.spinner} aria-hidden="true" />Analyzing your photo. This can take a moment.</p> : null}</>}
+        <div className={styles.actions}><button disabled={!file || preparing || busy} onClick={() => { void identify(); }}>Identify Plant</button></div>
+        </>}
     {outcome?.outcome !== "identified" ? <button className={styles.back} disabled={busy} onClick={onBack}>Back to my garden</button> : null}
   </section>;
 }
