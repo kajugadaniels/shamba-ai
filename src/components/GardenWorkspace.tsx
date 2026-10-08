@@ -41,7 +41,7 @@ export function GardenWorkspace({ userId = null, authReady = true, onSignOut, on
   const formStart = useRef<HTMLDivElement>(null);
   const reduce = useReducedMotion();
   usePageLoading(!authReady || restoring || busy || saving || signingOut,
-    !authReady ? "Connecting your account…" : restoring ? "Loading your saved garden…" : saving ? "Saving your garden…" : signingOut ? "Signing out…" : "Creating your garden guide…");
+    !authReady ? "Connecting your account…" : restoring ? "Loading your saved garden…" : saving ? (confirming ? "Replacing your garden…" : "Saving your garden…") : signingOut ? "Signing out…" : "Creating your garden guide…");
   useEffect(() => { mounted.current = true; return () => { mounted.current = false; controller.current?.abort(); }; }, []);
 
   useEffect(() => {
@@ -168,15 +168,14 @@ export function GardenWorkspace({ userId = null, authReady = true, onSignOut, on
 
   return <main className={styles.workspace}>
     <header className={styles.brand}><span className={styles.brandIcon}><PlantIcon crop="sprout" /></span><span>Shamba AI</span></header>
-    <nav className={styles.account} aria-label="Account">{userId ? <button onClick={() => { void signOut(); }} disabled={saving || signingOut}>{signingOut ? "Signing out…" : "Sign out"}</button> : <button onClick={signIn} disabled={!authReady}>Sign in</button>}</nav>
+    <nav className={styles.account} aria-label="Account">{userId ? <button onClick={() => { void signOut(); }} disabled={saving || signingOut} aria-busy={signingOut}>Sign out</button> : <button onClick={signIn} disabled={!authReady}>Sign in</button>}</nav>
     <div className={styles.intro} ref={formStart} tabIndex={-1}>
       <h1>Plan a small food garden<br className={styles.lineBreak} /> that works better together.</h1>
       <p>A little space. A few crops. A good place to start.</p>
     </div>
-    <div role="status" aria-live="polite" className="sr-only">{busy ? "Creating your garden guide. Please wait." : ""}</div>
     {failure ? <div className={styles.error} role="alert"><strong>Let&apos;s try that again</strong><p>{failure}</p>{sessionExpired ? <button onClick={signIn} disabled={!authReady}>Sign in again</button> : null}</div> : null}
     {restoreFailure ? <div role="alert" className={styles.error}><p>{restoreFailure}</p><button onClick={() => setRestoreAttempt((attempt) => attempt + 1)}>Retry loading garden</button></div> : null}
-    {restoring ? <p role="status">Loading your saved garden…</p> : saved && identifying ? <PlantUpload garden={saved} onSignIn={onSignIn} onBack={() => setIdentifying(false)} /> : saved && detailId ? <HistoricalResult id={detailId} onBack={() => setDetailId(null)} /> : saved && !editing && !draft ? <>
+    {restoring ? null : saved && identifying ? <PlantUpload garden={saved} onSignIn={onSignIn} onBack={() => setIdentifying(false)} /> : saved && detailId ? <HistoricalResult id={detailId} onBack={() => setDetailId(null)} /> : saved && !editing && !draft ? <>
       <MyGarden key={`${saved.id}:${saved.revision}`} plan={saved.plan} onChange={change} onIdentify={() => setIdentifying(true)} onDetails={setDetailId} />
     </> : draft ? <motion.div key={draft.plan.planId} initial={{ opacity: 0, y: reduce ? 0 : 8 }} animate={{ opacity: 1, y: 0 }}>
       <GardenPlan plan={draft.plan} onChange={change} onSave={() => { void save(); }} saving={saving} saveDisabled={!authReady || sessionExpired || restoring || Boolean(restoreFailure)} />
