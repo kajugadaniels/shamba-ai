@@ -1,17 +1,18 @@
 /* eslint-disable @next/next/no-img-element -- Blob URLs are temporary processed previews. */
 "use client";
 import { useEffect, useRef, useState } from "react";
-import Link from "next/link";
 import { z } from "zod";
 import { identificationResponseSchema, savedGardenSchema } from "@/lib/schemas";
 import { prepareImage } from "@/lib/client/image";
 import { IdentificationResult } from "./IdentificationResult";
+import { usePageLoading } from "./GlobalLoading";
 import styles from "./PlantUpload.module.css";
 type ResponseData = z.infer<typeof identificationResponseSchema>;
-export function PlantUpload({ garden, onBack }: { garden: z.infer<typeof savedGardenSchema>; onBack: () => void }) {
+export function PlantUpload({ garden, onBack, onSignIn }: { garden: z.infer<typeof savedGardenSchema>; onBack: () => void; onSignIn?: () => void }) {
   const [file, setFile] = useState<File | null>(null), [preview, setPreview] = useState("");
   const [preparing, setPreparing] = useState(false), [busy, setBusy] = useState(false), [failure, setFailure] = useState("");
   const [outcome, setOutcome] = useState<ResponseData | null>(null), [retryUnavailable, setRetryUnavailable] = useState(false);
+  usePageLoading(preparing || busy, preparing ? "Preparing your photo…" : outcome?.outcome === "identified" ? "Saving identification…" : "Identifying your plant…");
   const mounted = useRef(true);
   const sequence = useRef(0), controller = useRef<AbortController | null>(null), lock = useRef(false), requestId = useRef<string | null>(null);
   const heading = useRef<HTMLHeadingElement>(null);
@@ -54,7 +55,7 @@ export function PlantUpload({ garden, onBack }: { garden: z.infer<typeof savedGa
     <h2 tabIndex={-1} ref={heading}>Identify an unwanted plant</h2>
     <p className={styles.intro}>Upload a clear photo showing the plant, especially its leaves and as much of the whole plant as possible.</p>
     <p className={styles.garden}>Your saved garden · {garden.plan.input.widthM}m × {garden.plan.input.lengthM}m</p>
-    {failure ? <div role="alert" className={styles.error}><p>{failure}</p>{/Sign in/i.test(failure) ? <Link href="/sign-in" target="_blank" rel="noopener noreferrer">Sign in again in a new tab, then return here to retry</Link> : null}</div> : null}
+    {failure ? <div role="alert" className={styles.error}><p>{failure}</p>{/Sign in/i.test(failure) ? <button onClick={onSignIn}>Sign in again to retry</button> : null}</div> : null}
     {file && preview ? <div className={styles.preview}>{/* Native blob preview is temporary and needs no image optimization. */}<img src={preview} alt="Processed plant photo that will be analyzed" /></div> : null}
     {outcome?.outcome === "identified" ? <IdentificationResult result={outcome.result} saved={outcome.saveState === "saved"} saveMessage={outcome.saveMessage} busy={busy} onRetry={outcome.saveState === "failed" && !retryUnavailable ? () => { void identify(true); } : undefined} onBack={onBack} onAnother={() => { void choose(undefined); }} />
       : outcome?.outcome === "uncertain" ? <div role="status" className={styles.uncertain}><h3>We couldn&apos;t confidently identify this plant.</h3><p>Try a clearer photo in good light, showing the leaves and the whole plant.</p><button onClick={() => { void choose(undefined); }}>Try another photo</button></div>
