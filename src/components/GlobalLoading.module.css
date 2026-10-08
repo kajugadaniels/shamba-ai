@@ -1,31 +1,54 @@
-.indicator {
+.overlay {
   position: fixed;
-  inset: auto 16px 16px auto;
-  z-index: 30;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  width: max-content;
-  max-width: calc(100vw - 32px);
-  padding: 14px 18px;
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  background: var(--cream);
-  color: var(--text);
-  box-shadow: 0 8px 30px rgb(31 77 58 / 12%);
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  padding: max(20px, env(safe-area-inset-top)) max(20px, env(safe-area-inset-right)) max(20px, env(safe-area-inset-bottom)) max(20px, env(safe-area-inset-left));
+  background: rgb(247 245 238 / 62%);
+  backdrop-filter: blur(3px);
   pointer-events: none;
 }
-.indicator strong { display: block; font-size: .85rem; }
-.label { display: block; margin-top: 3px; font-size: .85rem; overflow-wrap: anywhere; }
-.spinner {
-  width: 22px;
-  height: 22px;
-  flex-shrink: 0;
-  border: 3px solid var(--border);
-  border-top-color: var(--forest);
-  border-radius: 50%;
-  animation: spin .8s linear infinite;
+.indicator {
+  position: relative;
+  width: min(100%, 340px);
+  max-height: calc(100dvh - 40px);
+  overflow: auto;
+  padding: clamp(24px, 6vw, 38px) 28px 30px;
+  border: 1px solid var(--border);
+  border-radius: 28px;
+  background: var(--surface);
+  color: var(--text);
+  text-align: center;
+  box-shadow: 0 24px 70px rgb(31 77 58 / 13%), 0 4px 12px rgb(31 77 58 / 4%);
+  animation: reveal 160ms ease-out both;
 }
-@keyframes spin { to { transform: rotate(360deg); } }
-@media (max-width: 480px) { .indicator { inset: auto 12px 12px; max-width: calc(100vw - 24px); padding: 12px 14px; } }
-@media (prefers-reduced-motion: reduce) { .spinner { animation: none; } }
+.illustration { width: 112px; margin: 0 auto 18px; }
+.illustration svg { width: 100%; height: auto; }
+.track { stroke: var(--border); stroke-width: 1; }
+.orbit {
+  stroke: var(--leaf);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-dasharray: 45 276;
+  transform-origin: 60px 60px;
+  animation: orbit 2.8s linear infinite;
+}
+.soil { fill: #eae2d4; }
+.stem { stroke: var(--forest); stroke-width: 3; stroke-linecap: round; }
+.leftLeaf { fill: var(--leaf); }
+.rightLeaf { fill: var(--forest); }
+.veins { stroke: var(--surface); stroke-opacity: .65; stroke-width: 1.5; stroke-linecap: round; }
+.indicator .brand { display: block; color: var(--forest); font-size: 13px; font-weight: 750; }
+.indicator .label { margin: 9px 0 0; font-size: clamp(19px, 5vw, 23px); font-weight: 650; line-height: 1.4; letter-spacing: -.6px; overflow-wrap: anywhere; }
+.indicator .note { margin: 14px 0 0; font-size: 13px; line-height: 1.6; color: var(--muted); }
+@keyframes orbit { to { transform: rotate(360deg); } }
+@keyframes reveal { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+@media (max-height: 420px) {
+  .indicator { padding: 18px 24px; }
+  .illustration { width: 72px; margin-bottom: 8px; }
+  .indicator .note { margin-top: 8px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .indicator, .orbit { animation: none; }
+}
