@@ -14,9 +14,9 @@ export const viewport: Viewport = { themeColor: "#F7F5EE" };
 // Flat Clerk surfaces: borders instead of shadows, shared button height and radius.
 const flatButton = { height: "var(--button-height)", minHeight: "var(--button-height)", paddingBlock: "0", boxShadow: "none" };
 const appearance = {
-  variables: { colorPrimary: "#1F4D3A", borderRadius: "12px", fontFamily: "var(--font-manrope)" },
+  variables: { colorPrimary: "#1F4D3A", borderRadius: "10px", fontFamily: "var(--font-manrope)" },
   elements: {
-    cardBox: { boxShadow: "none", border: "1.5px solid #DDE3D6", borderRadius: "28px" },
+    cardBox: { boxShadow: "none", border: "1px solid #DDE3D6", borderRadius: "20px" },
     card: { boxShadow: "none" },
     formButtonPrimary: { ...flatButton, fontWeight: 700 },
     socialButtonsBlockButton: flatButton,
