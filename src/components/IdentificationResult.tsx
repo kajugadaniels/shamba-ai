@@ -4,6 +4,7 @@ import { z } from "zod";
 import { motion, useReducedMotion } from "motion/react";
 import { identifiedPlantSchema } from "@/lib/schemas";
 import { filterGuidance, guidanceFallback, nonWeedMessage } from "@/lib/guidance";
+import { Button } from "./Button";
 import styles from "./PlantUpload.module.css";
 export function IdentificationResult({ result, saved, onBack, onAnother, onRetry, busy = false, saveMessage }: {
   result: Pick<z.infer<typeof identifiedPlantSchema>, "classification" | "commonName" | "scientificName" | "confidence" | "explanation" | "guidance" | "identifiedAt">;
@@ -22,7 +23,7 @@ export function IdentificationResult({ result, saved, onBack, onAnother, onRetry
     <p className={styles.explanation}>{result.explanation}</p>
     <time dateTime={result.identifiedAt}>{new Date(result.identifiedAt).toLocaleString()}</time>
     {result.classification === "weed" ? <section className={styles.guidance}><h3>Control guidance</h3>{guidance.length ? <ul>{guidance.map((item) => <li key={item}>{item}</li>)}</ul> : <p>{guidanceFallback}</p>}</section> : <p className={styles.guidance}>{nonWeedMessage}</p>}
-    {saved === false ? <div role="alert" className={styles.warning}><strong>The identification was not saved.</strong><p>{saveMessage}</p>{onRetry ? <button disabled={busy} onClick={onRetry}>Retry saving result</button> : null}</div> : saved ? <p role="status" className={styles.saved}>Saved to Identification History</p> : null}
-    <div className={styles.actions}>{onAnother ? <button disabled={busy} onClick={onAnother}>Identify another plant</button> : null}<button disabled={busy} onClick={onBack}>Back to my garden</button></div>
+    {saved === false ? <div role="alert" className={styles.warning}><strong>The identification was not saved.</strong><p>{saveMessage}</p>{onRetry ? <Button loading={busy} variant="primary" onClick={onRetry}>Retry saving result</Button> : null}</div> : saved ? <p role="status" className={styles.saved}>Saved to Identification History</p> : null}
+    <div className={styles.actions}>{onAnother ? <Button variant="primary" disabled={busy} onClick={onAnother}>Identify another plant</Button> : null}<Button disabled={busy} onClick={onBack}>Back to my garden</Button></div>
   </motion.section>;
 }
