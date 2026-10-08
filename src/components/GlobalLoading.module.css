@@ -1,0 +1,31 @@
+.indicator {
+  position: fixed;
+  inset: auto 16px 16px auto;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: max-content;
+  max-width: calc(100vw - 32px);
+  padding: 14px 18px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--cream);
+  color: var(--text);
+  box-shadow: 0 8px 30px rgb(31 77 58 / 12%);
+  pointer-events: none;
+}
+.indicator strong { display: block; font-size: .85rem; }
+.label { display: block; margin-top: 3px; font-size: .85rem; overflow-wrap: anywhere; }
+.spinner {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  border: 3px solid var(--border);
+  border-top-color: var(--forest);
+  border-radius: 50%;
+  animation: spin .8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (max-width: 480px) { .indicator { inset: auto 12px 12px; max-width: calc(100vw - 24px); padding: 12px 14px; } }
+@media (prefers-reduced-motion: reduce) { .spinner { animation: none; } }
