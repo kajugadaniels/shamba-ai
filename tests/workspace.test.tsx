@@ -89,6 +89,7 @@ describe("visitor planning experience", () => {
     await userEvent.click(screen.getByRole("button", { name: /Generate Garden Plan/ }));
     const loading = screen.getByRole("button", { name: /Generate Garden Plan/ });
     expect(loading).toBeDisabled();
+    expect(loading).toHaveAttribute("data-loading", "true");
     await userEvent.click(loading);
     expect(fetcher).toHaveBeenCalledTimes(1);
   });
