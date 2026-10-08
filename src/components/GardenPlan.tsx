@@ -6,7 +6,7 @@ import { CROPS } from "@/lib/crops";
 import { GardenMap } from "./GardenMap";
 import styles from "./GardenPlan.module.css";
 
-export function GardenPlan({ plan, onChange, onSave, saving = false, saveDisabled = false, saved = false }: { plan: Plan; onChange: () => void; onSave?: () => void; saving?: boolean; saveDisabled?: boolean; saved?: boolean }) {
+export function GardenPlan({ plan, onChange, onSave, saving = false, saveDisabled = false, saved = false, onIdentify }: { plan: Plan; onChange: () => void; onSave?: () => void; saving?: boolean; saveDisabled?: boolean; saved?: boolean; onIdentify?: () => void }) {
   const heading = useRef<HTMLHeadingElement>(null);
   useEffect(() => { heading.current?.focus(); }, []);
   return <section className={styles.plan}>
@@ -21,8 +21,8 @@ export function GardenPlan({ plan, onChange, onSave, saving = false, saveDisable
         {pair.kind === "conflict" ? <p className={styles.attribution}>This is the provider&apos;s evidence category, not independent verification by Shamba AI.</p> : null}
       </div>) : <p className={styles.noNotes}>The provider supplied planting rows without usable companion notes. This guide does not establish that every combination is compatible.</p>}
     </section>
-    <div className={styles.actions}>{!saved ? <button disabled={saving || saveDisabled || !onSave} onClick={onSave} className={styles.save} aria-describedby="save-note">{saving ? "Saving garden…" : "Save Garden"}</button> : <button disabled className={styles.save} aria-describedby="save-note">Identify an unwanted plant</button>}
+    <div className={styles.actions}>{!saved ? <button disabled={saving || saveDisabled || !onSave} onClick={onSave} className={styles.save} aria-describedby="save-note">{saving ? "Saving garden…" : "Save Garden"}</button> : <button disabled={!onIdentify} onClick={onIdentify} className={styles.save} aria-describedby="save-note">Identify an unwanted plant</button>}
       <button disabled={saving} className={styles.change} onClick={onChange}>Change Garden</button></div>
-    <p className={styles.saveNote} id="save-note">{saved ? "Plant identification arrives in the next build slice." : onSave ? "Your preview stays separate until you save it." : "Saving isn’t available yet. You can still adjust your garden guide."}</p>
+    <p className={styles.saveNote} id="save-note">{saved ? "Identify plants in this saved garden and keep their results together." : onSave ? "Your preview stays separate until you save it." : "Saving isn’t available yet. You can still adjust your garden guide."}</p>
   </section>;
 }
