@@ -146,3 +146,9 @@ Activity mode: Planned focused planning-to-code verification walkthrough; learne
 - Added an input-aware modal, elapsed time, explicitly estimated wait/bar, playful gardening captions, indeterminate feedback after the estimate, and cancel-with-input-preservation. It replaces the global centered card only while open; button progress remains. No fake provider stages, 100% completion, artificial delay, or automatic retry is introduced.
 - Guarded cancellation/retry so a late canceled response or finally block cannot overwrite the draft or unlock a newer request. Added focused timer, single-loader, cancellation, and late-response regression coverage.
 - The assistant ran no tests, lint, typecheck, build, installs, server, or provider calls. Developer checks and Slice 3 learner review remain pending.
+
+### Premium flat redesign — awaiting developer checks
+
+- Restyled the complete interface in a flat premium system on the approved palette and Manrope: sticky top bar, hero with orientation cards and a crop-reactive garden illustration, numbered form sections with quick sizes and a live bed outline, illustrated crop tiles, a side-by-side map/explanation plan, history card grid, upload tips with drag-and-drop and prepared-photo size, stamped result badges, flat dialogs/loader, and branded direct auth pages.
+- Replaced Motion with GSAP (`gsap`, `@gsap/react`) behind a reduced-motion guard; removed `MotionProvider.tsx`. Server-rendered hero/form use CSS entrances. Behavior, accessible names, honesty wording, and test-visible copy are unchanged; crop tiles intentionally supersede the 48px compact selector refinement.
+- The assistant ran no installs, tests, lint, typecheck, build, server, or provider calls. Run `npm install` before verification so the lockfile records GSAP and drops Motion. Developer checks and Slice 3 learner review remain pending.
