@@ -121,3 +121,10 @@ Activity mode: Planned focused planning-to-code verification walkthrough; learne
 - Awaiting the learner’s real authenticated upload, identification, history/details, and returning-session check. Slice 3, final review, and learning wrap-up remain unchecked.
 
 - Local startup follow-up: Turbopack cold compilation stalled after the passing build. Restarted the development server with `npm run dev -- --webpack`; it reported ready at localhost:3000, but the bounded signed-out route smoke check timed out. Authenticated Slice 3 runtime readiness is therefore still pending learner confirmation. No provider request was made by this check.
+
+### Requested experience refinements — 2026-10-08
+
+- The learner requested modal sign-in and global page-data loading before continuing Slice 3 review. In-app authentication now opens Clerk’s dialog and preserves previews; a shared non-blocking status covers account/data/analysis operations and route suspension. Direct auth routes remain callback fallbacks.
+- Added focused regression coverage for modal invocation/draft preservation, concurrent loading cleanup, restoration failures, and retries. Slice 3 remains unchecked pending learner review.
+
+- Refinement verification passed under the supported Node 24 runtime: 95 tests across 15 files, lint, typecheck, and production build. No new provider or database requests were required. Modal invocation is covered with simulated Clerk identity; live dialog interaction remains part of the learner review.
