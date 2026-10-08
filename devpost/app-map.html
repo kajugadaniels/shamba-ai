@@ -34,7 +34,7 @@
   <div class="eyebrow">Shamba AI · Build reference</div>
   <h1>From garden idea to saved evidence</h1>
   <p>One small outdoor garden: choose crops, generate a companion-placement guide, save it, then identify plants and return to their history.</p>
-  <p class="note">Static source snapshot: <code>a36112c</code>. All three slices have completed learner review. Final checks for later UI refinements and the final 5-build sign-off remain pending. This map is a reference route, not a record of a completed interactive code tour. It can drift as the code changes.</p>
+  <p class="note">Static source snapshot: <code>42739b6</code>. All three slices have completed learner review. Final checks passed: 104 tests, lint, typecheck, and production build. Final Review and the evidence-based 5-build recap are complete. This map is a reference route, not a record of a completed interactive code tour. It can drift as the code changes.</p>
 
   <h2>The main pieces</h2>
   <ul>
@@ -67,7 +67,7 @@
     <h3>3. Explain the outcome</h3>
     <p><a href="../src/components/PlantUpload.tsx"><code>src/components/PlantUpload.tsx</code></a> → the <code>uncertain</code> outcome shows the clearer-photo prompt and explains that uncertain results are not saved.</p>
   </section>
-  <p><strong>Evidence:</strong> <a href="../tests/identifications-route.test.ts"><code>tests/identifications-route.test.ts</code></a>, “does not save uncertainty and keeps provider failure distinct,” supplies a simulated score of 89 and asserts the save function was never called. <a href="../tests/identification.test.ts">Normalizer tests</a> cover the threshold and invalid evidence. The completed learner simulation also produced no history entry. Current check results for later UI changes are still pending.</p>
+  <p><strong>Evidence:</strong> <a href="../tests/identifications-route.test.ts"><code>tests/identifications-route.test.ts</code></a>, “does not save uncertainty and keeps provider failure distinct,” supplies a simulated score of 89 and asserts the save function was never called. <a href="../tests/identification.test.ts">Normalizer tests</a> cover the threshold and invalid evidence. The completed learner simulation also produced no history entry. The final run after the UI refinements passed all 104 tests across 17 files, along with lint, typecheck, and the production build.</p>
 
   <h2>A practice to reuse</h2>
   <p>Before implementation, turn an uncertain API capability into an explicit acceptance rule with a failure case. Trace that rule through the PRD, technical contract, save boundary, focused test, and observed behavior. In Shamba AI, this kept a high-looking score from bypassing missing identification evidence and kept uncertainty out of saved history.</p>
