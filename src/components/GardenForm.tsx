@@ -45,9 +45,9 @@ export function GardenForm({ values, errors, busy, onChange, onGenerate }: {
       </div>
       {errors.crops ? <p id="crops-error" tabIndex={-1} className={styles.error}>{errors.crops}</p> : null}
     </fieldset>
-    <button className={styles.generate} type="submit" disabled={busy}>
-      {busy ? <><span className={styles.spinner} aria-hidden="true" /> Creating your garden guide…</> : <>Generate Garden Plan <span aria-hidden="true">↗</span></>}
+    <button className={styles.generate} type="submit" disabled={busy} aria-busy={busy}>
+      Generate Garden Plan <span aria-hidden="true">↗</span>
     </button>
-    <p className={styles.bottomNote}>{busy ? "This can take a little time. Your crops are in good company." : "No account needed to start planning."}</p>
+    <p className={styles.bottomNote}>No account needed to start planning.</p>
   </form>;
 }
