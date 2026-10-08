@@ -29,12 +29,14 @@
   --warning-soft: #faf2de;
   --warning-line: #e0c88f;
   /* Shape and rhythm */
-  --button-height: 48px;
-  --button-radius: 12px;
-  --radius-sm: 12px;
-  --radius-md: 18px;
-  --radius-lg: 28px;
-  --page-width: 1180px;
+  --button-height: 44px;
+  --button-height-sm: 36px;
+  --button-radius: 10px;
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  /* One content column keeps the top bar, page, and footer edges aligned. */
+  --page-width: 760px;
   --ease-out: cubic-bezier(.2, .8, .2, 1);
   --ease-spring: cubic-bezier(.34, 1.56, .64, 1);
   --font-sans: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
