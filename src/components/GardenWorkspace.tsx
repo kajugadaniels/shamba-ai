@@ -8,6 +8,7 @@ import { rememberDraft, restoreDraft, forgetDraft } from "@/lib/client/draft";
 import { PlantUpload } from "./PlantUpload";
 import { HistoricalResult } from "./HistoricalResult";
 import { MyGarden } from "./MyGarden";
+import { GardenProgressDialog } from "./GardenProgressDialog";
 import { ReplaceGardenDialog } from "./ReplaceGardenDialog";
 import type { PlanResponse } from "@/lib/types";
 import { GardenForm, type FormErrors, type FormValues } from "./GardenForm";
@@ -41,7 +42,7 @@ export function GardenWorkspace({ userId = null, authReady = true, onSignOut, on
   const controller = useRef<AbortController | null>(null);
   const formStart = useRef<HTMLDivElement>(null);
   const reduce = useReducedMotion();
-  usePageLoading(!authReady || restoring || busy || saving || signingOut,
+  usePageLoading(!authReady || restoring || saving || signingOut,
     !authReady ? "Connecting your account…" : restoring ? "Loading your saved garden…" : saving ? (confirming ? "Replacing your garden…" : "Saving your garden…") : signingOut ? "Signing out…" : "Creating your garden guide…");
   useEffect(() => { mounted.current = true; return () => { mounted.current = false; controller.current?.abort(); }; }, []);
 
@@ -157,7 +158,16 @@ export function GardenWorkspace({ userId = null, authReady = true, onSignOut, on
           : name === "TypeError" ? "We could not connect to the garden planner. Check your connection and try again."
           : error instanceof Error && name !== "ZodError" && name !== "SyntaxError" ? error.message : "We could not create a usable garden guide. Try again.");
       }
-    } finally { controller.current = null; if (!active.signal.aborted) setBusy(false); }
+    } finally {
+      // A canceled request must not release a newer request's lock.
+      if (controller.current === active) { controller.current = null; if (!active.signal.aborted) setBusy(false); }
+    }
+  }
+
+  function cancelGeneration() {
+    if (!busy) return;
+    controller.current?.abort(); controller.current = null;
+    setBusy(false);
   }
 
   function change() {
@@ -182,6 +192,7 @@ export function GardenWorkspace({ userId = null, authReady = true, onSignOut, on
       <GardenPlan plan={draft.plan} onChange={change} onSave={() => { void save(); }} saving={saving} saveDisabled={!authReady || sessionExpired || restoring || Boolean(restoreFailure)} />
     </motion.div> : <GardenForm values={values} errors={errors} busy={busy} onChange={(next) => { setValues(next); setErrors({}); setFailure(""); }} onGenerate={generate} />}
     {saved && editing ? <Button variant="secondary" className={styles.cancel} aria-label="Cancel changes and return to my garden" disabled={busy || saving} onClick={cancelEdit}>Cancel changes</Button> : null}
+    {busy ? <GardenProgressDialog width={values.width} length={values.length} crops={values.crops} onCancel={cancelGeneration} /> : null}
     {confirming ? <ReplaceGardenDialog busy={saving} onCancel={() => setConfirming(false)} onConfirm={() => { void save(true); }} /> : null}
     <footer className={styles.footer}><PlantIcon crop="sprout" /><p>Made for small outdoor gardens and raised beds.</p></footer>
   </main>;
