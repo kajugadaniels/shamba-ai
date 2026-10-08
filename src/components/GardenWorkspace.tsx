@@ -7,6 +7,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { z } from "zod";
 import { rememberDraft, restoreDraft, forgetDraft } from "@/lib/client/draft";
+import { PlantUpload } from "./PlantUpload";
+import { HistoricalResult } from "./HistoricalResult";
 import { MyGarden } from "./MyGarden";
 import { ReplaceGardenDialog } from "./ReplaceGardenDialog";
 import type { PlanResponse } from "@/lib/types";
@@ -26,18 +28,25 @@ export function GardenWorkspace({ userId = null, authReady = true, onSignOut }: 
   const [restoreAttempt, setRestoreAttempt] = useState(0);
   const [sessionExpired, setSessionExpired] = useState(false);
   const [restoreFailure, setRestoreFailure] = useState("");
+  const [identifying, setIdentifying] = useState(false);
+  const [detailId, setDetailId] = useState<string | null>(null);
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [confirming, setConfirming] = useState(false);
   const saveLock = useRef(false);
+  const [signingOut, setSigningOut] = useState(false);
+  const signOutLock = useRef(false);
+  const mounted = useRef(true);
+  const restorationController = useRef<AbortController | null>(null);
   const [busy, setBusy] = useState(false);
   const controller = useRef<AbortController | null>(null);
   const formStart = useRef<HTMLDivElement>(null);
   const reduce = useReducedMotion();
-  useEffect(() => () => controller.current?.abort(), []);
+  useEffect(() => { mounted.current = true; return () => { mounted.current = false; controller.current?.abort(); }; }, []);
 
   useEffect(() => {
     const active = new AbortController();
+    restorationController.current = active;
     void Promise.resolve().then(async () => {
       if (active.signal.aborted) return;
       const pending = restoreDraft(userId);
@@ -57,6 +66,23 @@ export function GardenWorkspace({ userId = null, authReady = true, onSignOut }: 
     });
     return () => active.abort();
   }, [userId, restoreAttempt]);
+
+  async function signOut() {
+    if (!onSignOut || signOutLock.current) return;
+    signOutLock.current = true; setSigningOut(true);
+    controller.current?.abort(); restorationController.current?.abort();
+    cancelEdit(); setIdentifying(false); setDetailId(null); setConfirming(false); setBusy(false);
+    setValues({ width: "", length: "", crops: [] }); setSaved(null); setRestoring(false); setRestoreFailure("");
+    try { await onSignOut(); }
+    catch {
+      // Reload through the owned endpoint; never reinstate a cached private snapshot.
+      // The identity-keyed parent unmounts this workspace if the account changes.
+      if (mounted.current) {
+        setFailure("Sign-out could not finish. Your saved garden is being reloaded; please retry signing out.");
+        setRestoring(true); setRestoreAttempt((attempt) => attempt + 1);
+      }
+    } finally { signOutLock.current = false; if (mounted.current) setSigningOut(false); }
+  }
 
   async function save(confirmed = false) {
     if (!draft || !authReady || saveLock.current || restoring || restoreFailure) return;
@@ -119,7 +145,7 @@ export function GardenWorkspace({ userId = null, authReady = true, onSignOut }: 
       const payload = await response.json();
       if (!response.ok) throw new Error(typeof payload.error?.message === "string" ? payload.error.message : "We could not generate your guide. Try again.");
       const nextDraft = planResponseSchema.parse(payload);
-      setDraft(nextDraft); setEditing(true);
+      if (!active.signal.aborted) { setDraft(nextDraft); setEditing(true); }
     } catch (error) {
       if (!active.signal.aborted) {
         const name = typeof error === "object" && error !== null && "name" in error ? String(error.name) : "";
@@ -139,7 +165,7 @@ export function GardenWorkspace({ userId = null, authReady = true, onSignOut }: 
 
   return <main className={styles.workspace}>
     <header className={styles.brand}><span className={styles.brandIcon}><PlantIcon crop="sprout" /></span><span>Shamba AI</span></header>
-    <nav className={styles.account} aria-label="Account">{userId ? <button onClick={() => { controller.current?.abort(); cancelEdit(); setValues({ width: "", length: "", crops: [] }); setSaved(null); void onSignOut?.().catch(() => setFailure("Sign-out could not finish. Please retry.")); }} disabled={saving}>Sign out</button> : <Link href="/sign-in" onClick={(event) => { if (draft) { try { rememberDraft(draft, userId); } catch { event.preventDefault(); setFailure("Your browser could not preserve this preview. Enable session storage before signing in."); } } }}>Sign in</Link>}</nav>
+    <nav className={styles.account} aria-label="Account">{userId ? <button onClick={() => { void signOut(); }} disabled={saving || signingOut}>{signingOut ? "Signing out…" : "Sign out"}</button> : <Link href="/sign-in" onClick={(event) => { if (draft) { try { rememberDraft(draft, userId); } catch { event.preventDefault(); setFailure("Your browser could not preserve this preview. Enable session storage before signing in."); } } }}>Sign in</Link>}</nav>
     <div className={styles.intro} ref={formStart} tabIndex={-1}>
       <h1>Plan a small food garden<br className={styles.lineBreak} /> that works better together.</h1>
       <p>A little space. A few crops. A good place to start.</p>
@@ -147,8 +173,8 @@ export function GardenWorkspace({ userId = null, authReady = true, onSignOut }: 
     <div role="status" aria-live="polite" className="sr-only">{busy ? "Creating your garden guide. Please wait." : ""}</div>
     {failure ? <div className={styles.error} role="alert"><strong>Let&apos;s try that again</strong><p>{failure}</p>{sessionExpired ? <Link href="/sign-in">Sign in again</Link> : null}</div> : null}
     {restoreFailure ? <div role="alert" className={styles.error}><p>{restoreFailure}</p><button onClick={() => setRestoreAttempt((attempt) => attempt + 1)}>Retry loading garden</button></div> : null}
-    {restoring ? <p role="status">Loading your saved garden…</p> : saved && !editing && !draft ? <>
-      <MyGarden key={`${saved.id}:${saved.revision}`} plan={saved.plan} onChange={change} />
+    {restoring ? <p role="status">Loading your saved garden…</p> : saved && identifying ? <PlantUpload garden={saved} onBack={() => setIdentifying(false)} /> : saved && detailId ? <HistoricalResult id={detailId} onBack={() => setDetailId(null)} /> : saved && !editing && !draft ? <>
+      <MyGarden key={`${saved.id}:${saved.revision}`} plan={saved.plan} onChange={change} onIdentify={() => setIdentifying(true)} onDetails={setDetailId} />
     </> : draft ? <motion.div key={draft.plan.planId} initial={{ opacity: 0, y: reduce ? 0 : 8 }} animate={{ opacity: 1, y: 0 }}>
       <GardenPlan plan={draft.plan} onChange={change} onSave={() => { void save(); }} saving={saving} saveDisabled={!authReady || sessionExpired || restoring || Boolean(restoreFailure)} />
     </motion.div> : <GardenForm values={values} errors={errors} busy={busy} onChange={(next) => { setValues(next); setErrors({}); setFailure(""); }} onGenerate={generate} />}
