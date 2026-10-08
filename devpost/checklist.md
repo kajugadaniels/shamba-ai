@@ -7,7 +7,7 @@ status: approved
 
 Build mode: learn — pause after each mechanically verified slice for the learner check and a brief explanation of important implementation decisions. Keep final learner review and feedback.
 
-The scope, PRD, and technical specification are approved. The learner approved this build order without reordering or merging slices. Slice 1 is complete; Slice 2 is complete after mechanical verification and the learner’s authenticated review. Slice 3 is complete after its earlier mechanical verification and the learner’s connected-flow review. Final verification of the later UI refinements and the 5-build wrap-up remain pending. Each slice delivers usable behavior across the necessary layers. Styling, responsive behavior, error handling, and verification are part of each slice rather than deferred plumbing tasks.
+The scope, PRD, and technical specification are approved. The learner approved this build order without reordering or merging slices. Slice 1 is complete; Slice 2 is complete after mechanical verification and the learner’s authenticated review. Slice 3 is complete after its earlier mechanical verification and the learner’s connected-flow review. Final verification of the later UI refinements and the 5-build wrap-up are complete. Each slice delivers usable behavior across the necessary layers. Styling, responsive behavior, error handling, and verification are part of each slice rather than deferred plumbing tasks.
 
 Git execution override: `AGENTS.md` and `git.md` require developer-only Git mutations. `Commit:` describes the checkpoint intent; the assistant supplies a separate exact-path add/Conventional Commit block for every changed non-ignored file, never executes those commands, and never stages secrets or the learner profile. Record implementation verification separately from developer commit confirmation; never claim a commit happened without read-only evidence or developer confirmation.
 
@@ -47,11 +47,11 @@ Git execution override: `AGENTS.md` and `git.md` require developer-only Git muta
 
 All three slices are complete. The learner explicitly accepted Slice 3 without additional changes after checking photo preparation, identification, conservative guidance, non-weed behavior, automatic history saving, restored sessions, simulated uncertainty, and receipt-only persistence retry without duplicates.
 
-- Earlier implementation verification passed: 92 focused tests across 14 Vitest files, seven guarded disposable PostgreSQL integration checks, lint, typecheck, and production build. Later UI revisions have no reported current test/build results; historical passes do not verify those revisions.
-- The learner’s Slice 2 and Slice 3 reports cover the connected authenticated journey and final hands-on feedback. No additional product fixes were requested.
-- Next: the developer runs `npm test`, `npm run lint`, `npm run typecheck`, and `npm run build`, reports results, and confirms whether the proof of concept is ready for final sign-off. The assistant must not run tests, lint, typecheck, build, installs, or a server under the learner’s current instruction.
-- The application code was committed through `a36112c` when this wrap-up began (read-only inspection found a clean worktree). This documentation checkpoint is not yet committed; supplied Git commands remain developer-only.
-- A static reference tour and offline app map are prepared below. Final review and the learning wrap-up remain open; do not advance to 6-ship yet.
+- Final verification after the later UI refinements passed: `npm test` (104 tests across 17 files), `npm run lint`, `npm run typecheck`, and `npm run build`, all with exit code 0. No repairs or new features were needed.
+- The learner’s Slice 2 and Slice 3 reports cover the connected authenticated journey and final hands-on feedback. The learner confirmed the app map is ready and explicitly authorized completing the final checklist if these checks passed; that condition is satisfied.
+- The latest request authorized running these four final checks, superseding the earlier assistant-run restriction for this verification. No install, server startup, live provider request, or destructive database operation was performed. The seven earlier guarded disposable database checks remain historical evidence and were not rerun for UI-only refinements.
+- Read-only Git inspection found a clean worktree at `42739b6` before verification and after the build. This final documentation checkpoint is not yet committed; per-file Git commands are supplied for the developer. No Git mutations were executed.
+- 5-build is complete: slices, hands-on feedback, Final Review, and the evidence-based learning recap/app map. Ready to begin 6-ship in a separate step; submission work has not begun.
 
 ## Hands-on Checkpoints
 
@@ -62,22 +62,22 @@ In learn mode, also complete each slice's Learner check before advancing. In fas
 
 ## Final Review
 
-- [ ] Final review complete — feedback resolved, relevant checks pass, developer commit status is accurately recorded, and learner confirms ready to ship.
+- [x] Final review complete — feedback resolved, relevant checks pass, developer commit status is accurately recorded, and learner confirms ready to ship.
 
-The learner reported no additional Slice 3 changes. Final sign-off awaits results for the latest UI revisions and explicit confirmation that the proof of concept is ready. No new fixes are invented. Deployment is optional and is not a prerequisite for the local demo.
+The learner reported no additional Slice 3 changes, confirmed the app map is ready, and authorized final completion conditional on passing verification. All four requested checks passed on the current implementation; the condition is satisfied. No new fixes were needed. Deployment is optional and is not a prerequisite for the local demo.
 
 ## Code Tour and App Map
 
-- [ ] Learning activity complete — trace one actual planning decision through a spec section, implementation, and meaningful test to connect the learner's scoping/PRD/spec goal to working evidence.
-- [ ] Optional edit and transfer reflection addressed — offered/declined/already covered/not applicable as appropriate.
-- [ ] `devpost/app-map.html` generated from finished code, checked, and shown, including a project-grounded practice to reuse.
+- [x] Learning activity complete — trace one actual planning decision through a spec section, implementation, and meaningful test to connect the learner's scoping/PRD/spec goal to working evidence.
+- [x] Optional edit and transfer reflection addressed — offered/declined/already covered/not applicable as appropriate.
+- [x] `devpost/app-map.html` generated from finished code, checked, and shown, including a project-grounded practice to reuse.
 
-Activity and evidence: Prepared a concise reference walkthrough of the agreed rule “uncertain identifications never enter history.” The learner’s uncertainty simulation produced no history entry. Source inspection connects that observation to the PRD confidence policy, the specification’s normalizer contract, the server’s early return before persistence, and a focused regression test. This is a prepared reference route, not a completed interactive code tour or a claim that the latest tests were run.
+Activity and evidence: Completed a brief evidence-based recap of the agreed rule “uncertain identifications never enter history.” The learner’s uncertainty simulation produced no history entry. The PRD confidence policy and specification’s normalizer contract connect to the server’s early return before persistence and the focused regression test, now included in the passing 104-test run. This is a static reference walkthrough and recap of an actual planning/build decision, not a claimed interactive editor tour or claim of learner mastery.
 Route and stops: `src/lib/server/identification.ts > normalizeIdentification`; `src/app/api/identifications/route.ts > POST`; `src/components/PlantUpload.tsx > uncertain outcome`. Evidence: `tests/identifications-route.test.ts > does not save uncertainty and keeps provider failure distinct`, plus threshold/evidence cases in `tests/identification.test.ts`.
-Edit outcome: No edit is needed; the learner explicitly requested no additional Slice 3 changes. Do not invent an exercise or expand the guidance allowlist.
-Reflection: Optional transfer reflection remains for the final wrap-up; no learner answer is assumed or recorded publicly.
-Activity mode: Short planning-to-code reference walkthrough, tailored to an experienced full-stack developer practicing formal scope/PRD/spec decisions.
-App map: `devpost/app-map.html` created against code snapshot `a36112c`, with inspected source references and a script-free diagram. Opening it locally and confirming its presentation remain pending. The completion boxes stay open until final verification and the wrap-up are addressed.
+Edit outcome: Not applicable; the learner requested no additional features or Slice 3 changes. Passing verification revealed no bug requiring an edit.
+Reflection: Offered the optional transfer question about what to do differently next time when starting with an AI coding assistant. No answer is required for completion; no personal response is assumed or recorded publicly.
+Activity mode: Brief evidence-based planning-to-code recap using completed build investigation and learner-observed uncertainty behavior. Reusable practice: define observable acceptance criteria, then connect them to code, a meaningful regression test, and observed behavior.
+App map: `devpost/app-map.html` refreshed against source snapshot `42739b6`, with a script-free diagram and reference route. All source links and local/Markdown anchors were checked; the learner confirmed the map is ready. No new assistant browser session is claimed. Reopen the HTML file directly for the offline reference.
 
 ## Revisions
 
@@ -166,3 +166,9 @@ App map: `devpost/app-map.html` created against code snapshot `a36112c`, with in
 - The learner completed the connected authenticated photo/result/history/return flow, confirmed conservative guidance and non-weed presentation, and verified simulated uncertainty exclusion and idempotent save-only retry. No additional changes were requested; Slice 3 is checked complete.
 - Prior “awaiting learner review” entries are historical checkpoints now resolved by this report. Later UI verification remains distinct and pending developer-reported results.
 - Prepared the app-map reference route without executing tests, lint, typecheck, build, installs, a server, provider requests, or Git mutations. Final readiness confirmation and the learning wrap-up remain in 5-build.
+
+### Final 5-build verification and wrap-up
+
+- Ran only the four checks authorized by the latest learner request: 104 tests across 17 files passed; lint, typecheck, and production build passed. No implementation changes were necessary.
+- Credited the completed connected-flow review and app-map confirmation without requiring repeated hands-on exercises. Completed the short evidence-based recap, offered optional reflection, and refreshed the map’s snapshot/status.
+- Final Review and Code Tour/App Map items are checked complete. All implementation and review checkpoints are complete; developer-only staging/commits remain explicit. Ready for 6-ship, with no deployment or submission work started.
