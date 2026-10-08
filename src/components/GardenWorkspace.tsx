@@ -3,8 +3,6 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useReducedMotion } from "motion/react";
 import { gardenInputSchema, planResponseSchema, gardenResponseSchema, savedGardenSchema } from "@/lib/schemas";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { z } from "zod";
 import { rememberDraft, restoreDraft, forgetDraft } from "@/lib/client/draft";
 import { PlantUpload } from "./PlantUpload";
@@ -15,10 +13,10 @@ import type { PlanResponse } from "@/lib/types";
 import { GardenForm, type FormErrors, type FormValues } from "./GardenForm";
 import { GardenPlan } from "./GardenPlan";
 import { PlantIcon } from "./PlantIcon";
+import { usePageLoading } from "./GlobalLoading";
 import styles from "./GardenWorkspace.module.css";
 
-export function GardenWorkspace({ userId = null, authReady = true, onSignOut }: { userId?: string | null; authReady?: boolean; onSignOut?: () => Promise<void> }) {
-  const router = useRouter();
+export function GardenWorkspace({ userId = null, authReady = true, onSignOut, onSignIn }: { userId?: string | null; authReady?: boolean; onSignOut?: () => Promise<void>; onSignIn?: () => void }) {
   const [values, setValues] = useState<FormValues>({ width: "", length: "", crops: [] });
   const [errors, setErrors] = useState<FormErrors>({});
   const [failure, setFailure] = useState("");
@@ -42,6 +40,8 @@ export function GardenWorkspace({ userId = null, authReady = true, onSignOut }: 
   const controller = useRef<AbortController | null>(null);
   const formStart = useRef<HTMLDivElement>(null);
   const reduce = useReducedMotion();
+  usePageLoading(!authReady || restoring || busy || saving || signingOut,
+    !authReady ? "Connecting your account…" : restoring ? "Loading your saved garden…" : saving ? "Saving your garden…" : signingOut ? "Signing out…" : "Creating your garden guide…");
   useEffect(() => { mounted.current = true; return () => { mounted.current = false; controller.current?.abort(); }; }, []);
 
   useEffect(() => {
@@ -84,13 +84,16 @@ export function GardenWorkspace({ userId = null, authReady = true, onSignOut }: 
     } finally { signOutLock.current = false; if (mounted.current) setSigningOut(false); }
   }
 
+  function signIn() {
+    if (!authReady || !onSignIn) return;
+    try { if (draft) rememberDraft(draft, userId); }
+    catch { setFailure("Your browser could not preserve this preview. Enable session storage before signing in."); return; }
+    onSignIn();
+  }
+
   async function save(confirmed = false) {
     if (!draft || !authReady || saveLock.current || restoring || restoreFailure) return;
-    if (!userId) {
-      try { rememberDraft(draft, null); }
-      catch { setFailure("Your browser could not preserve this preview for sign-in. Enable session storage and retry; your preview is still here."); return; }
-      router.push("/sign-in"); return;
-    }
+    if (!userId) { signIn(); return; }
     if (saved && !confirmed) { setConfirming(true); return; }
     saveLock.current = true; setSaving(true); setFailure("");
     const active = new AbortController(); controller.current = active;
@@ -165,15 +168,15 @@ export function GardenWorkspace({ userId = null, authReady = true, onSignOut }: 
 
   return <main className={styles.workspace}>
     <header className={styles.brand}><span className={styles.brandIcon}><PlantIcon crop="sprout" /></span><span>Shamba AI</span></header>
-    <nav className={styles.account} aria-label="Account">{userId ? <button onClick={() => { void signOut(); }} disabled={saving || signingOut}>{signingOut ? "Signing out…" : "Sign out"}</button> : <Link href="/sign-in" onClick={(event) => { if (draft) { try { rememberDraft(draft, userId); } catch { event.preventDefault(); setFailure("Your browser could not preserve this preview. Enable session storage before signing in."); } } }}>Sign in</Link>}</nav>
+    <nav className={styles.account} aria-label="Account">{userId ? <button onClick={() => { void signOut(); }} disabled={saving || signingOut}>{signingOut ? "Signing out…" : "Sign out"}</button> : <button onClick={signIn} disabled={!authReady}>Sign in</button>}</nav>
     <div className={styles.intro} ref={formStart} tabIndex={-1}>
       <h1>Plan a small food garden<br className={styles.lineBreak} /> that works better together.</h1>
       <p>A little space. A few crops. A good place to start.</p>
     </div>
     <div role="status" aria-live="polite" className="sr-only">{busy ? "Creating your garden guide. Please wait." : ""}</div>
-    {failure ? <div className={styles.error} role="alert"><strong>Let&apos;s try that again</strong><p>{failure}</p>{sessionExpired ? <Link href="/sign-in">Sign in again</Link> : null}</div> : null}
+    {failure ? <div className={styles.error} role="alert"><strong>Let&apos;s try that again</strong><p>{failure}</p>{sessionExpired ? <button onClick={signIn} disabled={!authReady}>Sign in again</button> : null}</div> : null}
     {restoreFailure ? <div role="alert" className={styles.error}><p>{restoreFailure}</p><button onClick={() => setRestoreAttempt((attempt) => attempt + 1)}>Retry loading garden</button></div> : null}
-    {restoring ? <p role="status">Loading your saved garden…</p> : saved && identifying ? <PlantUpload garden={saved} onBack={() => setIdentifying(false)} /> : saved && detailId ? <HistoricalResult id={detailId} onBack={() => setDetailId(null)} /> : saved && !editing && !draft ? <>
+    {restoring ? <p role="status">Loading your saved garden…</p> : saved && identifying ? <PlantUpload garden={saved} onSignIn={onSignIn} onBack={() => setIdentifying(false)} /> : saved && detailId ? <HistoricalResult id={detailId} onBack={() => setDetailId(null)} /> : saved && !editing && !draft ? <>
       <MyGarden key={`${saved.id}:${saved.revision}`} plan={saved.plan} onChange={change} onIdentify={() => setIdentifying(true)} onDetails={setDetailId} />
     </> : draft ? <motion.div key={draft.plan.planId} initial={{ opacity: 0, y: reduce ? 0 : 8 }} animate={{ opacity: 1, y: 0 }}>
       <GardenPlan plan={draft.plan} onChange={change} onSave={() => { void save(); }} saving={saving} saveDisabled={!authReady || sessionExpired || restoring || Boolean(restoreFailure)} />
