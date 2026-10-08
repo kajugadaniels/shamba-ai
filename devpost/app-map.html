@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Shamba AI — App map</title>
+  <style>
+    :root { color-scheme: light; --ink: #202a25; --green: #1f4d3a; --line: #d8ded3; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: #f7f5ee; color: var(--ink); font: 16px/1.6 system-ui, sans-serif; }
+    main { max-width: 900px; margin: auto; padding: 44px 22px 60px; }
+    h1, h2, h3 { line-height: 1.2; color: var(--green); }
+    h1 { font-size: clamp(30px, 5vw, 44px); margin: 8px 0 16px; }
+    h2 { margin-top: 36px; font-size: 24px; }
+    h3 { font-size: 18px; margin: 0 0 12px; }
+    a { color: var(--green); text-underline-offset: 3px; }
+    a:focus-visible { outline: 3px solid #8a6746; outline-offset: 4px; }
+    code { font-size: .9em; overflow-wrap: anywhere; }
+    pre { white-space: pre-wrap; background: #fffdf7; padding: 16px; border: 1px solid var(--line); border-radius: 12px; }
+    .eyebrow, .note { color: #536258; }
+    .eyebrow { text-transform: uppercase; letter-spacing: .1em; font-size: 12px; }
+    .flow { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; gap: 12px; align-items: center; }
+    .step { border: 1px solid var(--line); border-radius: 16px; padding: 20px; background: #fffdf7; }
+    .step p { margin: 0; }
+    .arrow { color: var(--green); font-size: 24px; text-align: center; }
+    .stop { border-top: 1px solid var(--line); margin-top: 24px; padding-top: 20px; }
+    li { margin: 8px 0; }
+    @media (max-width: 640px) { main { padding-top: 28px; } .flow { grid-template-columns: 1fr; } .arrow { transform: rotate(90deg); } }
+    @media print { body { background: white; } main { padding: 0; } a { color: inherit; } }
+  </style>
+</head>
+<body>
+<main>
+  <div class="eyebrow">Shamba AI · Build reference</div>
+  <h1>From garden idea to saved evidence</h1>
+  <p>One small outdoor garden: choose crops, generate a companion-placement guide, save it, then identify plants and return to their history.</p>
+  <p class="note">Static source snapshot: <code>a36112c</code>. All three slices have completed learner review. Final checks for later UI refinements and the final 5-build sign-off remain pending. This map is a reference route, not a record of a completed interactive code tour. It can drift as the code changes.</p>
+
+  <h2>The main pieces</h2>
+  <ul>
+    <li><a href="../src/components/GardenWorkspace.tsx">GardenWorkspace.tsx</a> connects visitor drafts, saved gardens, editing, replacement, and identification views.</li>
+    <li><a href="../src/app/api/plans/route.ts">The plan route</a> calls the companion provider on the server. <a href="../src/components/GardenMap.tsx">GardenMap.tsx</a> renders the normalized placement guide with the real rectangular proportions.</li>
+    <li>Clerk provides user identity. <a href="../src/app/api/garden/route.ts">The garden route</a> and <a href="../src/lib/server/gardens.ts">garden service</a> save one owned garden in Neon through Prisma. Confirmed replacement clears old history and changes the revision.</li>
+    <li><a href="../src/components/PlantUpload.tsx">PlantUpload.tsx</a> prepares a temporary photo. Server identification routes normalize provider responses; <a href="../src/lib/server/history.ts">history.ts</a> saves confident results against the current garden revision.</li>
+    <li><a href="../src/lib/server/receipts.ts">Signed receipts</a> let persistence retry without another provider request. Photos are not stored permanently.</li>
+  </ul>
+
+  <h2>Reference route: uncertainty stays out of history</h2>
+  <p>The <a href="prd.md#identification-confidence-policy">PRD confidence policy</a> becomes the <a href="spec.md#identification-normalizer-and-result-card">specification’s normalization contract</a>, then an observable behavior.</p>
+  <div class="flow" aria-label="Photo analysis flows through normalization and a save decision into the visible result">
+    <div class="step"><h3>Analyze a photo</h3><p>A server-only request receives provider data.</p></div>
+    <div class="arrow" aria-hidden="true">→</div>
+    <div class="step"><h3>Apply the policy</h3><p>Valid name, boolean classification, score ≥90/100, and usable evidence.</p></div>
+    <div class="arrow" aria-hidden="true">→</div>
+    <div class="step"><h3>Show the outcome</h3><p>Confident results save to history. Uncertain results ask for another photo.</p></div>
+  </div>
+
+  <section class="stop" id="normalize">
+    <h3>1. Decide what qualifies</h3>
+    <p><a href="../src/lib/server/identification.ts"><code>src/lib/server/identification.ts</code></a> → <code>normalizeIdentification</code> rejects missing names, invalid classification, nonnumeric/out-of-range scores, scores below 90, and missing usable botanical evidence. It does not substitute <code>overallConfidence</code>. The score is a provider score, not a calibrated probability.</p>
+  </section>
+  <section class="stop" id="save-boundary">
+    <h3>2. Stop before persistence</h3>
+    <p><a href="../src/app/api/identifications/route.ts"><code>src/app/api/identifications/route.ts</code></a> → <code>POST</code> returns <code>{ outcome: "uncertain" }</code> when normalization fails, before signing a result receipt or calling <code>saveIdentification</code>. Confident weeds and non-weeds both pass into saving.</p>
+  </section>
+  <section class="stop" id="visible-outcome">
+    <h3>3. Explain the outcome</h3>
+    <p><a href="../src/components/PlantUpload.tsx"><code>src/components/PlantUpload.tsx</code></a> → the <code>uncertain</code> outcome shows the clearer-photo prompt and explains that uncertain results are not saved.</p>
+  </section>
+  <p><strong>Evidence:</strong> <a href="../tests/identifications-route.test.ts"><code>tests/identifications-route.test.ts</code></a>, “does not save uncertainty and keeps provider failure distinct,” supplies a simulated score of 89 and asserts the save function was never called. <a href="../tests/identification.test.ts">Normalizer tests</a> cover the threshold and invalid evidence. The completed learner simulation also produced no history entry. Current check results for later UI changes are still pending.</p>
+
+  <h2>A practice to reuse</h2>
+  <p>Before implementation, turn an uncertain API capability into an explicit acceptance rule with a failure case. Trace that rule through the PRD, technical contract, save boundary, focused test, and observed behavior. In Shamba AI, this kept a high-looking score from bypassing missing identification evidence and kept uncertainty out of saved history.</p>
+
+  <h2>To change this, start here</h2>
+  <ul>
+    <li><strong>Planning inputs:</strong> <a href="../src/lib/schemas.ts">schemas.ts</a> and <a href="../src/components/GardenMap.tsx">GardenMap.tsx</a>. Preserve the placement-guide boundary; do not invent capacity rules.</li>
+    <li><strong>Confidence policy:</strong> the <a href="#normalize">normalizer stop</a>, shared schemas, receipt validation, PRD/spec, and their tests. Coordinate any future rule change across all of them.</li>
+    <li><strong>Weed guidance:</strong> <a href="../src/lib/guidance.ts">guidance.ts</a>. Keep the narrow reviewed allowlist and fallback; changing it requires explicit review.</li>
+    <li><strong>Replacement/history safety:</strong> <a href="../src/lib/server/gardens.ts">gardens.ts</a> and <a href="../src/lib/server/history.ts">history.ts</a>. Preserve ownership, revision checks, transactions, and retry idempotency.</li>
+    <li><strong>Visual styling:</strong> <a href="../src/app/globals.css">globals.css</a> and the component CSS Modules. <a href="../src/lib/client/motion.ts">motion.ts</a> supplies the reduced-motion guard for GSAP animation.</li>
+  </ul>
+
+  <h2>Run and revisit</h2>
+  <p>Use the existing local setup described in <a href="../README.md">README.md</a>. Credentials remain in the ignored local environment file. Run these commands yourself; this map makes no requests and loads no external resources.</p>
+  <pre><code>npm run dev</code></pre>
+  <p>Open <code>http://localhost:3000</code>. Plant analysis consumes provider quota; persistence retry uses a signed receipt. For current mechanical verification:</p>
+  <pre><code>npm test
+npm run lint
+npm run typecheck
+npm run build</code></pre>
+  <p class="note">Open this HTML file directly to read it offline; no JavaScript or server is needed. Relative source links open files, while Markdown heading fragments depend on your viewer. Use the exact heading and symbol names above when navigating in the editor. Disposable database checks are separately guarded and documented in README.md; do not use the application database for destructive tests.</p>
+</main>
+</body>
+</html>
