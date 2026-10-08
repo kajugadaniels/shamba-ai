@@ -134,3 +134,9 @@ Activity mode: Planned focused planning-to-code verification walkthrough; learne
 - Replaced the corner status panel with one centered cream card, a custom sprout illustration, a restrained orbit, and a soft viewport veil. Reduced-motion preferences stop animation; underlying controls remain reachable.
 - Removed inline loading spinners/messages and busy button label replacements. Kept busy/disabled semantics and success, uncertainty, and failure feedback. Route fallback joins the shared registry; native replacement dialog receives the same loader through a portal.
 - Updated affected regression expectations and added overlapping route/page loader coverage. Per the learner’s instruction, the assistant ran no tests, lint, typecheck, build, installation, or server. Verification and Slice 3 learner review remain pending.
+
+### Shared button height and pending feedback — awaiting developer checks
+
+- Added a shared 48px Button with primary, secondary, outline, and destructive variants. Request actions retain their label/width, show a decorative spinner, and disable repeat clicks. The single global loader remains the source of progress text.
+- Migrated application action buttons, aligned responsive action rows, grouped upload controls, and compacted crop selection cards to the shared height. Clerk primary/social form buttons use the same token. Retry buttons remain visible during their request.
+- Added focused pending-button and identification regression coverage, and strengthened the existing generation test. No tests, lint, typecheck, build, installation, or server were run by the assistant, as requested. Slice 3 learner review and developer verification remain pending.
