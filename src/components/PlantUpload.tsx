@@ -8,10 +8,14 @@ import { gsap, motionAllowed, useGSAP } from "@/lib/client/motion";
 import { IdentificationResult } from "./IdentificationResult";
 import { usePageLoading } from "./GlobalLoading";
 import { Button } from "./Button";
-import { AlertIcon, ArrowLeftIcon, CameraIcon, FocusIcon, FrameIcon, ScanIcon, SunIcon } from "./Icons";
+import { AlertIcon, ArrowLeftIcon, CameraIcon, FocusIcon, ScanIcon } from "./Icons";
 import styles from "./PlantUpload.module.css";
 type ResponseData = z.infer<typeof identificationResponseSchema>;
-const TIPS = [{ icon: <FocusIcon />, text: "Leaves in sharp focus" }, { icon: <FrameIcon />, text: "Whole plant in frame" }, { icon: <SunIcon />, text: "Bright, even daylight" }];
+const STEPS = [
+  ["Choose a photo.", "Large photos are resized on this device first."],
+  ["Check the preview.", "This exact photo is the one analyzed."],
+  ["Select Identify Plant.", "Confident results are saved to your history automatically."],
+];
 const formatBytes = (bytes: number) => bytes >= 1e6 ? `${(bytes / 1e6).toFixed(1)} MB` : `${Math.max(1, Math.round(bytes / 1e3))} KB`;
 export function PlantUpload({ garden, onBack, onSignIn }: { garden: z.infer<typeof savedGardenSchema>; onBack: () => void; onSignIn?: () => void }) {
   const [file, setFile] = useState<File | null>(null), [preview, setPreview] = useState("");
@@ -27,11 +31,11 @@ export function PlantUpload({ garden, onBack, onSignIn }: { garden: z.infer<type
   useEffect(() => () => { if (preview) URL.revokeObjectURL(preview); }, [preview]);
   useGSAP(() => {
     if (!motionAllowed()) return;
-    gsap.from("[data-reveal]", { y: 16, opacity: 0, duration: 0.5, stagger: 0.07 });
+    gsap.from("[data-reveal]", { y: 10, opacity: 0, duration: 0.4, stagger: 0.05 });
   }, { scope: root });
   useGSAP(() => {
     if (!preview || !motionAllowed()) return;
-    gsap.fromTo("[data-preview]", { clipPath: "inset(0% 0% 100% 0% round 20px)" }, { clipPath: "inset(0% 0% 0% 0% round 20px)", duration: 0.7, ease: "power3.inOut", clearProps: "clipPath" });
+    gsap.from("[data-preview]", { opacity: 0, duration: 0.35 });
   }, { scope: root, dependencies: [preview] });
   async function choose(source: File | undefined) {
     const generation = ++sequence.current; setFile(null); setPreview(""); setOutcome(null); setFailure(""); requestId.current = null; setRetryUnavailable(false);
@@ -73,37 +77,35 @@ export function PlantUpload({ garden, onBack, onSignIn }: { garden: z.infer<type
       <h2 tabIndex={-1} ref={heading}>Identify an unwanted plant</h2>
       <p className={styles.intro}>Upload a clear photo showing the plant, especially its leaves and as much of the whole plant as possible.</p>
     </header>
-    {failure ? <div role="alert" className={styles.error}><AlertIcon /><div><p>{failure}</p>{/Sign in/i.test(failure) ? <Button onClick={onSignIn}>Sign in again to retry</Button> : null}</div></div> : null}
-    <div className={styles.stage}>
-      {photo ? <figure className={styles.preview} data-preview data-scanning={busy || undefined}>
-        <img src={preview} alt="Processed plant photo that will be analyzed" />
-        <span className={styles.scan} aria-hidden="true" />
-        <figcaption>Prepared photo · {formatBytes(photo.size)}</figcaption>
-      </figure> : null}
-      <div className={styles.flow}>
-        {outcome?.outcome === "identified" ? <IdentificationResult embedded result={outcome.result} saved={outcome.saveState === "saved"} saveMessage={outcome.saveMessage} busy={busy} onRetry={outcome.saveState === "failed" && !retryUnavailable ? () => { void identify(true); } : undefined} onBack={onBack} onAnother={() => { void choose(undefined); }} />
-          : outcome?.outcome === "uncertain" ? <div className={styles.uncertain}>
-            <div role="status"><span className={styles.uncertainIcon} aria-hidden="true"><FocusIcon /></span><h3>We couldn&apos;t confidently identify this plant.</h3><p>Try a clearer photo in good light, showing the leaves and the whole plant.</p></div>
-            <div className={styles.actions}><Button variant="primary" onClick={() => { void choose(undefined); }}><CameraIcon />Try another photo</Button><Button onClick={onBack}><ArrowLeftIcon />Back to my garden</Button></div>
-          </div>
-          : <>
-            {!photo ? <ul className={styles.tips} aria-label="Photo tips" data-reveal>{TIPS.map((tip) => <li key={tip.text}><span aria-hidden="true">{tip.icon}</span>{tip.text}</li>)}</ul> : null}
-            <div className={styles.dropzone} data-compact={photo ? true : undefined} data-dragging={dragging || undefined} data-reveal
-              onDragOver={(event) => { if (busy) return; event.preventDefault(); setDragging(true); }}
-              onDragLeave={() => setDragging(false)}
-              onDrop={(event) => { event.preventDefault(); setDragging(false); if (!busy) void choose(event.dataTransfer.files[0]); }}>
-              <input id="plant-photo" className={styles.fileInput} type="file" accept="image/jpeg,image/png,image/webp" disabled={busy} aria-describedby="plant-photo-hint"
-                onChange={(event) => { const selected = event.target.files?.[0]; event.target.value = ""; void choose(selected); }} />
-              <label htmlFor="plant-photo" className={styles.dropLabel}><span className={styles.dropIcon} aria-hidden="true"><CameraIcon /></span><span className={styles.dropTitle}>Choose or replace photo</span></label>
-              <p id="plant-photo-hint" className={styles.dropHint}>Drop a photo here or browse. JPG, PNG, or WEBP; photos over 3 MB are resized on this device first.</p>
-            </div>
-            <div className={styles.actions} data-reveal>
-              <Button variant="primary" loading={busy} disabled={!file || preparing} onClick={() => { void identify(); }}><ScanIcon />Identify Plant</Button>
-              {file ? <Button variant="secondary" disabled={busy} onClick={() => { void choose(undefined); }}>Remove photo</Button> : null}
-              <Button disabled={busy} onClick={onBack}><ArrowLeftIcon />Back to my garden</Button>
-            </div>
-          </>}
+    {!outcome ? <ol className={styles.steps} aria-label="How identification works" data-reveal>
+      {STEPS.map(([title, text], index) => <li key={title}><span className={styles.stepNumber} aria-hidden="true">{index + 1}</span><p><strong>{title}</strong> {text}</p></li>)}
+    </ol> : null}
+    {failure ? <div role="alert" className={styles.error}><AlertIcon /><div><p>{failure}</p>{/Sign in/i.test(failure) ? <Button size="sm" onClick={onSignIn}>Sign in again to retry</Button> : null}</div></div> : null}
+    {photo ? <figure className={styles.preview} data-preview data-scanning={busy || undefined}>
+      <img src={preview} alt="Processed plant photo that will be analyzed" />
+      <span className={styles.scan} aria-hidden="true" />
+      <figcaption>Prepared photo · {formatBytes(photo.size)}</figcaption>
+    </figure> : null}
+    {outcome?.outcome === "identified" ? <IdentificationResult embedded result={outcome.result} saved={outcome.saveState === "saved"} saveMessage={outcome.saveMessage} busy={busy} onRetry={outcome.saveState === "failed" && !retryUnavailable ? () => { void identify(true); } : undefined} onBack={onBack} onAnother={() => { void choose(undefined); }} />
+      : outcome?.outcome === "uncertain" ? <div className={styles.uncertain}>
+        <div role="status" className={styles.uncertainText}><FocusIcon /><div><h3>We couldn&apos;t confidently identify this plant.</h3><p>Try a clearer photo in good light, showing the leaves and the whole plant. Uncertain results are not saved.</p></div></div>
+        <div className={styles.actions}><Button variant="primary" onClick={() => { void choose(undefined); }}><CameraIcon />Try another photo</Button><Button onClick={onBack}><ArrowLeftIcon />Back to my garden</Button></div>
       </div>
-    </div>
+      : <>
+        <div className={styles.dropzone} data-compact={photo ? true : undefined} data-dragging={dragging || undefined} data-reveal
+          onDragOver={(event) => { if (busy) return; event.preventDefault(); setDragging(true); }}
+          onDragLeave={() => setDragging(false)}
+          onDrop={(event) => { event.preventDefault(); setDragging(false); if (!busy) void choose(event.dataTransfer.files[0]); }}>
+          <input id="plant-photo" className={styles.fileInput} type="file" accept="image/jpeg,image/png,image/webp" disabled={busy} aria-describedby="plant-photo-hint"
+            onChange={(event) => { const selected = event.target.files?.[0]; event.target.value = ""; void choose(selected); }} />
+          <label htmlFor="plant-photo" className={styles.dropLabel}><span className={styles.dropIcon} aria-hidden="true"><CameraIcon /></span><span className={styles.dropTitle}>Choose or replace photo</span></label>
+          <p id="plant-photo-hint" className={styles.dropHint}>{photo ? "Want a different photo? Choose another one." : "Drag a photo here, or select to browse. JPG, PNG, or WEBP."}</p>
+        </div>
+        <div className={styles.actions} data-reveal>
+          <Button variant="primary" loading={busy} disabled={!file || preparing} onClick={() => { void identify(); }}><ScanIcon />Identify Plant</Button>
+          {file ? <Button disabled={busy} onClick={() => { void choose(undefined); }}>Remove photo</Button> : null}
+          <Button disabled={busy} onClick={onBack}><ArrowLeftIcon />Back to my garden</Button>
+        </div>
+      </>}
   </section>;
 }
