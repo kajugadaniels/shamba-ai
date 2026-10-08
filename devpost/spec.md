@@ -45,7 +45,7 @@ flowchart LR
 | Next.js App Router + TypeScript | One application for browser and server; [Route Handlers](https://nextjs.org/docs/app/getting-started/route-handlers) |
 | CSS Modules + global CSS variables | Component styles and shared tokens; [Next.js CSS](https://nextjs.org/docs/app/getting-started/css). No Tailwind |
 | Manrope through `next/font/google` | Shared readable typography; [font support](https://nextjs.org/docs/app/getting-started/fonts) |
-| Motion for React | Restrained feedback; [installation](https://motion.dev/docs/react-installation) and [reduced motion](https://motion.dev/docs/react-motion-config) |
+| GSAP + `@gsap/react` | Map planting sequence, view entrances, and decorative illustration motion; [useGSAP](https://gsap.com/resources/React/). Replaces Motion for React in the premium flat redesign |
 | Clerk | Sign up/in/out and server-side user identity; [Next.js quickstart](https://clerk.com/docs/nextjs/getting-started/quickstart) |
 | Neon PostgreSQL | Persistent garden/history; [Neon Prisma guide](https://neon.com/docs/guides/prisma) |
 | Prisma ORM | Schema, migrations, and queries; [Prisma 7 Next.js guide](https://www.prisma.io/docs/guides/v7/frameworks/nextjs) |
@@ -53,7 +53,7 @@ flowchart LR
 | Vitest + React Testing Library | Focused service and client-component tests; [Vitest](https://vitest.dev/guide/), [RTL](https://testing-library.com/docs/react-testing-library/intro/), [Next.js test setup](https://nextjs.org/docs/app/guides/testing/vitest) |
 | Vercel | Intended deployment host; [function limits](https://vercel.com/docs/functions/limitations) |
 
-Planned compatibility baseline: Node.js 22.12+ or supported Node.js 24 (24.19.0 used for Slice 1), Next.js 16 with its matching React version, Prisma 7 packages at matching versions, Zod 4, and current compatible Clerk/Motion/test packages. Pin actual resolved versions in the lockfile during setup and verify installation/build before integration. Use Prisma's PostgreSQL adapter (`@prisma/adapter-pg` and `pg`), an explicitly generated client, and Node runtime handlers. No separate backend, queue, object storage, or additional AI service.
+Planned compatibility baseline: Node.js 22.12+ or supported Node.js 24 (24.19.0 used for Slice 1), Next.js 16 with its matching React version, Prisma 7 packages at matching versions, Zod 4, and current compatible Clerk/GSAP/test packages. Pin actual resolved versions in the lockfile during setup and verify installation/build before integration. Use Prisma's PostgreSQL adapter (`@prisma/adapter-pg` and `pg`), an explicitly generated client, and Node runtime handlers. No separate backend, queue, object storage, or additional AI service.
 
 ## Where It Runs and How Someone Tries It
 
@@ -93,7 +93,7 @@ Global tokens: forest `#1F4D3A`, leaf `#6F9E55`, cream `#F7F5EE`, soil `#8A6746`
 
 Mobile-first layout: stack dimensions where needed, wrap crop cards, maintain map width:length proportions, adapt action groups, and use at least 44px touch targets. Long names wrap. A labeled crop legend accompanies compact map labels. Use selected `aria-pressed` states, associated inline errors, visible keyboard focus, announced loading/results, and a focus-managed replacement dialog.
 
-Motion uses short opacity/transform transitions around 150–250ms with no action delay. `MotionConfig reducedMotion="user"`, a reduced-motion hook, and CSS media rules remove unnecessary movement. Loading also has text; no essential status depends on animation.
+Motion uses short opacity/transform transitions with no action delay. GSAP effects start only when `prefers-reduced-motion: no-preference` matches (`src/lib/client/motion.ts`); CSS media rules and a reduced-motion hook remove remaining movement. Loading also has text; no essential status depends on animation. See **Premium flat redesign** below for the current visual system.
 
 ## Components
 
@@ -253,7 +253,7 @@ Planned files; generated dependency contents omitted. Paired `.module.css` files
 shamba-ai/
 ├── src/
 │   ├── app/
-│   │   ├── layout.tsx                         # Clerk, Manrope, motion provider
+│   │   ├── layout.tsx                         # Clerk, Manrope, flat Clerk appearance
 │   │   ├── page.tsx                           # Main workspace entry
 │   │   ├── globals.css                        # Tokens, resets, accessibility
 │   │   ├── sign-in/[[...sign-in]]/page.tsx      # Clerk sign-in
@@ -277,7 +277,9 @@ shamba-ai/
 │   │   ├── PlantUpload.tsx + .module.css      # Preparation/preview/analysis
 │   │   ├── IdentificationResult.tsx           # Current/history result, shared upload styles
 │   │   ├── HistoricalResult.tsx               # Owned detail retrieval states
-│   │   └── MotionProvider.tsx                # Reduced-motion defaults
+│   │   ├── GardenScene.tsx + .module.css      # Decorative hero bed reflecting selected crops
+│   │   ├── AuthShell.tsx + .module.css        # Branded frame for direct auth routes
+│   │   └── Icons.tsx                         # Shared stroke icons and brand mark
 │   ├── lib/
 │   │   ├── types.ts                          # Normalized domain contracts
 │   │   ├── schemas.ts                        # Zod input and output checks
@@ -285,6 +287,7 @@ shamba-ai/
 │   │   ├── guidance.ts                       # Shared reviewed whole-item allowlist
 │   │   ├── client/draft.ts                   # Same-tab draft preservation
 │   │   ├── client/image.ts                   # Bounded native compression
+│   │   ├── client/motion.ts                  # GSAP setup and reduced-motion helpers
 │   │   └── server/
 │   │       ├── env.ts                        # Server configuration checks
 │   │       ├── prisma.ts                     # Shared PostgreSQL adapter/client
@@ -356,3 +359,11 @@ Button.tsx owns primary/secondary/outline/destructive variants, a decorative tra
 GardenProgressDialog mounts only during validated planning requests, uses a native modal for focus/Escape handling, and clears its elapsed timer on unmount. Measure elapsed time with performance.now rather than assuming interval ticks occur on time. The display estimate is 20–40 seconds, informed by limited observations (two provider requests around 18–21 seconds, one app request around 2 seconds, and a documented 10–40 second typical claim); it is neither an SLA nor a calibrated duration model. Do not invent crop-count-specific completion estimates.
 
 The labeled time-based bar advances toward 90% over 40 seconds, then becomes indeterminate. Captions are waiting entertainment, not claims of measured provider stages. Reduced-motion mode disables bar transitions and keeps a static caption. Existing 100-second client request timeout and error behavior remain in place. The global registry retains other requests but suppresses its card while an open data-progress-dialog occupies the top layer. Cancellation aborts the local request and preserves form/saved data; a canceled request’s finally block cannot release a newer request’s controller. Local cancellation does not guarantee the upstream provider stops processing or refunds quota.
+
+### Premium flat redesign
+
+Implements `prd.md > Premium flat redesign`. Global tokens extend the approved palette (deep forest, sprout, leaf tints, paper, sand, soil, sun, clay accents) with shared radii and easing; surfaces use 1.5px borders and solid fills, never drop shadows, gradients, or blur. The workspace has a sticky top bar, a two-column planner (hero with GardenScene beside the form) from 1024px, a sticky map beside the explanations from 1000px, and narrower identify/detail views. Non-planning views keep a screen-reader `h1`.
+
+`src/lib/client/motion.ts` registers `useGSAP`, exposes `motionAllowed()` (true only for `prefers-reduced-motion: no-preference`), `useReducedMotion()`, and `useHydrated()`. Components animate inside `useGSAP` scopes so tweens revert on unmount. The server-rendered hero and form use CSS keyframe entrances to avoid a hydration flash; GardenScene renders its SVG only after hydration. GardenMap runs a planting timeline (bed, rows, sprouts, labels, legend) per plan ID; GardenPlan, MyGarden, PlantUpload, and IdentificationResult reveal content with short staggered transforms. GardenForm pops a crop icon on selection. Dialogs and loaders keep CSS animation. No animation gates an action, and accessible names, roles, and test-visible copy are unchanged.
+
+The replaced `MotionProvider.tsx` and `motion` dependency are removed. Crop selectors become illustrated tiles taller than the 48px action-button height. Quick sizes fill both dimension inputs and are disabled with the fieldset. Upload accepts dropped files through the same `prepareImage` validation. Three.js was considered and declined.
