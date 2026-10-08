@@ -304,3 +304,12 @@ The learner requested a complete, premium, user-friendly interface in a flat sty
 - The form adds numbered sections, three quick size presets, a live bed-shape outline that follows the entered dimensions, and larger illustrated crop tiles. The tiles intentionally replace the earlier 48px compact crop selectors; action buttons keep the shared 48px height.
 - The plan places the map beside its explanations and actions on wide screens. History uses a responsive card grid. Upload offers photo tips, drag-and-drop, the prepared-photo size, and a scanning line during analysis. Direct sign-in/sign-up routes use a branded split layout.
 - Motion uses GSAP for the map planting sequence, view entrances, crop selection feedback, history and result reveals, and the ambient illustration. Motion never delays actions; reduced-motion preferences remove it while keeping every state readable. Three.js is not used: a WebGL scene conflicts with flat styling and adds weight for outdoor phone use.
+
+### Calm, minimal layout and loading
+
+The learner reported crowded layouts, oversized text and buttons, inconsistent alignment, loading that appeared at awkward moments, and a loading card appearing over an open dialog. This refinement keeps the palette, Manrope, journey, wording policies, and flat style, and supersedes the premium redesign's hero illustration, side-by-side layouts, playful generation captions, and the 48px button height.
+
+- Use one centered content column on every screen, aligned with the top bar. Use modest heading sizes and comfortable spacing; remove decorative illustration.
+- Explain what to do on every screen in plain language: what the planner needs, that the preview is unsaved and how saving helps, how identification works in three steps, what the provider score means, that uncertain results are not saved, and what happens when cancelling generation or replacing a garden.
+- Buttons are 44px, with smaller 36px buttons for secondary/utility actions. Labels and widths stay stable while pending.
+- Loading never appears as a second dialog. Page-level loading is a small status under the top bar that appears only when an operation takes longer than a moment; inside an open dialog it is an inline status row. History loads quietly inside its own section. Screens waiting for data show simple placeholders.
