@@ -1,30 +1,9 @@
-.shell { min-height: 100dvh; display: grid; grid-template-columns: minmax(0, 1fr); background: var(--cream); }
-@media (min-width: 960px) { .shell { grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); } }
-
-.brandPanel { display: flex; flex-direction: column; justify-content: space-between; gap: 32px; padding: clamp(24px, 5vw, 56px); background: var(--forest); color: var(--paper); }
-.brand { display: inline-flex; align-items: center; gap: 12px; color: var(--paper); font-size: 19px; font-weight: 800; letter-spacing: -.035em; text-decoration: none; }
-.mark { width: 40px; height: 40px; border-radius: 12px; outline: 1.5px solid rgb(255 253 248 / 30%); }
-.brandPanel h1 { max-width: 16ch; font-size: clamp(30px, 4vw, 48px); line-height: 1.05; letter-spacing: -.045em; font-weight: 800; animation: rise 700ms var(--ease-out) both; }
-.points { display: grid; gap: 12px; margin-top: 24px; list-style: none; }
-.points li { display: flex; align-items: center; gap: 10px; font-size: 15px; font-weight: 600; color: #dbe8d4; animation: rise 700ms var(--ease-out) both; }
-.points li:nth-child(2) { animation-delay: 80ms; }
-.points li:nth-child(3) { animation-delay: 160ms; }
-.points svg { width: 22px; height: 22px; padding: 4px; flex-shrink: 0; border-radius: 50%; background: var(--sprout); color: var(--forest); stroke-width: 3; }
-.crops { display: flex; gap: 12px; }
-.crops span { display: grid; place-items: center; width: 64px; height: 64px; border-radius: 20px; background: var(--paper); animation: pop 600ms var(--ease-spring) both; }
-.crops span:nth-child(2) { animation-delay: 90ms; }
-.crops span:nth-child(3) { animation-delay: 180ms; }
-.crops span:nth-child(4) { animation-delay: 270ms; }
-.crops svg { width: 44px; height: 44px; }
-
-.formPanel { display: grid; place-content: center; justify-items: center; gap: 20px; padding: clamp(24px, 5vw, 56px) 16px; }
-.back { display: inline-flex; align-items: center; gap: 8px; color: var(--forest); font-size: 14px; font-weight: 700; text-decoration: none; border-radius: 8px; padding: 6px 10px; }
+.shell { min-height: 100dvh; display: grid; justify-items: center; align-content: center; gap: 20px; padding: 40px 16px; background: var(--cream); }
+.brand { display: inline-flex; align-items: center; gap: 10px; color: var(--forest-ink); font-size: 17px; font-weight: 800; letter-spacing: -.03em; text-decoration: none; }
+.mark { width: 32px; height: 32px; }
+.intro { max-width: 400px; text-align: center; }
+.intro h1 { font-size: 24px; line-height: 1.2; letter-spacing: -.03em; font-weight: 800; color: var(--forest-ink); }
+.intro p { margin-top: 8px; font-size: 14px; line-height: 1.6; color: var(--muted); }
+.back { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; border-radius: 8px; color: var(--forest); font-size: 14px; font-weight: 600; text-decoration: none; }
 .back:hover { background: var(--leaf-soft); }
 .back svg { width: 16px; height: 16px; }
-
-@keyframes rise { from { opacity: 0; transform: translateY(14px); } }
-@keyframes pop { from { opacity: 0; transform: scale(.6); } }
-@media (max-width: 959px) {
-  .brandPanel { gap: 20px; }
-  .points, .crops { display: none; }
-}
