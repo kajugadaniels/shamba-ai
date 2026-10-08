@@ -4,7 +4,8 @@ import { usePageLoading } from "./GlobalLoading";
 import { z } from "zod";
 import { historyItemSchema } from "@/lib/schemas";
 import { Button } from "./Button";
-import styles from "./PlantUpload.module.css";
+import { AlertIcon, ArrowLeftIcon } from "./Icons";
+import styles from "./IdentificationResult.module.css";
 import { IdentificationResult } from "./IdentificationResult";
 export function HistoricalResult({ id, onBack }: { id: string; onBack: () => void }) {
   const [result, setResult] = useState<z.infer<typeof historyItemSchema> | null>(null), [failure, setFailure] = useState(false), [retry, setRetry] = useState(0);
@@ -18,10 +19,10 @@ export function HistoricalResult({ id, onBack }: { id: string; onBack: () => voi
     return () => controller.abort();
   }, [id, retry]);
   return result ? <IdentificationResult result={result} onBack={onBack} /> : <section className={styles.result} aria-busy={!failure}>
-    {failure ? <p role="alert">This identification could not be loaded.</p> : null}
+    {failure ? <div role="alert" className={styles.warning}><AlertIcon /><p>This identification could not be loaded.</p></div> : null}
     <div className={styles.actions}>
       {failure || retry > 0 ? <Button loading={!failure} onClick={() => { setFailure(false); setResult(null); setRetry((value) => value + 1); }}>Retry loading result</Button> : null}
-      <Button onClick={onBack}>Back to my garden</Button>
+      <Button onClick={onBack}><ArrowLeftIcon />Back to my garden</Button>
     </div>
   </section>;
 }
