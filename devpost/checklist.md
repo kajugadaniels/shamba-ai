@@ -140,3 +140,9 @@ Activity mode: Planned focused planning-to-code verification walkthrough; learne
 - Added a shared 48px Button with primary, secondary, outline, and destructive variants. Request actions retain their label/width, show a decorative spinner, and disable repeat clicks. The single global loader remains the source of progress text.
 - Migrated application action buttons, aligned responsive action rows, grouped upload controls, and compacted crop selection cards to the shared height. Clerk primary/social form buttons use the same token. Retry buttons remain visible during their request.
 - Added focused pending-button and identification regression coverage, and strengthened the existing generation test. No tests, lint, typecheck, build, installation, or server were run by the assistant, as requested. Slice 3 learner review and developer verification remain pending.
+
+### Garden generation progress dialog — awaiting developer checks
+
+- Added an input-aware modal, elapsed time, explicitly estimated wait/bar, playful gardening captions, indeterminate feedback after the estimate, and cancel-with-input-preservation. It replaces the global centered card only while open; button progress remains. No fake provider stages, 100% completion, artificial delay, or automatic retry is introduced.
+- Guarded cancellation/retry so a late canceled response or finally block cannot overwrite the draft or unlock a newer request. Added focused timer, single-loader, cancellation, and late-response regression coverage.
+- The assistant ran no tests, lint, typecheck, build, installs, server, or provider calls. Developer checks and Slice 3 learner review remain pending.
