@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { SignUp } from "@clerk/nextjs";
+import { AuthShell } from "@/components/AuthShell";
 export default function SignUpPage() {
-  return <main style={{ minHeight: "100dvh", display: "grid", placeContent: "center", padding: 20 }}><SignUp routing="path" path="/sign-up" signInUrl="/sign-in" forceRedirectUrl="/" /><Link href="/" style={{ textAlign: "center", marginTop: 20 }}>Back to Shamba AI</Link></main>;
+  return <AuthShell title="Keep your garden plan in one place."><SignUp routing="path" path="/sign-up" signInUrl="/sign-in" forceRedirectUrl="/" /></AuthShell>;
 }
